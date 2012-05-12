@@ -81,7 +81,6 @@ class Form_Model_Sub {
 
     }
 
-
     //validate_file
 
     /**
@@ -307,7 +306,7 @@ class Form_Model_Sub {
             if (is_array($form_output)) {
                 array_walk_recursive($form_output, 'stripslashes_deep');
             } else {
-                $form_output = stripslashes($form_output);
+                $form_output = stripslashes_deep($form_output);
             }
 
         } else {
@@ -319,7 +318,7 @@ class Form_Model_Sub {
                 if (preg_match("/$att/i", $thisKey)) {
 
                     if (is_string($thisKey)) {
-                        $form_output[$option_name][$thisKey] = stripslashes($result);
+                        $form_output[$option_name][$thisKey] = stripslashes_deep($result);
                     }
 
                 } // end if
@@ -368,6 +367,37 @@ class Form_Model_Sub {
 
 
     }
+    
+    // need to make sure that only code [#234#] is used and only used once
+    protected function title_check($form_output, $att) {
+
+        extract(static::$form);
+
+        if (is_array($form_output) && is_string($att)) {
+
+            foreach ($form_output[$option_name] as $thisKey => $result) {
+
+                if (preg_match("/$att/i", $thisKey)) {
+
+                    if ($result !== "") {
+
+                        if (!preg_match("/^\[#([0-9]*)#\]$/", $result)) {
+                            return FALSE;
+                        }
+
+                    } // end if
+
+                } // end if
+
+            } // end foreach
+
+        } else {
+            die("Make sure that the inputs for validate_url() is an array and a string");
+        }
+
+
+    }
+
 
 
     /**
@@ -456,6 +486,12 @@ class Form_Model_Sub {
     protected function get_file_basename($file_name) {
 
         return pathinfo($file_name, PATHINFO_BASENAME);
+
+    }
+    
+    protected function get_file_filename($file_name) {
+
+        return pathinfo($file_name, PATHINFO_FILENAME);
 
     }
 

@@ -280,8 +280,8 @@ class Form_Controller extends OptionModel\Form_Model {
 
         //var_dump($option_name);
 
-        if (count($form_elms) !== 7) {
-            die("Make sure you enter five values in the form builder array");
+        if (count($form_elms) !== 8) {
+            die("Make sure you enter eight values in the form builder array");
         }
 
         foreach ($form_elms as $key => $value) {
@@ -389,6 +389,11 @@ class Form_Controller extends OptionModel\Form_Model {
                 '<p class="submit" style="margin-top:0;padding-top:0"><input type="submit"  name="'.
                 $form_elms['6'].'" class="button-primary" value="Update form"></p>';
         }
+        if ($form_elms['7'] != NULL) {
+            $form .=
+                '<p class="submit" style="margin-top:0;padding-top:0"><input type="submit"  name="'.
+                $form_elms['7'].'" class="button-primary" value="Synchronize"></p>';
+        }
         $form .= '</fieldset>';
         $form .= '</form>';
         echo $form;
@@ -434,8 +439,6 @@ class Form_Controller extends OptionModel\Form_Model {
             6 => 'select',
             );
         $fields_essentials = array_combine($default, $array);
-
-        //var_dump($fields_essentials);
 
         // above combines the default array with the user input data to create a multidimensial array with
         // form attribute names and values
@@ -529,16 +532,15 @@ class Form_Controller extends OptionModel\Form_Model {
                         $text .= "<input type=\"hidden\" name=\"{$option_name}[$i][input_type]\" value=\"text\">";
                         $text .= "<input type=\"hidden\" name=\"{$option_name}[$i][file_name]\" value=\"\">";
                         if ($add_link === TRUE) {
-                            $text .= '<span class="description"><a href="';
+                            $text .= '<span class="description"><p><a href="';
                             $text .= '?page='.$page_url.'&unique_name='.urlencode($name_value);
-                            $text .= '">Click here to add or edit feed details</a>';
+                            $text .= '">Edit feed details</a></p>';
 
                             if ($this->check_feed_details_table($name_value) != "") {
 
-                                $text .= '<br />';
-                                $text .= '<a href="';
+                                $text .= '<p><a href="';
                                 $text .= '?page='.$page_url.'&unique_form='.urlencode($name_value);
-                                $text .= '">Change the form details for this feed</a>';
+                                $text .= '">Feed form</a></p>';
 
                             }
 

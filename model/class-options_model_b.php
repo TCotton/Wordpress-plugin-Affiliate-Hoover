@@ -3,6 +3,13 @@
 namespace OptionModel;
 use OptionModelSub;
 use File_CSV_DataSource;
+use XML_Serializer;
+use XML_Unserializer;
+use XmlArray;
+use RecursiveIteratorIterator;
+use RecursiveArrayIterator;
+
+
 /**
  * Form_Model
  * 
@@ -493,18 +500,12 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         global $wpdb;
 
         return $wpdb->query($wpdb->prepare("UPDATE ".AH_FEED_DETAILS_TABLE.
-            " SET form_title = %s, form_title_contains = %s, form_body = %s, form_body_contains = %s, form_categories = %s, form_tags = %s, form_allow_comments = %d, form_allow_trackback = %d, min_rows = %d, max_rows = %d, post_status = %s, WHERE name = %s",
+            " SET form_title = %s, form_title_contains = %s, form_body = %s, form_body_contains = %s, form_categories = %s, form_tags = %s, form_allow_comments = %d, form_allow_trackback = %d, min_rows = %d, max_rows = %d, post_status = %s WHERE name = %s",
             $form_title, $form_title_contains, $form_body, $form_body_contains, $form_categories, $form_tags,
             $form_allow_comments, $form_allow_trackback, $form_min_rows, $form_max_rows, $form_post_status,
             $form_name));
 
         $wpdb->print_error();
-
-    }
-
-
-    protected function create_post_items_updateInd($var) {
-
 
     }
 
@@ -518,7 +519,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         // get user id of admin
         $user_info = get_userdata(1);
         // this is user id --> $user_info->ID
-
 
         // PARSE AND SAVE CSV DETAILS HERE
 
@@ -536,106 +536,120 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             'post_category' => null,
             'post_status' => 'publish');
 
-        $csv = new File_CSV_DataSource;
-
         $post_meta = $this->get_post_meta();
 
-        if ($csv->load(AH_FEEDS_DIR.$file_here)) {
+        // CSV
 
-            $csv->symmetrize();
+        if ($this->get_file_extension($file_here) === "csv") {
 
-            $total = $csv->getrawArray();
+            $csv = new File_CSV_DataSource;
 
-            foreach ($total as $result => $value) {
+            if ($csv->load(AH_FEEDS_DIR.$file_here)) {
 
-                if ($item->num_rows != "" || $item->max_rows != "") {
+                $csv->symmetrize();
 
-                    if ($result > $item->max_rows) continue;
-                    if ($result < $item->min_rows) continue;
+                $total = $csv->getrawArray();
 
-                }
+                foreach ($total as $result => $value) {
 
-                if ($result == 0) continue;
+                    if ($item->min_rows != FALSE && $item->max_rows != FALSE) {
 
-                $total_val = count($value);
-
-                foreach ($value as $key => $row_value) {
-
-                    //$regex = "/(\[#$key#\])/";
-
-                    if ($key === 0) {
-
-                        $post_title = $item->form_title;
-                        $post_content = $item->form_body;
-                        $tags_input = $item->form_tags;
-                        $post_category = $item->form_categories;
-                        $post_cat_array = array();
+                        if ($result > $item->max_rows) continue;
+                        if ($result < $item->min_rows) continue;
 
                     }
 
-                    // Post title
+                    if ($result == 0) continue;
 
-                    if (stristr($item->form_title, "[#$key#]") !== FALSE) {
+                    $total_val = count($value);
 
-                        $post_title = str_replace("[#$key#]", $row_value, $post_title);
+                    foreach ($value as $key => $row_value) {
 
-                    }
+                        if ($key === 0) {
 
-                    // Post content
+                            $post_title = $item->form_title;
+                            $post_content = $item->form_body;
+                            $tags_input = $item->form_tags;
+                            $post_category = $item->form_categories;
+                            $post_cat_array = array();
 
-                    if (stristr($item->form_body, "[#$key#]") !== FALSE) {
+                        }
 
-                        $post_content = str_replace("[#$key#]", $row_value, $post_content);
+                        // Post title
 
-                    }
+                        if (stristr($item->form_title, "[#$key#]") !== FALSE) {
 
-                    // Form tags
+                            $post_title = str_replace("[#$key#]", $row_value, $post_title);
 
-                    if (stristr($item->form_tags, "[#$key#]") !== FALSE) {
+                        }
 
-                        $tags_input = str_replace("[#$key#]", $row_value, $tags_input);
+                        // Post content
 
-                    }
+                        if (stristr($item->form_body, "[#$key#]") !== FALSE) {
 
-                    // form cats
+                            $post_content = str_replace("[#$key#]", $row_value, $post_content);
 
-                    if (stristr($item->form_categories, "[#$key#]") !== FALSE) {
+                        }
 
-                        $post_category = str_replace("[#$key#]", $row_value, $post_category);
+                        // Form tags
 
-                    }
+                        if (stristr($item->form_tags, "[#$key#]") !== FALSE) {
 
-                    // Allow comments
+                            $tags_input = str_replace("[#$key#]", $row_value, $tags_input);
 
-                    if ($item->form_allow_comments == TRUE) {
-                        $comment_status = 'open';
-                    } else {
-                        $comment_status = 'closed';
-                    }
+                        }
 
-                    // Allow trackback
+                        // form cats
 
-                    if ($item->form_allow_trackback == TRUE) {
-                        $ping_status = 'open';
-                    } else {
-                        $ping_status = 'closed';
-                    }
+                        if (stristr($item->form_categories, "[#$key#]") !== FALSE) {
 
-                    if ($key === ($total_val - 1)) {
+                            $post_category = str_replace("[#$key#]", $row_value, $post_category);
 
-                        $new_post['post_title'] = $this->check_utf($post_title);
-                        $new_post['post_content'] = $this->check_utf($post_content);
-                        $new_post['comment_status'] = $comment_status;
-                        $new_post['ping_status'] = $ping_status;
-                        $new_post['tags_input'] = $this->check_utf($tags_input);
+                        }
 
-                        $duplicate = FALSE;
+                        // Allow comments
 
-                        foreach ($post_meta as $result) {
+                        if ($item->form_allow_comments == TRUE) {
+                            $comment_status = 'open';
+                        } else {
+                            $comment_status = 'closed';
+                        }
 
-                            if ((int)$result->meta_value === hexdec(substr(md5($post_title), 0, 7))) {
+                        // Allow trackback
 
-                                if ($bol === FALSE) {
+                        if ($item->form_allow_trackback == TRUE) {
+                            $ping_status = 'open';
+                        } else {
+                            $ping_status = 'closed';
+                        }
+
+                        if ($key === ($total_val - 1)) {
+                            // Need to make sure title doesn't start with digits
+                            $new_post['post_title'] = stripslashes_deep($this->check_utf($post_title));
+
+                            $new_post['post_title'] = "Warning: Don't start thread with numbers";
+
+                            $new_post['post_content'] = stripslashes_deep($this->check_utf($post_content));
+                            $new_post['comment_status'] = $comment_status;
+                            $new_post['ping_status'] = $ping_status;
+
+                            // Don't create tags that are digits
+                            if (!preg_match("/[0-9]/", $tags_input)) {
+                                $new_post['tags_input'] = stripslashes_deep($this->check_utf($tags_input));
+
+                            }
+
+                            $new_post['post_status'] = $item->post_status;
+
+                            $duplicate = FALSE;
+
+                            foreach ($post_meta as $result) {
+
+                                if ((int)$result->meta_value === hexdec(substr(md5($post_title), 0,
+                                    7))) {
+
+                                    if ($bol === FALSE) continue;
+
                                     // this is set to false if the update button is clicked
                                     // that way no old posts will not be updated
 
@@ -689,7 +703,12 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                                 $result = ($this->check_utf($result));
 
-                                                $id = wp_create_category($this->check_utf($result));
+                                                // make sure that the user doesn't accidently add numbers
+                                                if (!preg_match("/^[0-9]/", $result)) {
+                                                    $id = wp_create_category($this->check_utf($result));
+
+                                                }
+
                                                 $post_cat_array[] = $id;
 
                                             }
@@ -707,92 +726,143 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                     } // end publish equals true
 
-                                } // if($bol === FALSE) {
+                                } // end  if ((int)$result->meta_value === hexdec(substr(md5($post_title), 0, 7))) {
 
-                            } // end  if ((int)$result->meta_value === hexdec(substr(md5($post_title), 0, 7))) {
+                            } // end foreach loop
 
-                        } // end foreach loop
 
-                        if ($duplicate === FALSE) {
+                            if ($duplicate === FALSE) {
 
-                            // Here create variables for the keyword filtering on creating new post
-                            $publish = TRUE;
+                                // Here create variables for the keyword filtering on creating new post
+                                $publish = TRUE;
 
-                            if ($item->form_title_contains != "") {
+                                if ($item->form_title_contains != "") {
 
-                                $form_title_contains = explode(",", $item->form_title_contains);
-                                $publish = FALSE;
+                                    $form_title_contains = explode(",", $item->form_title_contains);
+                                    $publish = FALSE;
 
-                                foreach ($form_title_contains as $new_result) {
+                                    foreach ($form_title_contains as $new_result) {
 
-                                    if (stristr($new_post['post_title'], trim($new_result))) {
-                                        $publish = TRUE;
-                                    }
-
-                                }
-
-                            }
-
-                            if ($item->form_body_contains != "") {
-
-                                $form_body_contains = explode(",", $item->form_body_contains);
-                                $publish = FALSE;
-
-                                foreach ($form_body_contains as $new_result) {
-
-                                    if (stristr($new_post['post_content'], trim($new_result))) {
-                                        $publish = TRUE;
-                                    }
-
-                                }
-
-                            }
-
-                            // If the title and body DO contain keywords then publish items OR publish if NO keywords set
-
-                            if ($publish === TRUE) {
-
-                                // Categories
-
-                                // Create the categories in the database here and use the IDs in the insert_post() function
-
-                                if ($item->form_categories != "") {
-
-                                    $cat_array = explode(",", $post_category);
-
-                                    foreach ($cat_array as $result) {
-
-                                        $result = ($this->check_utf($result));
-
-                                        $id = wp_create_category($result);
-                                        $post_cat_array[] = $id;
+                                        if (stristr($new_post['post_title'], trim($new_result))) {
+                                            $publish = TRUE;
+                                        }
 
                                     }
 
                                 }
 
-                                //$new_post['post_category'] = $post_cat_array;
-                                $new_post['post_date'] = date('Y-m-d H:i:s');
+                                if ($item->form_body_contains != "") {
 
-                                $id = wp_insert_post($new_post);
+                                    $form_body_contains = explode(",", $item->form_body_contains);
+                                    $publish = FALSE;
 
-                                add_post_meta($id, '_unique_post', $post_title, TRUE);
+                                    foreach ($form_body_contains as $new_result) {
 
-                                $this->insert_total_feeds($post_title);
+                                        if (stristr($new_post['post_content'], trim($new_result))) {
+                                            $publish = TRUE;
+                                        }
+
+                                    }
+
+                                }
+
+                                // If the title and body DO contain keywords then publish items OR publish if NO keywords set
+
+                                if ($publish === TRUE) {
+
+                                    // Check that item has never been published
+                                    // This is to prevent duplicate content if the item has been previously deleted
+
+                                    $post_title = hexdec(substr(md5($post_title), 0, 7));
+
+                                    if ($this->select_total_feeds($post_title)) continue;
+
+                                    // Categories
+
+                                    // Create the categories in the database here and use the IDs in the insert_post() function
+
+                                    if ($item->form_categories != "") {
+
+                                        $cat_array = explode(",", $post_category);
+
+                                        foreach ($cat_array as $result) {
+
+                                            $result = ($this->check_utf($result));
+
+                                            // make sure that the user doesn't accidently add numbers
+                                            if (!preg_match("/^[0-9]/", $result)) {
+                                                $id = wp_create_category($this->check_utf($result));
+
+                                            }
+
+                                            $post_cat_array[] = $id;
+
+                                        }
+
+                                    }
+
+                                    $new_post['post_category'] = $post_cat_array;
+                                    $new_post['post_date'] = date('Y-m-d H:i:s');
+
+                                    //var_dump($new_post);
+
+                                    $id = wp_insert_post($new_post);
+
+                                    add_post_meta($id, '_unique_post', $post_title, TRUE);
+
+                                    $this->insert_total_feeds($post_title);
+
+                                }
 
                             }
 
-                        }
+                        } // end if statement
 
-                    } // end if statement
+                    } // end foreach
 
                 } // end foreach
 
-            } // end foreach
+            } // end if ($csv->load(AH_FEEDS_DIR.$file_here)) {
 
-        }
+        } // end if($this->get_file_extension($item->fileName) === "csv") {
+
 
     }
+
+
+    private function recursive_array_find_key_digit($old_array, $new_array = array()) {
+
+        foreach ($old_array as $key => $value) {
+
+            if (!is_int($key)) {
+                $new_array = $this->recursive_array_find_key_digit($value, $new_array);
+
+            } else {
+                $new_array[] = $value;
+
+            }
+
+        }
+        return $new_array;
+    }
+
+
+    private function recursive_array_find_total_entries($old_array, $new_array = array()) {
+
+        foreach ($old_array as $key => $value) {
+
+            if (!is_int($key)) {
+                $new_array = $this->recursive_array_find_total_entries($value, $new_array);
+
+            } else {
+                $new_array[] = $key;
+
+            }
+
+        }
+        return $new_array;
+    }
+
 
     private function insert_total_feeds($id) {
 
@@ -807,7 +877,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         global $wpdb;
 
-        return $wpdb->get_row("SELECT post_title_id FROM ".AH_TOTAL_FEEDS_TABLES." WHERE id = $id");
+        return $wpdb->get_row("SELECT post_title_id FROM ".AH_TOTAL_FEEDS_TABLES.
+            " WHERE post_title_id = $id");
 
     }
 
@@ -823,6 +894,59 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             return $str;
 
         }
+
+    }
+
+    protected function synchronize_feeds($var) {
+
+        $filename = $this->find_filename_feed_details(urldecode($_GET['unique_form']));
+
+        $csv = new File_CSV_DataSource;
+
+        $total_titles = array();
+
+        if ($csv->load(AH_FEEDS_DIR.$filename->fileName)) {
+
+            $csv->symmetrize();
+
+            $total = $csv->getrawArray();
+
+            foreach ($total as $result => $value) {
+
+                if ($result == 0) continue;
+
+                foreach ($value as $key => $row_value) {
+
+                    $total_titles[] = hexdec(substr(md5($row_value), 0, 7));
+
+                } // end foreach
+
+            } // end foreach
+
+        } // end if ($csv->load(AH_FEEDS_DIR.$filename)) {
+
+        // now loop through array in postmeta
+
+        $total_postmeta = $this->get_post_meta();
+
+        foreach ($total_postmeta as $meta_result) {
+
+            if (!in_array((int)$meta_result->meta_value, $total_titles)) {
+
+                wp_delete_post($meta_result->post_id);
+
+            }
+
+        }
+
+    }
+
+    private function find_filename_feed_details($var) {
+
+        global $wpdb;
+
+        return $wpdb->get_row("SELECT fileName, header_array FROM ".AH_FEED_DETAILS_TABLE.
+            " WHERE name = '".$var."'");
 
     }
 
@@ -845,7 +969,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
-    protected function get_post_meta() {
+    private function get_post_meta() {
 
         global $wpdb;
 
@@ -853,7 +977,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             "postmeta WHERE meta_key = '_unique_post'");
 
     }
-
 
     /**
      * Form_Model::select_all() 
@@ -884,8 +1007,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
      * @return boolean
      */
 
-    protected function insert_table($name, $url, $fileName, $header_array, $header_array_amend, $cron_run,
-        $num_rows) {
+    protected function insert_table($name, $url, $fileName, $header_array, $header_array_amend, $num_rows) {
 
         global $wpdb;
 
@@ -893,9 +1015,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             return $wpdb->query($wpdb->prepare("
 		INSERT INTO ".AH_FEED_DETAILS_TABLE."
-		( name, URL, fileName, header_array, header_array_amend, form_cron, num_rows)
-		VALUES ( %s, %s, %s, %s, %s, %s, %d )
-	", $name, $url, $fileName, $header_array, $header_array_amend, $cron_run, $num_rows));
+		( name, URL, fileName, header_array, header_array_amend,  num_rows)
+		VALUES ( %s, %s, %s, %s, %s,  %d )
+	", $name, $url, $fileName, $header_array, $header_array_amend, $num_rows));
 
         } else {
 
@@ -910,8 +1032,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 unlink($file);
 
                 return $wpdb->query($wpdb->prepare("UPDATE ".AH_FEED_DETAILS_TABLE.
-                    " SET URL = %s, fileName = %s, header_array = %s, header_array_amend = %s, form_cron = %s, num_rows = %d WHERE name = %s",
-                    $url, $fileName, $header_array, $header_array_amend, $cron_run, $num_rows, $name));
+                    " SET URL = %s, fileName = %s, header_array = %s, header_array_amend = %s, num_rows = %d WHERE name = %s",
+                    $url, $fileName, $header_array, $header_array_amend, $num_rows, $name));
 
             }
             //$wpdb->print_error();
@@ -1083,19 +1205,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             }
 
-            /*
-
-            if ($key === "formCategoryContains") {
-            if ($value != "") {
-            $form_category_contains = $value;
-            } else {
-            $form_category_contains = null;
-            }
-
-            }
-            
-            */
-
             if ($key === "formTags") {
 
                 preg_match_all($regex, $value, $match);
@@ -1155,7 +1264,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         $feed_url = $form[$option_name]['feedURL'];
 
-        // move uploaded file to
         $fileName = NULL;
 
         if ($this->check_file_empty($_FILES[$option_name], 'feedFile') === FALSE) {
@@ -1171,38 +1279,195 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         if ($this->get_file_extension($fileName) === "xml") {
 
-            //$xml = $this->parse_xml(AH_FEEDS_DIR.$fileName);
+            // Here convert XML file to CSV
 
-        } elseif ($this->get_file_extension($fileName) === "csv") {
+            $xml_file = AH_FEEDS_DIR.$fileName;
+
+            // Use XML_Serializer to get the data into a useable array
+
+            $data = $this->xml_helper($xml_file);
+
+            print '<pre>';
+            //print_r($data);
+            print '</pre>';
+
+            // Retreive header information using RecursiveIteratorIterator / RecursiveArrayIterator
+
+            $header_array = $this->recursive_array($data);
+
+            //var_dump($header_array); //correct!
+
+            // Find ZML filename without the extension
+
+            $csv_file = $this->get_file_filename($fileName).'.csv';
+
+            // Use that for the name of the CSV file
+
+            $csv_full = AH_FEEDS_DIR.$csv_file;
+
+            $fp = fopen($csv_full, 'w');
+
+            // The first line in the CSV line is the header infor
+
+            fputcsv($fp, $header_array);
+
+            // Find all the values in the XML file
+
+            $total = $this->recursive_array_values($data);
+
+            //var_dump(count($total));
+
+            // Here I reset the array so the first key in the index is one not zero
+
+            //$keys = range(1, count($form));
+            //$values = array_values($form);
+            //$form = array_combine($keys, $values);
+
+            $this->reset_array($total);
+
+            static $i = 1;
+            $end = array();
+            foreach ($total as $key => $value) {
+
+                // Now loop through the values in the XML file adding them underneath the CSV headers
+                // If a value has no info use empty instead
+
+                if (strlen($value) === 0) {
+                    $value = "Empty";
+                }
+
+                $end[] = $value;
+
+                if ($i++ % count($header_array) == 0) {
+                    fputcsv($fp, $end);
+                    unset($end);
+                }
+
+            }
+
+            // Done. Close the CSV file and destroy the used XML file
+            fclose($fp);
+            unlink($xml_file);
+
+            $fileName = $csv_file;
 
             $header_array = $this->parse_csv_head(AH_FEEDS_DIR.$fileName);
 
+            //var_dump($header_array); //correct!
+
             $header_array_amend = $header_array;
 
+            //count total number of entries
             $num_rows = $this->count_csv_rows(AH_FEEDS_DIR.$fileName);
 
             foreach ($header_array_amend as $key => $value) {
                 $header_array_amend['[#'.$key.'#]'] = $value;
                 unset($header_array_amend[$key]);
-            }
+            } // end foreach
+
 
         }
 
-        //var_dump($form);
+
+        if ($this->get_file_extension($fileName) === "csv") {
+
+            $header_array = $this->parse_csv_head(AH_FEEDS_DIR.$fileName);
+
+            $header_array_amend = $header_array;
+
+            //count total number of entries
+            $num_rows = $this->count_csv_rows(AH_FEEDS_DIR.$fileName);
+
+            foreach ($header_array_amend as $key => $value) {
+                $header_array_amend['[#'.$key.'#]'] = $value;
+                unset($header_array_amend[$key]);
+            } // end foreach
+
+        } // end if
 
         if ($fileName != NULL) {
 
             if ($this->insert_table($form['indName'], $feed_url, $fileName, serialize($header_array),
-                serialize($header_array_amend), $form[$option_name]['formCron'], $num_rows)) {
+                serialize($header_array_amend), $num_rows)) {
                 //wp_redirect(admin_url("/options-general.php?page=".$page_url));
                 //exit;
             }
 
-
         }
 
+    }
+
+    private function recursive_array($old_array) {
+
+        $riter = new RecursiveIteratorIterator(New RecursiveArrayIterator($old_array));
+
+        $output = array();
+
+        foreach ($riter as $key => $value) {
+            static $i = 1;
+
+            if ($riter->getDepth() > 2) {
+
+                $index = $i++;
+
+                if ($index === 1) {
+                    $index_key = $key;
+                }
+
+                if ($key === $index_key && $index > 1) {
+                    break;
+                }
+
+                $output[] = $key;
+            }
+        }
+
+        return $output;
+    }
+
+
+    private function recursive_array_values($old_array, $new_array = array()) {
+
+        $riter = new RecursiveIteratorIterator(New RecursiveArrayIterator($old_array));
+
+        foreach ($riter as $key => $value) {
+
+            if ($riter->getDepth() > 2) {
+                $new_array[] = $value;
+
+            }
+        }
+
+        return $new_array;
 
     }
+
+
+    private function xml_helper($file) {
+
+        $xml = simplexml_load_file($file, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+        $options = array(XML_SERIALIZER_OPTION_INDENT => '    ', XML_SERIALIZER_OPTION_RETURN_RESULT => true
+                //XML_SERIALIZER_OPTION_TYPEHINTS => true
+                );
+
+        $serializer = &new XML_Serializer($options);
+
+        $result = $serializer->serialize($xml);
+
+        $options = array(XML_UNSERIALIZER_OPTION_COMPLEXTYPE => 'array');
+
+        $unserializer = &new XML_Unserializer($options);
+
+        // userialize the document
+        $unserializer->unserialize($result, false);
+
+        $data = $unserializer->getUnserializedData();
+
+        return $data;
+
+    }
+
 
     /**
      * Form_Model::success_message()
