@@ -99,7 +99,7 @@ class OS_Guess
     var $release;
     var $extra;
 
-    function OS_Guess($uname = null)
+    function OS_Guess($uname = NULL)
     {
         list($this->sysname,
              $this->release,
@@ -108,7 +108,7 @@ class OS_Guess
              $this->nodename) = $this->parseSignature($uname);
     }
 
-    function parseSignature($uname = null)
+    function parseSignature($uname = NULL)
     {
         static $sysmap = array(
             'HP-UX' => 'hpux',
@@ -119,7 +119,7 @@ class OS_Guess
             'i686' => 'i386',
             'ppc' => 'powerpc',
         );
-        if ($uname === null) {
+        if ($uname === NULL) {
             $uname = php_uname();
         }
         $parts = preg_split('/\s+/', trim($uname));
@@ -190,8 +190,8 @@ class OS_Guess
 
     function _detectGlibcVersion()
     {
-        static $glibc = false;
-        if ($glibc !== false) {
+        static $glibc = FALSE;
+        if ($glibc !== FALSE) {
             return $glibc; // no need to run this multiple times
         }
         $major = $minor = 0;
@@ -204,7 +204,7 @@ class OS_Guess
                 $features_file = fopen('/usr/include/features.h', 'rb');
                 while (!feof($features_file)) {
                     $line = fgets($features_file, 8192);
-                    if (!$line || (strpos($line, '#define') === false)) {
+                    if (!$line || (strpos($line, '#define') === FALSE)) {
                         continue;
                     }
                     if (strpos($line, '__GLIBC__')) {

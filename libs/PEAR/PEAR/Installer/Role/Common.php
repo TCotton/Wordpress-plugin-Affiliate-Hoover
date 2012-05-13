@@ -70,7 +70,7 @@ class PEAR_Installer_Role_Common
      *    3 the full path to the final location of the file
      *    4 the location of the pre-installation file
      */
-    function processInstallation($pkg, $atts, $file, $tmp_path, $layer = null)
+    function processInstallation($pkg, $atts, $file, $tmp_path, $layer = NULL)
     {
         $roleInfo = PEAR_Installer_Role_Common::getInfo('PEAR_Installer_Role_' . 
             ucfirst(str_replace('pear_installer_role_', '', strtolower(get_class($this)))));
@@ -78,7 +78,7 @@ class PEAR_Installer_Role_Common
             return $roleInfo;
         }
         if (!$roleInfo['locationconfig']) {
-            return false;
+            return FALSE;
         }
         if ($roleInfo['honorsbaseinstall']) {
             $dest_dir = $save_destdir = $this->config->get($roleInfo['locationconfig'], $layer,
@@ -118,7 +118,7 @@ class PEAR_Installer_Role_Common
 
     /**
      * Get the name of the configuration variable that specifies the location of this file
-     * @return string|false
+     * @return string|FALSE
      */
     function getLocationConfig()
     {

@@ -185,7 +185,7 @@ configuration.',
         $i = $j = 0;
         $data = array(
             'caption' => 'Registered Channels:',
-            'border' => true,
+            'border' => TRUE,
             'headline' => array('Channel', 'Alias', 'Summary')
             );
         foreach ($registered as $channel) {
@@ -198,7 +198,7 @@ configuration.',
             $data = '(no registered channels)';
         }
         $this->ui->outputData($data, $command);
-        return true;
+        return TRUE;
     }
 
     function doUpdateAll($command, $options, $params)
@@ -206,7 +206,7 @@ configuration.',
         $reg = &$this->config->getRegistry();
         $channels = $reg->getChannels();
 
-        $success = true;
+        $success = TRUE;
         foreach ($channels as $channel) {
             if ($channel->getName() != '__uri') {
                 PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
@@ -215,7 +215,7 @@ configuration.',
                                           array($channel->getName()));
                 if (PEAR::isError($err)) {
                     $this->ui->outputData($err->getMessage(), $command);
-                    $success = false;
+                    $success = FALSE;
                 } else {
                     $success &= $err;
                 }
@@ -274,7 +274,7 @@ configuration.',
             $chan = new PEAR_ChannelFile;
             $chan->fromXmlString($contents);
             $chan->validate();
-            if ($errs = $chan->getErrors(true)) {
+            if ($errs = $chan->getErrors(TRUE)) {
                 foreach ($errs as $err) {
                     $this->ui->outputData($err['level'] . ': ' . $err['message']);
                 }
@@ -291,7 +291,7 @@ configuration.',
         $caption = 'Channel ' . $channel . ' Information:';
         $data1 = array(
             'caption' => $caption,
-            'border' => true);
+            'border' => TRUE);
         $data1['data']['server'] = array('Name and Server', $chan->getName());
         if ($chan->getAlias() != $chan->getName()) {
             $data1['data']['alias'] = array('Alias', $chan->getAlias());
@@ -434,7 +434,7 @@ configuration.',
             }
 
             PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-            $loc = $downloader->downloadHttp($params[0], $this->ui, $tmpdir, null, false);
+            $loc = $downloader->downloadHttp($params[0], $this->ui, $tmpdir, NULL, FALSE);
             PEAR::staticPopErrorHandling();
             if (PEAR::isError($loc)) {
                 return $this->raiseError('channel-add: Cannot open "' . $params[0] .
@@ -444,7 +444,7 @@ configuration.',
             list($loc, $lastmodified) = $loc;
             $contents = implode('', file($loc));
         } else {
-            $lastmodified = $fp = false;
+            $lastmodified = $fp = FALSE;
             if (file_exists($params[0])) {
                 $fp = fopen($params[0], 'r');
             }
@@ -469,12 +469,12 @@ configuration.',
         $result = $channel->fromXmlString($contents);
         PEAR::staticPopErrorHandling();
         if (!$result) {
-            $exit = false;
-            if (count($errors = $channel->getErrors(true))) {
+            $exit = FALSE;
+            if (count($errors = $channel->getErrors(TRUE))) {
                 foreach ($errors as $error) {
                     $this->ui->outputData(ucfirst($error['level'] . ': ' . $error['message']));
                     if (!$exit) {
-                        $exit = $error['level'] == 'error' ? true : false;
+                        $exit = $error['level'] == 'error' ? TRUE : FALSE;
                     }
                 }
                 if ($exit) {
@@ -530,7 +530,7 @@ configuration.',
         }
 
         $reg = &$this->config->getRegistry();
-        $lastmodified = false;
+        $lastmodified = FALSE;
         if ((!file_exists($params[0]) || is_dir($params[0]))
               && $reg->channelExists(strtolower($params[0]))) {
             $c = $reg->getChannel(strtolower($params[0]));
@@ -541,10 +541,10 @@ configuration.',
             $this->ui->outputData("Updating channel \"$params[0]\"", $command);
             $dl = &$this->getDownloader(array());
             // if force is specified, use a timestamp of "1" to force retrieval
-            $lastmodified = isset($options['force']) ? false : $c->lastModified();
+            $lastmodified = isset($options['force']) ? FALSE : $c->lastModified();
             PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
             $contents = $dl->downloadHttp('http://' . $c->getName() . '/channel.xml',
-                $this->ui, $tmpdir, null, $lastmodified);
+                $this->ui, $tmpdir, NULL, $lastmodified);
             PEAR::staticPopErrorHandling();
             if (PEAR::isError($contents)) {
                 // Attempt to fall back to https
@@ -552,7 +552,7 @@ configuration.',
                 $this->ui->outputData("Trying channel \"$params[0]\" over https:// instead");
                 PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
                 $contents = $dl->downloadHttp('https://' . $c->getName() . '/channel.xml',
-                    $this->ui, $tmpdir, null, $lastmodified);
+                    $this->ui, $tmpdir, NULL, $lastmodified);
                 PEAR::staticPopErrorHandling();
                 if (PEAR::isError($contents)) {
                     return $this->raiseError('Cannot retrieve channel.xml for channel "' .
@@ -592,7 +592,7 @@ configuration.',
                 $dl = &$this->getDownloader();
                 PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
                 $loc = $dl->downloadHttp($params[0],
-                    $this->ui, $tmpdir, null, $lastmodified);
+                    $this->ui, $tmpdir, NULL, $lastmodified);
                 PEAR::staticPopErrorHandling();
                 if (PEAR::isError($loc)) {
                     return $this->raiseError("Cannot open " . $params[0] .
@@ -602,7 +602,7 @@ configuration.',
                 list($loc, $lastmodified) = $loc;
                 $contents = implode('', file($loc));
             } else {
-                $fp = false;
+                $fp = FALSE;
                 if (file_exists($params[0])) {
                     $fp = fopen($params[0], 'r');
                 }
@@ -626,12 +626,12 @@ configuration.',
             $channel->fromXmlString($contents);
         }
 
-        $exit = false;
-        if (count($errors = $channel->getErrors(true))) {
+        $exit = FALSE;
+        if (count($errors = $channel->getErrors(TRUE))) {
             foreach ($errors as $error) {
                 $this->ui->outputData(ucfirst($error['level'] . ': ' . $error['message']));
                 if (!$exit) {
-                    $exit = $error['level'] == 'error' ? true : false;
+                    $exit = $error['level'] == 'error' ? TRUE : FALSE;
                 }
             }
             if ($exit) {
@@ -680,7 +680,7 @@ configuration.',
         }
 
         $reg = &$this->config->getRegistry();
-        if (!$reg->channelExists($params[0], true)) {
+        if (!$reg->channelExists($params[0], TRUE)) {
             $extra = '';
             if ($reg->isAlias($params[0])) {
                 $extra = ' (use "channel-alias ' . $reg->channelName($params[0]) . ' ' .
@@ -702,7 +702,7 @@ configuration.',
         }
 
         // make it a local alias
-        if (!$chan->setAlias(strtolower($params[1]), true)) {
+        if (!$chan->setAlias(strtolower($params[1]), TRUE)) {
             return $this->raiseError('Alias "' . strtolower($params[1]) .
                 '" is not a valid channel alias');
         }
@@ -721,7 +721,7 @@ configuration.',
      *               $params[0] should contain a string with either:
      *               - <channel name> or
      *               - <username>:<password>@<channel name>
-     * @return null|PEAR_Error
+     * @return NULL|PEAR_Error
      */
     function doDiscover($command, $options, $params)
     {
@@ -807,10 +807,10 @@ configuration.',
             return $this->raiseError($chan);
         }
 
-        $server   = $this->config->get('preferred_mirror', null, $channel);
-        $username = $this->config->get('username',         null, $channel);
+        $server   = $this->config->get('preferred_mirror', NULL, $channel);
+        $username = $this->config->get('username',         NULL, $channel);
         if (empty($username)) {
-            $username = isset($_ENV['USER']) ? $_ENV['USER'] : null;
+            $username = isset($_ENV['USER']) ? $_ENV['USER'] : NULL;
         }
         $this->ui->outputData("Logging in to $server.", $command);
 
@@ -832,10 +832,10 @@ configuration.',
         $this->config->set('password', $password, 'user', $channel);
 
         if ($chan->supportsREST()) {
-            $ok = true;
+            $ok = TRUE;
         }
 
-        if ($ok !== true) {
+        if ($ok !== TRUE) {
             return $this->raiseError('Login failed!');
         }
 
@@ -846,7 +846,7 @@ configuration.',
         $ourconfig->set('password', $password, 'user', $channel);
         $ourconfig->store();
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -873,11 +873,11 @@ configuration.',
             return $this->raiseError($chan);
         }
 
-        $server = $this->config->get('preferred_mirror', null, $channel);
+        $server = $this->config->get('preferred_mirror', NULL, $channel);
         $this->ui->outputData("Logging out from $server.", $command);
         $this->config->remove('username', 'user', $channel);
         $this->config->remove('password', 'user', $channel);
         $this->config->store();
-        return true;
+        return TRUE;
     }
 }

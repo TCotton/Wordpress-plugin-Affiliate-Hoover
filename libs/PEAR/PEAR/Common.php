@@ -127,17 +127,17 @@ $GLOBALS['_PEAR_Common_script_phases'] = array('pre-install', 'post-install', 'p
 class PEAR_Common extends PEAR
 {
     /**
-     * User Interface object (PEAR_Frontend_* class).  If null,
+     * User Interface object (PEAR_Frontend_* class).  If NULL,
      * the log() method uses print.
      * @var object
      */
-    var $ui = null;
+    var $ui = NULL;
 
     /**
      * Configuration object (PEAR_Config).
      * @var PEAR_Config
      */
-    var $config = null;
+    var $config = NULL;
 
     /** stack of elements, gives some sort of XML context */
     var $element_stack = array();
@@ -151,7 +151,7 @@ class PEAR_Common extends PEAR
     /** assoc with information about a package */
     var $pkginfo = array();
 
-    var $current_path = null;
+    var $current_path = NULL;
 
     /**
      * Flag variable used to mark a valid package file
@@ -245,7 +245,7 @@ class PEAR_Common extends PEAR
      * @access public
      * @static
      */
-    function log($level, $msg, $append_crlf = true)
+    function log($level, $msg, $append_crlf = TRUE)
     {
         if ($this->debug >= $level) {
             if (!class_exists('PEAR_Frontend')) {
@@ -281,7 +281,7 @@ class PEAR_Common extends PEAR
         }
 
         if (!$tmpdir = System::mktemp($topt)) {
-            return false;
+            return FALSE;
         }
 
         $this->addTempFile($tmpdir);
@@ -306,14 +306,14 @@ class PEAR_Common extends PEAR
      *
      * @param string Release state
      * @param boolean Determines whether to include $state in the list
-     * @return false|array False if $state is not a valid release state
+     * @return FALSE|array FALSE if $state is not a valid release state
      */
-    function betterStates($state, $include = false)
+    function betterStates($state, $include = FALSE)
     {
         static $states = array('snapshot', 'devel', 'alpha', 'beta', 'stable');
         $i = array_search($state, $states);
-        if ($i === false) {
-            return false;
+        if ($i === FALSE) {
+            return FALSE;
         }
         if ($include) {
             $i--;
@@ -445,18 +445,18 @@ class PEAR_Common extends PEAR
     function isIncludeable($path)
     {
         if (file_exists($path) && is_readable($path)) {
-            return true;
+            return TRUE;
         }
 
         $ipath = explode(PATH_SEPARATOR, ini_get('include_path'));
         foreach ($ipath as $include) {
             $test = realpath($include . DIRECTORY_SEPARATOR . $path);
             if (file_exists($test) && is_readable($test)) {
-                return true;
+                return TRUE;
             }
         }
 
-        return false;
+        return FALSE;
     }
 
     function _postProcessChecks($pf)
@@ -468,7 +468,7 @@ class PEAR_Common extends PEAR
         $errs = $pf->getUserinfo();
         if (is_array($errs)) {
             foreach ($errs as $error) {
-                $e = $this->raiseError($error['message'], $error['code'], null, null, $error);
+                $e = $this->raiseError($error['message'], $error['code'], NULL, NULL, $error);
             }
         }
 
@@ -528,7 +528,7 @@ class PEAR_Common extends PEAR
     function infoFromString($data)
     {
         $packagefile = &new PEAR_PackageFile($this->config);
-        $pf = &$packagefile->fromXmlString($data, PEAR_VALIDATE_NORMAL, false);
+        $pf = &$packagefile->fromXmlString($data, PEAR_VALIDATE_NORMAL, FALSE);
         return $this->_postProcessChecks($pf);
     }
 
@@ -545,7 +545,7 @@ class PEAR_Common extends PEAR
 
         // sort of make this into a package.xml 1.0-style array
         // changelog is not converted to old format.
-        $arr = $pf->toArray(true);
+        $arr = $pf->toArray(TRUE);
         $arr = array_merge($arr, $arr['old']);
         unset($arr['old'], $arr['xsdversion'], $arr['contents'], $arr['compatible'],
               $arr['channel'], $arr['uri'], $arr['dependencies'], $arr['phprelease'],
@@ -577,7 +577,7 @@ class PEAR_Common extends PEAR
                 $errs = $pf->getUserinfo();
                 if (is_array($errs)) {
                     foreach ($errs as $error) {
-                        $e = $this->raiseError($error['message'], $error['code'], null, null, $error);
+                        $e = $this->raiseError($error['message'], $error['code'], NULL, NULL, $error);
                     }
                 }
 
@@ -628,7 +628,7 @@ class PEAR_Common extends PEAR
         $config      = &PEAR_Config::singleton();
         $packagefile = &new PEAR_PackageFile($config);
         PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-        if (strpos($info, '<?xml') !== false) {
+        if (strpos($info, '<?xml') !== FALSE) {
             $pf = &$packagefile->fromXmlString($info, PEAR_VALIDATE_NORMAL, '');
         } else {
             $pf = &$packagefile->fromAnyFile($info, PEAR_VALIDATE_NORMAL);
@@ -647,10 +647,10 @@ class PEAR_Common extends PEAR
                 }
             }
 
-            return false;
+            return FALSE;
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -741,10 +741,10 @@ class PEAR_Common extends PEAR
         return $a->analyzeSourceCode($file);
     }
 
-    function detectDependencies($any, $status_callback = null)
+    function detectDependencies($any, $status_callback = NULL)
     {
         if (!function_exists("token_get_all")) {
-            return false;
+            return FALSE;
         }
 
         if (PEAR::isError($info = $this->infoFromAny($any))) {
@@ -752,7 +752,7 @@ class PEAR_Common extends PEAR
         }
 
         if (!is_array($info)) {
-            return false;
+            return FALSE;
         }
 
         $deps = array();
@@ -824,7 +824,7 @@ class PEAR_Common extends PEAR
      * @access public
      * @deprecated in favor of PEAR_Downloader::downloadHttp()
      */
-    function downloadHttp($url, &$ui, $save_dir = '.', $callback = null)
+    function downloadHttp($url, &$ui, $save_dir = '.', $callback = NULL)
     {
         if (!class_exists('PEAR_Downloader')) {
             require_once 'PEAR/Downloader.php';

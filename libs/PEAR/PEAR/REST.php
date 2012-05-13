@@ -49,12 +49,12 @@ class PEAR_REST
      * This is useful for elements that should never change, such as information on a particular
      * release
      * @param string full URL to this resource
-     * @param array|false contents of the accept-encoding header
-     * @param boolean     if true, xml will be returned as a string, otherwise, xml will be
+     * @param array|FALSE contents of the accept-encoding header
+     * @param boolean     if TRUE, xml will be returned as a string, otherwise, xml will be
      *                    parsed using PEAR_XMLParser
      * @return string|array
      */
-    function retrieveCacheFirst($url, $accept = false, $forcestring = false, $channel = false)
+    function retrieveCacheFirst($url, $accept = FALSE, $forcestring = FALSE, $channel = FALSE)
     {
         $cachefile = $this->config->get('cache_dir') . DIRECTORY_SEPARATOR .
             md5($url) . 'rest.cachefile';
@@ -69,22 +69,22 @@ class PEAR_REST
     /**
      * Retrieve a remote REST resource
      * @param string full URL to this resource
-     * @param array|false contents of the accept-encoding header
-     * @param boolean     if true, xml will be returned as a string, otherwise, xml will be
+     * @param array|FALSE contents of the accept-encoding header
+     * @param boolean     if TRUE, xml will be returned as a string, otherwise, xml will be
      *                    parsed using PEAR_XMLParser
      * @return string|array
      */
-    function retrieveData($url, $accept = false, $forcestring = false, $channel = false)
+    function retrieveData($url, $accept = FALSE, $forcestring = FALSE, $channel = FALSE)
     {
         $cacheId = $this->getCacheId($url);
         if ($ret = $this->useLocalCache($url, $cacheId)) {
             return $ret;
         }
 
-        $file = $trieddownload = false;
+        $file = $trieddownload = FALSE;
         if (!isset($this->_options['offline'])) {
-            $trieddownload = true;
-            $file = $this->downloadHttp($url, $cacheId ? $cacheId['lastChange'] : false, $accept, $channel);
+            $trieddownload = TRUE;
+            $file = $this->downloadHttp($url, $cacheId ? $cacheId['lastChange'] : FALSE, $accept, $channel);
         }
 
         if (PEAR::isError($file)) {
@@ -92,15 +92,15 @@ class PEAR_REST
                 return $file;
             }
 
-            $trieddownload = false;
-            $file = false; // use local copy if available on socket connect error
+            $trieddownload = FALSE;
+            $file = FALSE; // use local copy if available on socket connect error
         }
 
         if (!$file) {
             $ret = $this->getCache($url);
             if (!PEAR::isError($ret) && $trieddownload) {
                 // reset the age of the cache if the server says it was unmodified
-                $result = $this->saveCache($url, $ret, null, true, $cacheId);
+                $result = $this->saveCache($url, $ret, NULL, TRUE, $cacheId);
                 if (PEAR::isError($result)) {
                     return PEAR::raiseError($result->getMessage());
                 }
@@ -115,12 +115,12 @@ class PEAR_REST
             $content      = $file[0];
         } else {
             $headers      = array();
-            $lastmodified = false;
+            $lastmodified = FALSE;
             $content      = $file;
         }
 
         if ($forcestring) {
-            $result = $this->saveCache($url, $content, $lastmodified, false, $cacheId);
+            $result = $this->saveCache($url, $content, $lastmodified, FALSE, $cacheId);
             if (PEAR::isError($result)) {
                 return PEAR::raiseError($result->getMessage());
             }
@@ -160,7 +160,7 @@ class PEAR_REST
             $content = $parser->getData();
         }
 
-        $result = $this->saveCache($url, $content, $lastmodified, false, $cacheId);
+        $result = $this->saveCache($url, $content, $lastmodified, FALSE, $cacheId);
         if (PEAR::isError($result)) {
             return PEAR::raiseError($result->getMessage());
         }
@@ -168,13 +168,13 @@ class PEAR_REST
         return $content;
     }
 
-    function useLocalCache($url, $cacheid = null)
+    function useLocalCache($url, $cacheid = NULL)
     {
-        if ($cacheid === null) {
+        if ($cacheid === NULL) {
             $cacheidfile = $this->config->get('cache_dir') . DIRECTORY_SEPARATOR .
                 md5($url) . 'rest.cacheid';
             if (!file_exists($cacheidfile)) {
-                return false;
+                return FALSE;
             }
 
             $cacheid = unserialize(implode('', file($cacheidfile)));
@@ -186,7 +186,7 @@ class PEAR_REST
             return $this->getCache($url);
         }
 
-        return false;
+        return FALSE;
     }
 
     function getCacheId($url)
@@ -195,7 +195,7 @@ class PEAR_REST
             md5($url) . 'rest.cacheid';
 
         if (!file_exists($cacheidfile)) {
-            return false;
+            return FALSE;
         }
 
         $ret = unserialize(implode('', file($cacheidfile)));
@@ -218,10 +218,10 @@ class PEAR_REST
      * @param string full URL to REST resource
      * @param string original contents of the REST resource
      * @param array  HTTP Last-Modified and ETag headers
-     * @param bool   if true, then the cache id file should be regenerated to
+     * @param bool   if TRUE, then the cache id file should be regenerated to
      *               trigger a new time-to-live value
      */
-    function saveCache($url, $contents, $lastmodified, $nochange = false, $cacheid = null)
+    function saveCache($url, $contents, $lastmodified, $nochange = FALSE, $cacheid = NULL)
     {
         $cache_dir   = $this->config->get('cache_dir');
         $d           = $cache_dir . DIRECTORY_SEPARATOR . md5($url);
@@ -229,12 +229,12 @@ class PEAR_REST
         $cachefile   = $d . 'rest.cachefile';
 
         if (!is_dir($cache_dir)) {
-            if (System::mkdir(array('-p', $cache_dir)) === false) {
+            if (System::mkdir(array('-p', $cache_dir)) === FALSE) {
               return PEAR::raiseError("The value of config option cache_dir ($cache_dir) is not a directory and attempts to create the directory failed.");
             }
         }
 
-        if ($cacheid === null && $nochange) {
+        if ($cacheid === NULL && $nochange) {
             $cacheid = unserialize(implode('', file($cacheidfile)));
         }
 
@@ -247,7 +247,7 @@ class PEAR_REST
         if (PEAR::isError($result)) {
             return $result;
         } elseif ($nochange) {
-            return true;
+            return TRUE;
         }
 
         $result = $this->saveCacheFile($cachefile, serialize($contents));
@@ -259,7 +259,7 @@ class PEAR_REST
             return $result;
         }
 
-        return true;
+        return TRUE;
     }
 
     function saveCacheFile($file, $contents)
@@ -267,7 +267,7 @@ class PEAR_REST
         $len = strlen($contents);
 
         $cachefile_fp = @fopen($file, 'xb'); // x is the O_CREAT|O_EXCL mode
-        if ($cachefile_fp !== false) { // create file
+        if ($cachefile_fp !== FALSE) { // create file
             if (fwrite($cachefile_fp, $contents, $len) < $len) {
                 fclose($cachefile_fp);
                 return PEAR::raiseError("Could not write $file.");
@@ -298,7 +298,7 @@ class PEAR_REST
         }
 
         fclose($cachefile_fp);
-        return true;
+        return TRUE;
     }
 
     /**
@@ -310,9 +310,9 @@ class PEAR_REST
      *
      * @param string  $url       the URL to download
      * @param string  $save_dir  directory to save file in
-     * @param false|string|array $lastmodified header values to check against for caching
-     *                           use false to return the header values from this download
-     * @param false|array $accept Accept headers to send
+     * @param FALSE|string|array $lastmodified header values to check against for caching
+     *                           use FALSE to return the header values from this download
+     * @param FALSE|array $accept Accept headers to send
      * @return string|array  Returns the contents of the downloaded file or a PEAR
      *                       error on failure.  If the error is caused by
      *                       socket-related errors, the error object will
@@ -322,7 +322,7 @@ class PEAR_REST
      *
      * @access public
      */
-    function downloadHttp($url, $lastmodified = null, $accept = false, $channel = false)
+    function downloadHttp($url, $lastmodified = NULL, $accept = FALSE, $channel = FALSE)
     {
         static $redirect = 0;
         // always reset , so we are clean case of error
@@ -338,23 +338,23 @@ class PEAR_REST
             return PEAR::raiseError('Cannot download from non-URL "' . $url . '"');
         }
 
-        $host   = isset($info['host']) ? $info['host'] : null;
-        $port   = isset($info['port']) ? $info['port'] : null;
-        $path   = isset($info['path']) ? $info['path'] : null;
+        $host   = isset($info['host']) ? $info['host'] : NULL;
+        $port   = isset($info['port']) ? $info['port'] : NULL;
+        $path   = isset($info['path']) ? $info['path'] : NULL;
         $schema = (isset($info['scheme']) && $info['scheme'] == 'https') ? 'https' : 'http';
 
         $proxy_host = $proxy_port = $proxy_user = $proxy_pass = '';
         if ($this->config->get('http_proxy')&&
               $proxy = parse_url($this->config->get('http_proxy'))
         ) {
-            $proxy_host = isset($proxy['host']) ? $proxy['host'] : null;
+            $proxy_host = isset($proxy['host']) ? $proxy['host'] : NULL;
             if ($schema === 'https') {
                 $proxy_host = 'ssl://' . $proxy_host;
             }
 
             $proxy_port   = isset($proxy['port']) ? $proxy['port'] : 8080;
-            $proxy_user   = isset($proxy['user']) ? urldecode($proxy['user']) : null;
-            $proxy_pass   = isset($proxy['pass']) ? urldecode($proxy['pass']) : null;
+            $proxy_user   = isset($proxy['user']) ? urlencode($proxy['user']) : NULL;
+            $proxy_pass   = isset($proxy['pass']) ? urlencode($proxy['pass']) : NULL;
             $proxy_schema = (isset($proxy['scheme']) && $proxy['scheme'] == 'https') ? 'https' : 'http';
         }
 
@@ -385,8 +385,8 @@ class PEAR_REST
         $request .= $ifmodifiedsince .
             "User-Agent: PEAR/1.9.4/PHP/" . PHP_VERSION . "\r\n";
 
-        $username = $this->config->get('username', null, $channel);
-        $password = $this->config->get('password', null, $channel);
+        $username = $this->config->get('username', NULL, $channel);
+        $password = $this->config->get('password', NULL, $channel);
 
         if ($username && $password) {
             $tmp = base64_encode("$username:$password");
@@ -431,8 +431,8 @@ class PEAR_REST
                 $headers[strtolower($matches[1])] = trim($matches[2]);
             } elseif (preg_match('|^HTTP/1.[01] ([0-9]{3}) |', $line, $matches)) {
                 $reply = (int)$matches[1];
-                if ($reply == 304 && ($lastmodified || ($lastmodified === false))) {
-                    return false;
+                if ($reply == 304 && ($lastmodified || ($lastmodified === FALSE))) {
+                    return FALSE;
                 }
 
                 if (!in_array($reply, array(200, 301, 302, 303, 305, 307))) {
@@ -462,7 +462,7 @@ class PEAR_REST
         }
         fclose($fp);
 
-        if ($lastmodified === false || $lastmodified) {
+        if ($lastmodified === FALSE || $lastmodified) {
             if (isset($headers['etag'])) {
                 $lastmodified = array('ETag' => $headers['etag']);
             }

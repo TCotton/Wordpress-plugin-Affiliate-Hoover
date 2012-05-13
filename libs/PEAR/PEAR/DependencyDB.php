@@ -55,19 +55,19 @@ class PEAR_DependencyDB
      * @var string
      * @access private
      */
-    var $_depdb = false;
+    var $_depdb = FALSE;
     /**
      * File name of the lockfile (usually .depdblock)
      * @var string
      * @access private
      */
-    var $_lockfile = false;
+    var $_lockfile = FALSE;
     /**
      * Open file resource for locking the lockfile
-     * @var resource|false
+     * @var resource|FALSE
      * @access private
      */
-    var $_lockFp = false;
+    var $_lockFp = FALSE;
     /**
      * API version of this class, used to validate a file on-disk
      * @var string
@@ -76,7 +76,7 @@ class PEAR_DependencyDB
     var $_version = '1.0';
     /**
      * Cached dependency database file
-     * @var array|null
+     * @var array|NULL
      * @access private
      */
     var $_cache;
@@ -87,13 +87,13 @@ class PEAR_DependencyDB
     /**
      * Get a raw dependency database.  Calls setConfig() and assertDepsDB()
      * @param PEAR_Config
-     * @param string|false full path to the dependency database, or false to use default
+     * @param string|FALSE full path to the dependency database, or FALSE to use default
      * @return PEAR_DependencyDB|PEAR_Error
      * @static
      */
-    function &singleton(&$config, $depdb = false)
+    function &singleton(&$config, $depdb = FALSE)
     {
-        $phpdir = $config->get('php_dir', null, 'pear.php.net');
+        $phpdir = $config->get('php_dir', NULL, 'pear.php.net');
         if (!isset($GLOBALS['_PEAR_DEPENDENCYDB_INSTANCE'][$phpdir])) {
             $a = new PEAR_DependencyDB;
             $GLOBALS['_PEAR_DEPENDENCYDB_INSTANCE'][$phpdir] = &$a;
@@ -109,10 +109,10 @@ class PEAR_DependencyDB
 
     /**
      * Set up the registry/location of dependency DB
-     * @param PEAR_Config|false
-     * @param string|false full path to the dependency database, or false to use default
+     * @param PEAR_Config|FALSE
+     * @param string|FALSE full path to the dependency database, or FALSE to use default
      */
-    function setConfig(&$config, $depdb = false)
+    function setConfig(&$config, $depdb = FALSE)
     {
         if (!$config) {
             $this->_config = &PEAR_Config::singleton();
@@ -122,7 +122,7 @@ class PEAR_DependencyDB
 
         $this->_registry = &$this->_config->getRegistry();
         if (!$depdb) {
-            $this->_depdb = $this->_config->get('php_dir', null, 'pear.php.net') .
+            $this->_depdb = $this->_config->get('php_dir', NULL, 'pear.php.net') .
                 DIRECTORY_SEPARATOR . '.depdb';
         } else {
             $this->_depdb = $depdb;
@@ -140,14 +140,14 @@ class PEAR_DependencyDB
                 $dir = dirname($dir); // cd ..
                 if ($dir != '.' && file_exists($dir)) {
                     if (is_writeable($dir)) {
-                        return true;
+                        return TRUE;
                     }
 
-                    return false;
+                    return FALSE;
                 }
             }
 
-            return false;
+            return FALSE;
         }
 
         return is_writeable($this->_depdb);
@@ -183,7 +183,7 @@ class PEAR_DependencyDB
     /**
      * Get a list of installed packages that depend on this package
      * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2|array
-     * @return array|false
+     * @return array|FALSE
      */
     function getDependentPackages(&$pkg)
     {
@@ -200,14 +200,14 @@ class PEAR_DependencyDB
             return $data['packages'][$channel][$package];
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
      * Get a list of the actual dependencies of installed packages that depend on
      * a package.
      * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2|array
-     * @return array|false
+     * @return array|FALSE
      */
     function getDependentPackageDependencies(&$pkg)
     {
@@ -222,7 +222,7 @@ class PEAR_DependencyDB
 
         $depend = $this->getDependentPackages($pkg);
         if (!$depend) {
-            return false;
+            return FALSE;
         }
 
         $dependencies = array();
@@ -252,7 +252,7 @@ class PEAR_DependencyDB
     /**
      * Get a list of dependencies of this installed package
      * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2|array
-     * @return array|false
+     * @return array|FALSE
      */
     function getDependencies(&$pkg)
     {
@@ -269,7 +269,7 @@ class PEAR_DependencyDB
             return $data['dependencies'][$channel][$package];
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
@@ -303,31 +303,31 @@ class PEAR_DependencyDB
         }
 
         if (isset($checked[$channel][$package][$depchannel][$deppackage])) {
-            return false; // avoid endless recursion
+            return FALSE; // avoid endless recursion
         }
 
-        $checked[$channel][$package][$depchannel][$deppackage] = true;
+        $checked[$channel][$package][$depchannel][$deppackage] = TRUE;
         if (!isset($this->_cache['dependencies'][$channel][$package])) {
-            return false;
+            return FALSE;
         }
 
         foreach ($this->_cache['dependencies'][$channel][$package] as $info) {
             if (isset($info['dep']['uri'])) {
                 if (is_object($child)) {
                     if ($info['dep']['uri'] == $child->getURI()) {
-                        return true;
+                        return TRUE;
                     }
                 } elseif (isset($child['uri'])) {
                     if ($info['dep']['uri'] == $child['uri']) {
-                        return true;
+                        return TRUE;
                     }
                 }
-                return false;
+                return FALSE;
             }
 
             if (strtolower($info['dep']['channel']) == $depchannel &&
                   strtolower($info['dep']['name']) == $deppackage) {
-                return true;
+                return TRUE;
             }
         }
 
@@ -336,18 +336,18 @@ class PEAR_DependencyDB
                 if ($this->_dependsOn(array(
                         'uri' => $info['dep']['uri'],
                         'package' => $info['dep']['name']), $child, $checked)) {
-                    return true;
+                    return TRUE;
                 }
             } else {
                 if ($this->_dependsOn(array(
                         'channel' => $info['dep']['channel'],
                         'package' => $info['dep']['name']), $child, $checked)) {
-                    return true;
+                    return TRUE;
                 }
             }
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
@@ -382,17 +382,17 @@ class PEAR_DependencyDB
         }
 
         if (!isset($data['dependencies'][$channel][$package])) {
-            return true;
+            return TRUE;
         }
 
         foreach ($data['dependencies'][$channel][$package] as $dep) {
-            $found      = false;
+            $found      = FALSE;
             $depchannel = isset($dep['dep']['uri']) ? '__uri' : strtolower($dep['dep']['channel']);
             $depname    = strtolower($dep['dep']['name']);
             if (isset($data['packages'][$depchannel][$depname])) {
                 foreach ($data['packages'][$depchannel][$depname] as $i => $info) {
                     if ($info['channel'] == $channel && $info['package'] == $package) {
-                        $found = true;
+                        $found = TRUE;
                         break;
                     }
                 }
@@ -430,7 +430,7 @@ class PEAR_DependencyDB
 
     /**
      * Rebuild the dependency DB by reading registry entries.
-     * @return true|PEAR_Error
+     * @return TRUE|PEAR_Error
      */
     function rebuildDB()
     {
@@ -461,24 +461,24 @@ class PEAR_DependencyDB
         }
 
         $this->_cache = $depdb;
-        return true;
+        return TRUE;
     }
 
     /**
      * Register usage of the dependency DB to prevent race conditions
      * @param int one of the LOCK_* constants
-     * @return true|PEAR_Error
+     * @return TRUE|PEAR_Error
      * @access private
      */
     function _lock($mode = LOCK_EX)
     {
         if (stristr(php_uname(), 'Windows 9')) {
-            return true;
+            return TRUE;
         }
 
         if ($mode != LOCK_UN && is_resource($this->_lockFp)) {
             // XXX does not check type of lock (LOCK_SH/LOCK_EX)
-            return true;
+            return TRUE;
         }
 
         $open_mode = 'w';
@@ -513,12 +513,12 @@ class PEAR_DependencyDB
             return PEAR::raiseError("could not acquire $str lock ($this->_lockfile)");
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
      * Release usage of dependency DB
-     * @return true|PEAR_Error
+     * @return TRUE|PEAR_Error
      * @access private
      */
     function _unlock()
@@ -527,7 +527,7 @@ class PEAR_DependencyDB
         if (is_resource($this->_lockFp)) {
             fclose($this->_lockFp);
         }
-        $this->_lockFp = null;
+        $this->_lockFp = NULL;
         return $ret;
     }
 
@@ -563,7 +563,7 @@ class PEAR_DependencyDB
     /**
      * Write out the dependency database to disk
      * @param array the database
-     * @return true|PEAR_Error
+     * @return TRUE|PEAR_Error
      * @access private
      */
     function _writeDepDB(&$deps)
@@ -584,7 +584,7 @@ class PEAR_DependencyDB
         fclose($fp);
         $this->_unlock();
         $this->_cache = $deps;
-        return true;
+        return TRUE;
     }
 
     /**
@@ -601,7 +601,7 @@ class PEAR_DependencyDB
             $gen = &$pkg->getDefaultGenerator();
             $deps = $gen->dependenciesToV2();
         } else {
-            $deps = $pkg->getDeps(true);
+            $deps = $pkg->getDeps(TRUE);
         }
 
         if (!$deps) {
@@ -707,9 +707,9 @@ class PEAR_DependencyDB
      * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2
      * @param array the specific dependency
      * @param required|optional whether this is a required or an optional dep
-     * @param string|false dependency group this dependency is from, or false for ordinary dep
+     * @param string|FALSE dependency group this dependency is from, or FALSE for ordinary dep
      */
-    function _registerDep(&$data, &$pkg, $dep, $type, $group = false)
+    function _registerDep(&$data, &$pkg, $dep, $type, $group = FALSE)
     {
         $info = array(
             'dep'   => $dep,
@@ -736,10 +736,10 @@ class PEAR_DependencyDB
 
         $data['dependencies'][$channel][$package][] = $info;
         if (isset($data['packages'][$depchannel][$dep['name']])) {
-            $found = false;
+            $found = FALSE;
             foreach ($data['packages'][$depchannel][$dep['name']] as $i => $p) {
                 if ($p['channel'] == $channel && $p['package'] == $package) {
-                    $found = true;
+                    $found = TRUE;
                     break;
                 }
             }
@@ -756,7 +756,7 @@ class PEAR_DependencyDB
                 $data['packages'][$depchannel][$dep['name']] = array();
             }
 
-            $found = false;
+            $found = FALSE;
         }
 
         if (!$found) {

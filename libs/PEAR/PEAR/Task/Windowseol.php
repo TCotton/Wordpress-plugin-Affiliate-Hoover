@@ -46,7 +46,7 @@ class PEAR_Task_Windowseol extends PEAR_Task_Common
         if ($xml != '') {
             return array(PEAR_TASK_ERROR_INVALID, 'no attributes allowed');
         }
-        return true;
+        return TRUE;
     }
 
     /**
@@ -65,7 +65,7 @@ class PEAR_Task_Windowseol extends PEAR_Task_Common
      * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2
      * @param string file contents
      * @param string the eventual final file location (informational only)
-     * @return string|false|PEAR_Error false to skip this file, PEAR_Error to fail
+     * @return string|FALSE|PEAR_Error FALSE to skip this file, PEAR_Error to fail
      *         (use $this->throwError), otherwise return the new contents
      */
     function startSession($pkg, $contents, $dest)

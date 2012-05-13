@@ -74,10 +74,10 @@ class PEAR_Task_Postinstallscript_rw extends PEAR_Task_Postinstallscript
      * Use {@link addConditionTypeGroup()} to add a <paramgroup> containing
      * a <conditiontype> tag
      * @param string $id <paramgroup> id as seen by the script
-     * @param array|false $params array of getParam() calls, or false for no params
-     * @param string|false $instructions
+     * @param array|FALSE $params array of getParam() calls, or FALSE for no params
+     * @param string|FALSE $instructions
      */
-    function addParamGroup($id, $params = false, $instructions = false)
+    function addParamGroup($id, $params = FALSE, $instructions = FALSE)
     {
         if ($params && isset($params[0]) && !isset($params[1])) {
             $params = $params[0];
@@ -114,11 +114,11 @@ class PEAR_Task_Postinstallscript_rw extends PEAR_Task_Postinstallscript
      *                      by <contitiontype>
      * @param string $value value to match of the parameter
      * @param string $conditiontype one of '=', '!=', 'preg_match'
-     * @param array|false $params array of getParam() calls, or false for no params
-     * @param string|false $instructions
+     * @param array|FALSE $params array of getParam() calls, or FALSE for no params
+     * @param string|FALSE $instructions
      */
     function addConditionTypeGroup($id, $oldgroup, $param, $value, $conditiontype = '=',
-                                   $params = false, $instructions = false)
+                                   $params = FALSE, $instructions = FALSE)
     {
         if ($params && isset($params[0]) && !isset($params[1])) {
             $params = $params[0];
@@ -147,9 +147,9 @@ class PEAR_Task_Postinstallscript_rw extends PEAR_Task_Postinstallscript
      * Use to set up a param tag for use in creating a paramgroup
      * @static
      */
-    function getParam($name, $prompt, $type = 'string', $default = null)
+    function getParam($name, $prompt, $type = 'string', $default = NULL)
     {
-        if ($default !== null) {
+        if ($default !== NULL) {
             return
             array(
                 $this->_pkg->getTasksNs() . ':name' => $name,

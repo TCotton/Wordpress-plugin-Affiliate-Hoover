@@ -51,14 +51,14 @@ class PEAR_PackageFile_Generator_v1
 
     /**
      * @param PEAR_Packager
-     * @param bool if true, a .tgz is written, otherwise a .tar is written
-     * @param string|null directory in which to save the .tgz
+     * @param bool if TRUE, a .tgz is written, otherwise a .tar is written
+     * @param string|NULL directory in which to save the .tgz
      * @return string|PEAR_Error location of package or error object
      */
-    function toTgz(&$packager, $compress = true, $where = null)
+    function toTgz(&$packager, $compress = TRUE, $where = NULL)
     {
         require_once 'Archive/Tar.php';
-        if ($where === null) {
+        if ($where === NULL) {
             if (!($where = System::mktemp(array('-d')))) {
                 return PEAR::raiseError('PEAR_Packagefile_v1::toTgz: mktemp failed');
             }
@@ -107,7 +107,7 @@ class PEAR_PackageFile_Generator_v1
             }
         }
         // }}}
-        $packagexml = $this->toPackageFile($where, PEAR_VALIDATE_PACKAGING, 'package.xml', true);
+        $packagexml = $this->toPackageFile($where, PEAR_VALIDATE_PACKAGING, 'package.xml', TRUE);
         if ($packagexml) {
             $tar =& new Archive_Tar($dest_package, $compress);
             $tar->setErrorHandling(PEAR_ERROR_RETURN); // XXX Don't print errors
@@ -127,20 +127,20 @@ class PEAR_PackageFile_Generator_v1
     }
 
     /**
-     * @param string|null directory to place the package.xml in, or null for a temporary dir
+     * @param string|NULL directory to place the package.xml in, or NULL for a temporary dir
      * @param int one of the PEAR_VALIDATE_* constants
      * @param string name of the generated file
-     * @param bool if true, then no analysis will be performed on role="php" files
+     * @param bool if TRUE, then no analysis will be performed on role="php" files
      * @return string|PEAR_Error path to the created file on success
      */
-    function toPackageFile($where = null, $state = PEAR_VALIDATE_NORMAL, $name = 'package.xml',
-                           $nofilechecking = false)
+    function toPackageFile($where = NULL, $state = PEAR_VALIDATE_NORMAL, $name = 'package.xml',
+                           $nofilechecking = FALSE)
     {
         if (!$this->_packagefile->validate($state, $nofilechecking)) {
             return PEAR::raiseError('PEAR_Packagefile_v1::toPackageFile: invalid package.xml',
-                null, null, null, $this->_packagefile->getValidationWarnings());
+                NULL, NULL, NULL, $this->_packagefile->getValidationWarnings());
         }
-        if ($where === null) {
+        if ($where === NULL) {
             if (!($where = System::mktemp(array('-d')))) {
                 return PEAR::raiseError('PEAR_Packagefile_v1::toPackageFile: mktemp failed');
             }
@@ -154,7 +154,7 @@ class PEAR_PackageFile_Generator_v1
             return PEAR::raiseError('PEAR_Packagefile_v1::toPackageFile: unable to save ' .
                "$name as $newpkgfile");
         }
-        fwrite($np, $this->toXml($state, true));
+        fwrite($np, $this->toXml($state, TRUE));
         fclose($np);
         return $newpkgfile;
     }
@@ -185,11 +185,11 @@ class PEAR_PackageFile_Generator_v1
      *
      * @return string XML data
      */
-    function toXml($state = PEAR_VALIDATE_NORMAL, $nofilevalidation = false)
+    function toXml($state = PEAR_VALIDATE_NORMAL, $nofilevalidation = FALSE)
     {
         $this->_packagefile->setDate(date('Y-m-d'));
         if (!$this->_packagefile->validate($state, $nofilevalidation)) {
-            return false;
+            return FALSE;
         }
         $pkginfo = $this->_packagefile->getArray();
         static $maint_map = array(
@@ -219,11 +219,11 @@ class PEAR_PackageFile_Generator_v1
             $ret .= "  </maintainer>\n";
         }
         $ret .= "  </maintainers>\n";
-        $ret .= $this->_makeReleaseXml($pkginfo, false, $state);
+        $ret .= $this->_makeReleaseXml($pkginfo, FALSE, $state);
         if (isset($pkginfo['changelog']) && count($pkginfo['changelog']) > 0) {
             $ret .= " <changelog>\n";
             foreach ($pkginfo['changelog'] as $oldrelease) {
-                $ret .= $this->_makeReleaseXml($oldrelease, true);
+                $ret .= $this->_makeReleaseXml($oldrelease, TRUE);
             }
             $ret .= " </changelog>\n";
         }
@@ -244,7 +244,7 @@ class PEAR_PackageFile_Generator_v1
      *
      * @access private
      */
-    function _makeReleaseXml($pkginfo, $changelog = false, $state = PEAR_VALIDATE_NORMAL)
+    function _makeReleaseXml($pkginfo, $changelog = FALSE, $state = PEAR_VALIDATE_NORMAL)
     {
         // XXX QUOTE ENTITIES IN PCDATA, OR EMBED IN CDATA BLOCKS!!
         $indent = $changelog ? "  " : "";
@@ -371,11 +371,11 @@ class PEAR_PackageFile_Generator_v1
     /**
      * @param array
      * @param array
-     * @param string|null
-     * @param array|null
+     * @param string|NULL
+     * @param array|NULL
      * @access private
      */
-    function _addDir(&$dirs, $dir, $file = null, $attributes = null)
+    function _addDir(&$dirs, $dir, $file = NULL, $attributes = NULL)
     {
         if ($dir == array() || $dir == array('.')) {
             $dirs['files'][basename($file)] = $attributes;
@@ -501,17 +501,17 @@ class PEAR_PackageFile_Generator_v1
      * features like bundles and multiple releases
      * @param string the classname to instantiate and return.  This must be
      *               PEAR_PackageFile_v2 or a descendant
-     * @param boolean if true, only valid, deterministic package.xml 1.0 as defined by the
+     * @param boolean if TRUE, only valid, deterministic package.xml 1.0 as defined by the
      *                strictest parameters will be converted
      * @return PEAR_PackageFile_v2|PEAR_Error
      */
-    function &toV2($class = 'PEAR_PackageFile_v2', $strict = false)
+    function &toV2($class = 'PEAR_PackageFile_v2', $strict = FALSE)
     {
         if ($strict) {
             if (!$this->_packagefile->validate()) {
                 $a = PEAR::raiseError('invalid package.xml version 1.0 cannot be converted' .
-                    ' to version 2.0', null, null, null,
-                    $this->_packagefile->getValidationWarnings(true));
+                    ' to version 2.0', NULL, NULL, NULL,
+                    $this->_packagefile->getValidationWarnings(TRUE));
                 return $a;
             }
         }
@@ -708,7 +708,7 @@ class PEAR_PackageFile_Generator_v1
      * @param bool
      * @access private
      */
-    function _convertDependencies2_0(&$release, $internal = false)
+    function _convertDependencies2_0(&$release, $internal = FALSE)
     {
         $peardep = array('pearinstaller' =>
             array('min' => '1.4.0b1')); // this is a lot safer
@@ -752,7 +752,7 @@ class PEAR_PackageFile_Generator_v1
                         }
                         $release['dependencies'][$arr]['php'] = $php;
                     }
-                } while (false);
+                } while (FALSE);
                 do {
                     if (isset($deps['pkg'])) {
                         $pkg = array();
@@ -762,14 +762,14 @@ class PEAR_PackageFile_Generator_v1
                         }
                         $release['dependencies'][$arr]['package'] = $pkg;
                     }
-                } while (false);
+                } while (FALSE);
                 do {
                     if (isset($deps['ext'])) {
                         $pkg = array();
                         $pkg = $this->_processMultipleDepsName($deps['ext']);
                         $release['dependencies'][$arr]['extension'] = $pkg;
                     }
-                } while (false);
+                } while (FALSE);
                 // skip sapi - it's not supported so nobody will have used it
                 // skip os - it's not supported in 1.0
             }
@@ -807,11 +807,11 @@ class PEAR_PackageFile_Generator_v1
                     );
         $package['platform'] =
         $package['install-as'] = array();
-        $this->_isExtension = false;
+        $this->_isExtension = FALSE;
         foreach ($this->_packagefile->getFilelist() as $name => $file) {
             $file['name'] = $name;
             if (isset($file['role']) && $file['role'] == 'src') {
-                $this->_isExtension = true;
+                $this->_isExtension = TRUE;
             }
             if (isset($file['replacements'])) {
                 $repl = $file['replacements'];
@@ -1101,7 +1101,7 @@ class PEAR_PackageFile_Generator_v1
         if ($dep['type'] == 'php') {
             if ($dep['rel'] == 'has') {
                 // come on - everyone has php!
-                return false;
+                return FALSE;
             }
         }
         $php = array();
@@ -1180,13 +1180,13 @@ class PEAR_PackageFile_Generator_v1
             // get the highest minimum
             $min = array_pop($a = array_flip($min));
         } else {
-            $min = false;
+            $min = FALSE;
         }
         if (count($max)) {
             // get the lowest maximum
             $max = array_shift($a = array_flip($max));
         } else {
-            $max = false;
+            $max = FALSE;
         }
         if ($min) {
             $php['min'] = $min;
@@ -1252,13 +1252,13 @@ class PEAR_PackageFile_Generator_v1
                 // get the highest minimum
                 $min = array_pop($a = array_flip($min));
             } else {
-                $min = false;
+                $min = FALSE;
             }
             if (count($max)) {
                 // get the lowest maximum
                 $max = array_shift($a = array_flip($max));
             } else {
-                $max = false;
+                $max = FALSE;
             }
             if ($min) {
                 $php['min'] = $min;

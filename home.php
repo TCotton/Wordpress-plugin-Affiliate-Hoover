@@ -3,7 +3,7 @@
 /*
 Plugin Name: Affiliate Hoover
 Plugin URI: //
-Description: Takes affiliate CSV feeds and integrates them into Wordpress posts on cron run
+Description: Takes affiliate feed files and parses them into posts
 Version: 0.1
 Author: Andy Walpole
 Author URI: http://andywalpole.me
@@ -28,7 +28,6 @@ if (floatval(phpversion()) < 5.3 && floatval($wp_version) > 3.3) {
 
 include_once ("config.php");
 
-
 //Loop through all files in folders and include them in main file
 foreach (\Config\Configuration::total_files() as $file) {
 
@@ -39,7 +38,6 @@ foreach (\Config\Configuration::total_files() as $file) {
     }
 
 }
-
 
 
 set_time_limit(200);

@@ -82,7 +82,7 @@ packages within preferred_state ({config preferred_state}) will be downloaded'
     * @param string $command the command
     * @param array $options the command options before the command
     * @param array $params the stuff after the command name
-    * @return bool true if succesful
+    * @return bool TRUE if succesful
     * @throw PEAR_Error
     */
     function doDownloadAll($command, $options, $params)
@@ -127,13 +127,13 @@ packages within preferred_state ({config preferred_state}) will be downloaded'
          * the download command
          */
         PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-        $err = $cmd->run('download', array('downloadonly' => true), array_keys($remoteInfo));
+        $err = $cmd->run('download', array('downloadonly' => TRUE), array_keys($remoteInfo));
         PEAR::staticPopErrorHandling();
         $this->config->set('default_channel', $savechannel);
         if (PEAR::isError($err)) {
             $this->ui->outputData($err->getMessage());
         }
 
-        return true;
+        return TRUE;
     }
 }

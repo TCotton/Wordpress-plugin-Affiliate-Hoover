@@ -45,19 +45,19 @@ class PEAR_PackageFile_Generator_v2
     var $_defaultOptions = array(
         'indent'             => ' ',                    // string used for indentation
         'linebreak'          => "\n",                  // string used for newlines
-        'typeHints'          => false,                 // automatically add type hin attributes
-        'addDecl'            => true,                 // add an XML declaration
+        'typeHints'          => FALSE,                 // automatically add type hin attributes
+        'addDecl'            => TRUE,                 // add an XML declaration
         'defaultTagName'     => 'XML_Serializer_Tag',  // tag used for indexed arrays or invalid names
-        'classAsTagName'     => false,                 // use classname for objects in indexed arrays
+        'classAsTagName'     => FALSE,                 // use classname for objects in indexed arrays
         'keyAttribute'       => '_originalKey',        // attribute where original key is stored
-        'typeAttribute'      => '_type',               // attribute for type (only if typeHints => true)
-        'classAttribute'     => '_class',              // attribute for class of objects (only if typeHints => true)
-        'scalarAsAttributes' => false,                 // scalar values (strings, ints,..) will be serialized as attribute
+        'typeAttribute'      => '_type',               // attribute for type (only if typeHints => TRUE)
+        'classAttribute'     => '_class',              // attribute for class of objects (only if typeHints => TRUE)
+        'scalarAsAttributes' => FALSE,                 // scalar values (strings, ints,..) will be serialized as attribute
         'prependAttributes'  => '',                    // prepend string for attributes
-        'indentAttributes'   => false,                 // indent the attributes, if set to '_auto', it will indent attributes so they all start at the same column
+        'indentAttributes'   => FALSE,                 // indent the attributes, if set to '_auto', it will indent attributes so they all start at the same column
         'mode'               => 'simplexml',             // use 'simplexml' to use parent name as tagname if transforming an indexed array
-        'addDoctype'         => false,                 // add a doctype declaration
-        'doctype'            => null,                  // supply a string or an array with id and uri ({@see XML_Util::getDoctypeDeclaration()}
+        'addDoctype'         => FALSE,                 // add a doctype declaration
+        'doctype'            => NULL,                  // supply a string or an array with id and uri ({@see XML_Util::getDoctypeDeclaration()}
         'rootName'           => 'package',                  // name of the root tag
         'rootAttributes'     => array(
             'version' => '2.0',
@@ -71,7 +71,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
         ),               // attributes of the root tag
         'attributesArray'    => 'attribs',                  // all values in this key will be treated as attributes
         'contentName'        => '_content',                   // this value will be used directly as content, instead of creating a new tag, may only be used in conjuction with attributesArray
-        'beautifyFilelist'   => false,
+        'beautifyFilelist'   => FALSE,
         'encoding' => 'UTF-8',
     );
 
@@ -92,7 +92,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
     * serilialized representation of the data
     * @var string $_serializedData
     */
-    var $_serializedData = null;
+    var $_serializedData = NULL;
     /**
      * @var PEAR_PackageFile_v2
      */
@@ -119,11 +119,11 @@ http://pear.php.net/dtd/package-2.0.xsd',
     /**
      * @param PEAR_Packager
      * @param bool generate a .tgz or a .tar
-     * @param string|null temporary directory to package in
+     * @param string|NULL temporary directory to package in
      */
-    function toTgz(&$packager, $compress = true, $where = null)
+    function toTgz(&$packager, $compress = TRUE, $where = NULL)
     {
-        $a = null;
+        $a = NULL;
         return $this->toTgz2($packager, $a, $compress, $where);
     }
 
@@ -132,9 +132,9 @@ http://pear.php.net/dtd/package-2.0.xsd',
      * @param PEAR_Packager
      * @param PEAR_PackageFile_v1
      * @param bool generate a .tgz or a .tar
-     * @param string|null temporary directory to package in
+     * @param string|NULL temporary directory to package in
      */
-    function toTgz2(&$packager, &$pf1, $compress = true, $where = null)
+    function toTgz2(&$packager, &$pf1, $compress = TRUE, $where = NULL)
     {
         require_once 'Archive/Tar.php';
         if (!$this->_packagefile->isEquivalent($pf1)) {
@@ -144,7 +144,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
                 . '"');
         }
 
-        if ($where === null) {
+        if ($where === NULL) {
             if (!($where = System::mktemp(array('-d')))) {
                 return PEAR::raiseError('PEAR_Packagefile_v2::toTgz: mktemp failed');
             }
@@ -235,7 +235,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
                         $task = &new $task($this->_packagefile->_config,
                             $this->_packagefile->_logger,
                             PEAR_TASK_PACKAGE);
-                        $task->init($raw, $atts, null);
+                        $task->init($raw, $atts, NULL);
                         $res = $task->startSession($this->_packagefile, $contents, $tfile);
                         if (!$res) {
                             continue; // skip this task
@@ -266,7 +266,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
         }
             // }}}
 
-        $name       = $pf1 !== null ? 'package2.xml' : 'package.xml';
+        $name       = $pf1 !== NULL ? 'package2.xml' : 'package.xml';
         $packagexml = $this->toPackageFile($where, PEAR_VALIDATE_PACKAGING, $name);
         if ($packagexml) {
             $tar =& new Archive_Tar($dest_package, $compress);
@@ -287,9 +287,9 @@ http://pear.php.net/dtd/package-2.0.xsd',
             }
 
             // add the package.xml version 1.0
-            if ($pf1 !== null) {
+            if ($pf1 !== NULL) {
                 $pfgen = &$pf1->getDefaultGenerator();
-                $packagexml1 = $pfgen->toPackageFile($where, PEAR_VALIDATE_PACKAGING, 'package.xml', true);
+                $packagexml1 = $pfgen->toPackageFile($where, PEAR_VALIDATE_PACKAGING, 'package.xml', TRUE);
                 if (!$tar->addModify(array($packagexml1), '', $where)) {
                     return $packager->raiseError(
                         'PEAR_Packagefile_v2::toTgz(): adding package.xml failed');
@@ -300,14 +300,14 @@ http://pear.php.net/dtd/package-2.0.xsd',
         }
     }
 
-    function toPackageFile($where = null, $state = PEAR_VALIDATE_NORMAL, $name = 'package.xml')
+    function toPackageFile($where = NULL, $state = PEAR_VALIDATE_NORMAL, $name = 'package.xml')
     {
         if (!$this->_packagefile->validate($state)) {
             return PEAR::raiseError('PEAR_Packagefile_v2::toPackageFile: invalid package.xml',
-                null, null, null, $this->_packagefile->getValidationWarnings());
+                NULL, NULL, NULL, $this->_packagefile->getValidationWarnings());
         }
 
-        if ($where === null) {
+        if ($where === NULL) {
             if (!($where = System::mktemp(array('-d')))) {
                 return PEAR::raiseError('PEAR_Packagefile_v2::toPackageFile: mktemp failed');
             }
@@ -343,7 +343,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
         $this->_packagefile->setDate(date('Y-m-d'));
         $this->_packagefile->setTime(date('H:i:s'));
         if (!$this->_packagefile->validate($state)) {
-            return false;
+            return FALSE;
         }
 
         if (is_array($options)) {
@@ -395,7 +395,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
             if (isset($use['file'])) {
                 $arr['contents']['dir']['file'] = $use['file'];
             }
-            $this->options['beautifyFilelist'] = true;
+            $this->options['beautifyFilelist'] = TRUE;
         }
 
         $arr['attribs']['packagerversion'] = '1.9.4';
@@ -403,7 +403,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
             return $this->_serializedData . "\n";
         }
 
-        return false;
+        return FALSE;
     }
 
 
@@ -428,7 +428,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
         return $dirs;
     }
 
-    function _addDir(&$dirs, $dir, $file = null, $attributes = null, $tasks = null)
+    function _addDir(&$dirs, $dir, $file = NULL, $attributes = NULL, $tasks = NULL)
     {
         if (!$tasks) {
             $tasks = array();
@@ -543,21 +543,21 @@ http://pear.php.net/dtd/package-2.0.xsd',
     *
     * @access   public
     * @param    mixed    $data data to serialize
-    * @return   boolean  true on success, pear error on failure
+    * @return   boolean  TRUE on success, pear error on failure
     */
-    function serialize($data, $options = null)
+    function serialize($data, $options = NULL)
     {
         // if options have been specified, use them instead
         // of the previously defined ones
         if (is_array($options)) {
             $optionsBak = $this->options;
-            if (isset($options['overrideOptions']) && $options['overrideOptions'] == true) {
+            if (isset($options['overrideOptions']) && $options['overrideOptions'] == TRUE) {
                 $this->options = array_merge($this->_defaultOptions, $options);
             } else {
                 $this->options = array_merge($this->options, $options);
             }
         } else {
-            $optionsBak = null;
+            $optionsBak = NULL;
         }
 
         //  start depth is zero
@@ -570,7 +570,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
         }
 
         // add doctype declaration
-        if ($this->options['addDoctype'] === true) {
+        if ($this->options['addDoctype'] === TRUE) {
             $this->_serializedData = XML_Util::getDoctypeDeclaration($tagName, $this->options['doctype'])
                                    . $this->options['linebreak']
                                    . $this->_serializedData;
@@ -579,18 +579,18 @@ http://pear.php.net/dtd/package-2.0.xsd',
         //  build xml declaration
         if ($this->options['addDecl']) {
             $atts = array();
-            $encoding = isset($this->options['encoding']) ? $this->options['encoding'] : null;
+            $encoding = isset($this->options['encoding']) ? $this->options['encoding'] : NULL;
             $this->_serializedData = XML_Util::getXMLDeclaration('1.0', $encoding)
                                    . $this->options['linebreak']
                                    . $this->_serializedData;
         }
 
 
-        if ($optionsBak !== null) {
+        if ($optionsBak !== NULL) {
             $this->options = $optionsBak;
         }
 
-        return  true;
+        return  TRUE;
     }
 
    /**
@@ -601,7 +601,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
     */
     function getSerializedData()
     {
-        if ($this->_serializedData === null) {
+        if ($this->_serializedData === NULL) {
             return  $this->raiseError('No serialized data available. Use XML_Serializer::serialize() first.', XML_SERIALIZER_ERROR_NO_SERIALIZATION);
         }
         return $this->_serializedData;
@@ -618,7 +618,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
     * @param  array     $attributes
     * @return string
     */
-    function _serializeValue($value, $tagName = null, $attributes = array())
+    function _serializeValue($value, $tagName = NULL, $attributes = array())
     {
         if (is_array($value)) {
             $xml = $this->_serializeArray($value, $tagName, $attributes);
@@ -645,14 +645,14 @@ http://pear.php.net/dtd/package-2.0.xsd',
     * @return   string  $string      serialized data
     * @uses     XML_Util::isValidName() to check, whether key has to be substituted
     */
-    function _serializeArray(&$array, $tagName = null, $attributes = array())
+    function _serializeArray(&$array, $tagName = NULL, $attributes = array())
     {
-        $_content = null;
+        $_content = NULL;
 
         /**
          * check for special attributes
          */
-        if ($this->options['attributesArray'] !== null) {
+        if ($this->options['attributesArray'] !== NULL) {
             if (isset($array[$this->options['attributesArray']])) {
                 $attributes = $array[$this->options['attributesArray']];
                 unset($array[$this->options['attributesArray']]);
@@ -660,7 +660,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
             /**
              * check for special content
              */
-            if ($this->options['contentName'] !== null) {
+            if ($this->options['contentName'] !== NULL) {
                 if (isset($array[$this->options['contentName']])) {
                     $_content = $array[$this->options['contentName']];
                     unset($array[$this->options['contentName']]);
@@ -673,13 +673,13 @@ http://pear.php.net/dtd/package-2.0.xsd',
         * the array is associative or indexed
         */
         if (is_array($array) && $this->options['mode'] == 'simplexml') {
-            $indexed = true;
+            $indexed = TRUE;
             if (!count($array)) {
-                $indexed = false;
+                $indexed = FALSE;
             }
             foreach ($array as $key => $val) {
                 if (!is_int($key)) {
-                    $indexed = false;
+                    $indexed = FALSE;
                     break;
                 }
             }
@@ -715,7 +715,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
 
                     $string .= $this->options['linebreak'];
                     // do indentation
-                    if ($this->options['indent'] !== null && $this->_tagDepth > 0) {
+                    if ($this->options['indent'] !== NULL && $this->_tagDepth > 0) {
                         $string .= str_repeat($this->options['indent'], $this->_tagDepth);
                     }
                 }
@@ -723,9 +723,9 @@ http://pear.php.net/dtd/package-2.0.xsd',
             }
         }
 
-        if ($this->options['scalarAsAttributes'] === true) {
+        if ($this->options['scalarAsAttributes'] === TRUE) {
             foreach ($array as $key => $value) {
-                if (is_scalar($value) && (XML_Util::isValidName($key) === true)) {
+                if (is_scalar($value) && (XML_Util::isValidName($key) === TRUE)) {
                     unset($array[$key]);
                     $attributes[$this->options['prependAttributes'].$key] = $value;
                 }
@@ -745,7 +745,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
             $tmp = $this->options['linebreak'];
             foreach ($array as $key => $value) {
                 // do indentation
-                if ($this->options['indent'] !== null && $this->_tagDepth > 0) {
+                if ($this->options['indent'] !== NULL && $this->_tagDepth > 0) {
                     $tmp .= str_repeat($this->options['indent'], $this->_tagDepth);
                 }
 
@@ -761,7 +761,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
                     }
                 }
                 $atts = array();
-                if ($this->options['typeHints'] === true) {
+                if ($this->options['typeHints'] === TRUE) {
                     $atts[$this->options['typeAttribute']] = gettype($value);
                     if ($key !== $origKey) {
                         $atts[$this->options['keyAttribute']] = (string)$origKey;
@@ -804,12 +804,12 @@ http://pear.php.net/dtd/package-2.0.xsd',
             }
 
             $this->_tagDepth--;
-            if ($this->options['indent']!==null && $this->_tagDepth>0) {
+            if ($this->options['indent']!==NULL && $this->_tagDepth>0) {
                 $tmp .= str_repeat($this->options['indent'], $this->_tagDepth);
             }
 
             if (trim($tmp) === '') {
-                $tmp = null;
+                $tmp = NULL;
             }
 
             $tag = array(
@@ -818,13 +818,13 @@ http://pear.php.net/dtd/package-2.0.xsd',
                 'attributes' => $attributes
             );
         }
-        if ($this->options['typeHints'] === true) {
+        if ($this->options['typeHints'] === TRUE) {
             if (!isset($tag['attributes'][$this->options['typeAttribute']])) {
                 $tag['attributes'][$this->options['typeAttribute']] = 'array';
             }
         }
 
-        $string = $this->_createXMLTag($tag, false);
+        $string = $this->_createXMLTag($tag, FALSE);
         return $string;
     }
 
@@ -844,10 +844,10 @@ http://pear.php.net/dtd/package-2.0.xsd',
     * @param    boolean $replaceEntities whether to replace XML entities in content or not
     * @return   string  $string XML tag
     */
-    function _createXMLTag($tag, $replaceEntities = true)
+    function _createXMLTag($tag, $replaceEntities = TRUE)
     {
-        if ($this->options['indentAttributes'] !== false) {
-            $multiline = true;
+        if ($this->options['indentAttributes'] !== FALSE) {
+            $multiline = TRUE;
             $indent    = str_repeat($this->options['indent'], $this->_tagDepth);
 
             if ($this->options['indentAttributes'] == '_auto') {
@@ -857,7 +857,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
                 $indent .= $this->options['indentAttributes'];
             }
         } else {
-            $indent = $multiline = false;
+            $indent = $multiline = FALSE;
         }
 
         if (is_array($tag['content'])) {
@@ -868,14 +868,14 @@ http://pear.php.net/dtd/package-2.0.xsd',
             $tag['content'] = '';
         }
 
-        if (is_scalar($tag['content']) || is_null($tag['content'])) {
+        if (is_scalar($tag['content']) || is_NULL($tag['content'])) {
             if ($this->options['encoding'] == 'UTF-8' &&
                   version_compare(phpversion(), '5.0.0', 'lt')
             ) {
                 $tag['content'] = utf8_encode($tag['content']);
             }
 
-            if ($replaceEntities === true) {
+            if ($replaceEntities === TRUE) {
                 $replaceEntities = XML_UTIL_ENTITIES_XML;
             }
 

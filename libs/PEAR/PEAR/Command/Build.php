@@ -72,7 +72,7 @@ Builds one or more extensions contained in a package.'
             return $err;
         }
 
-        return true;
+        return TRUE;
     }
 
     function buildCallback($what, $data)

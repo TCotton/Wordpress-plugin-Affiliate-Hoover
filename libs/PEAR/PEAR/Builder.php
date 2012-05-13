@@ -50,11 +50,11 @@ class PEAR_Builder extends PEAR_Common
      * @var string Used for reporting when it is not possible to pass function
      *             via extra parameter, e.g. log, msdevCallback
      */
-    var $current_callback = null;
+    var $current_callback = NULL;
 
     // used for msdev builds
-    var $_lastline = null;
-    var $_firstline = null;
+    var $_lastline = NULL;
+    var $_firstline = NULL;
 
     /**
      * PEAR_Builder constructor.
@@ -73,7 +73,7 @@ class PEAR_Builder extends PEAR_Common
      * Build an extension from source on windows.
      * requires msdev
      */
-    function _build_win32($descfile, $callback = null)
+    function _build_win32($descfile, $callback = NULL)
     {
         if (is_object($descfile)) {
             $pkg = $descfile;
@@ -152,7 +152,7 @@ class PEAR_Builder extends PEAR_Common
         } else {
             return $this->raiseError("Could not retrieve output information from $dsp.");
         }
-        // realpath returns false if the file doesn't exist
+        // realpath returns FALSE if the file doesn't exist
         if ($outfile && copy($outfile, "$dir/$out")) {
             $outfile = "$dir/$out";
         }
@@ -187,10 +187,10 @@ class PEAR_Builder extends PEAR_Common
     {
         $d = opendir($dirname);
         if (!$d)
-            return false;
+            return FALSE;
 
-        $ret = true;
-        while (($ent = readdir($d)) !== false) {
+        $ret = TRUE;
+        while (($ent = readdir($d)) !== FALSE) {
             if ($ent{0} == '.')
                 continue;
 
@@ -199,7 +199,7 @@ class PEAR_Builder extends PEAR_Common
                 if (!$this->_harvestInstDir(
                         $dest_prefix . DIRECTORY_SEPARATOR . $ent,
                         $full, $built_files)) {
-                    $ret = false;
+                    $ret = FALSE;
                     break;
                 }
             } else {
@@ -240,7 +240,7 @@ class PEAR_Builder extends PEAR_Common
      *
      * @see PEAR_Builder::_runCommand
      */
-    function build($descfile, $callback = null)
+    function build($descfile, $callback = NULL)
     {
         if (preg_match('/(\\/|\\\\|^)([^\\/\\\\]+)?php(.+)?$/',
                        $this->config->get('php_bin'), $matches)) {
@@ -325,7 +325,7 @@ class PEAR_Builder extends PEAR_Common
         $configure_options = $pkg->getConfigureOptions();
         if ($configure_options) {
             foreach ($configure_options as $o) {
-                $default = array_key_exists('default', $o) ? $o['default'] : null;
+                $default = array_key_exists('default', $o) ? $o['default'] : NULL;
                 list($r) = $this->ui->userDialog('build',
                                                  array($o['prompt']),
                                                  array('text'),
@@ -449,7 +449,7 @@ class PEAR_Builder extends PEAR_Common
      *
      * @access private
      */
-    function _runCommand($command, $callback = null)
+    function _runCommand($command, $callback = NULL)
     {
         $this->log(1, "running: $command");
         $pp = popen("$command 2>&1", "r");

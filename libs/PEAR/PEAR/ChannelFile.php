@@ -192,13 +192,13 @@ class PEAR_ChannelFile
      * @var boolean
      * @access private
      */
-    var $_isValid = false;
+    var $_isValid = FALSE;
 
     function PEAR_ChannelFile()
     {
         $this->_stack = &new PEAR_ErrorStack('PEAR_ChannelFile');
         $this->_stack->setErrorMessageTemplate($this->_getErrorMessage());
-        $this->_isValid = false;
+        $this->_isValid = FALSE;
     }
 
     /**
@@ -272,24 +272,24 @@ class PEAR_ChannelFile
             if (!in_array($channelversion[1], $this->_supportedVersions)) {
                 $this->_stack->push(PEAR_CHANNELFILE_ERROR_INVALID_VERSION, 'error',
                     array('version' => $channelversion[1]));
-                return false;
+                return FALSE;
             }
             $parser = new PEAR_XMLParser;
             $result = $parser->parse($data);
-            if ($result !== true) {
+            if ($result !== TRUE) {
                 if ($result->getCode() == 1) {
                     $this->_stack->push(PEAR_CHANNELFILE_ERROR_NO_XML_EXT, 'error',
                         array('error' => $result->getMessage()));
                 } else {
                     $this->_stack->push(PEAR_CHANNELFILE_ERROR_CANT_MAKE_PARSER, 'error');
                 }
-                return false;
+                return FALSE;
             }
             $this->_channelInfo = $parser->getData();
-            return true;
+            return TRUE;
         } else {
             $this->_stack->push(PEAR_CHANNELFILE_ERROR_NO_VERSION, 'error', array('xml' => $data));
-            return false;
+            return FALSE;
         }
     }
 
@@ -299,7 +299,7 @@ class PEAR_ChannelFile
     function toArray()
     {
         if (!$this->_isValid && !$this->validate()) {
-            return false;
+            return FALSE;
         }
         return $this->_channelInfo;
     }
@@ -307,14 +307,14 @@ class PEAR_ChannelFile
     /**
      * @param array
      * @static
-     * @return PEAR_ChannelFile|false false if invalid
+     * @return PEAR_ChannelFile|FALSE FALSE if invalid
      */
-    function &fromArray($data, $compatibility = false, $stackClass = 'PEAR_ErrorStack')
+    function &fromArray($data, $compatibility = FALSE, $stackClass = 'PEAR_ErrorStack')
     {
         $a = new PEAR_ChannelFile($compatibility, $stackClass);
         $a->_fromArray($data);
         if (!$a->validate()) {
-            $a = false;
+            $a = FALSE;
             return $a;
         }
         return $a;
@@ -326,7 +326,7 @@ class PEAR_ChannelFile
      * @static
      * @return PEAR_ChannelFile
      */
-    function &fromArrayWithErrors($data, $compatibility = false,
+    function &fromArrayWithErrors($data, $compatibility = FALSE,
                                   $stackClass = 'PEAR_ErrorStack')
     {
         $a = new PEAR_ChannelFile($compatibility, $stackClass);
@@ -348,7 +348,7 @@ class PEAR_ChannelFile
      * @param boolean determines whether to purge the error stack after retrieving
      * @return array
      */
-    function getErrors($purge = false)
+    function getErrors($purge = FALSE)
     {
         return $this->_stack->getErrors($purge);
     }
@@ -445,7 +445,7 @@ class PEAR_ChannelFile
     {
         if (!$this->_isValid && !$this->validate()) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_INVALID);
-            return false;
+            return FALSE;
         }
         if (!isset($this->_channelInfo['attribs']['version'])) {
             $this->_channelInfo['attribs']['version'] = '1.0';
@@ -547,7 +547,7 @@ class PEAR_ChannelFile
      * Generate the <functions> tag
      * @access private
      */
-    function _makeFunctionsXml($functions, $indent, $rest = false)
+    function _makeFunctionsXml($functions, $indent, $rest = FALSE)
     {
         $ret = '';
         if (!isset($functions[0])) {
@@ -572,7 +572,7 @@ class PEAR_ChannelFile
     function _validateError($code, $params = array())
     {
         $this->_stack->push($code, 'error', $params);
-        $this->_isValid = false;
+        $this->_isValid = FALSE;
     }
 
     /**
@@ -594,7 +594,7 @@ class PEAR_ChannelFile
      */
     function validate()
     {
-        $this->_isValid = true;
+        $this->_isValid = TRUE;
         $info = $this->_channelInfo;
         if (empty($info['name'])) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_NO_NAME);
@@ -606,7 +606,7 @@ class PEAR_ChannelFile
         }
         if (empty($info['summary'])) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_NO_SUMMARY);
-        } elseif (strpos(trim($info['summary']), "\n") !== false) {
+        } elseif (strpos(trim($info['summary']), "\n") !== FALSE) {
             $this->_validateWarning(PEAR_CHANNELFILE_ERROR_MULTILINE_SUMMARY,
                 array('summary' => $info['summary']));
         }
@@ -629,7 +629,7 @@ class PEAR_ChannelFile
             if (!isset($info['validatepackage']['attribs']['version'])) {
                 $content = isset($info['validatepackage']['_content']) ?
                     $info['validatepackage']['_content'] :
-                    null;
+                    NULL;
                 $this->_validateError(PEAR_CHANNELFILE_ERROR_NOVALIDATE_VERSION,
                     array('package' => $content));
             }
@@ -721,13 +721,13 @@ class PEAR_ChannelFile
     function validChannelServer($server)
     {
         if ($server == '__uri') {
-            return true;
+            return TRUE;
         }
         return (bool) preg_match(PEAR_CHANNELS_SERVER_PREG, $server);
     }
 
     /**
-     * @return string|false
+     * @return string|FALSE
      */
     function getName()
     {
@@ -735,11 +735,11 @@ class PEAR_ChannelFile
             return $this->_channelInfo['name'];
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
-     * @return string|false
+     * @return string|FALSE
      */
     function getServer()
     {
@@ -747,13 +747,13 @@ class PEAR_ChannelFile
             return $this->_channelInfo['name'];
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
      * @return int|80 port number to connect to
      */
-    function getPort($mirror = false)
+    function getPort($mirror = FALSE)
     {
         if ($mirror) {
             if ($mir = $this->getMirror($mirror)) {
@@ -768,7 +768,7 @@ class PEAR_ChannelFile
                 return 80;
             }
 
-            return false;
+            return FALSE;
         }
 
         if (isset($this->_channelInfo['servers']['primary']['attribs']['port'])) {
@@ -785,29 +785,29 @@ class PEAR_ChannelFile
     /**
      * @return bool Determines whether secure sockets layer (SSL) is used to connect to this channel
      */
-    function getSSL($mirror = false)
+    function getSSL($mirror = FALSE)
     {
         if ($mirror) {
             if ($mir = $this->getMirror($mirror)) {
                 if (isset($mir['attribs']['ssl'])) {
-                    return true;
+                    return TRUE;
                 }
 
-                return false;
+                return FALSE;
             }
 
-            return false;
+            return FALSE;
         }
 
         if (isset($this->_channelInfo['servers']['primary']['attribs']['ssl'])) {
-            return true;
+            return TRUE;
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
-     * @return string|false
+     * @return string|FALSE
      */
     function getSummary()
     {
@@ -815,18 +815,18 @@ class PEAR_ChannelFile
             return $this->_channelInfo['summary'];
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
      * @param string protocol type
      * @param string Mirror name
-     * @return array|false
+     * @return array|FALSE
      */
-    function getFunctions($protocol, $mirror = false)
+    function getFunctions($protocol, $mirror = FALSE)
     {
         if ($this->getName() == '__uri') {
-            return false;
+            return FALSE;
         }
 
         $function = $protocol == 'rest' ? 'baseurl' : 'function';
@@ -837,32 +837,32 @@ class PEAR_ChannelFile
                 }
             }
 
-            return false;
+            return FALSE;
         }
 
         if (isset($this->_channelInfo['servers']['primary'][$protocol][$function])) {
             return $this->_channelInfo['servers']['primary'][$protocol][$function];
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
      * @param string Protocol type
-     * @param string Function name (null to return the
+     * @param string Function name (NULL to return the
      *               first protocol of the type requested)
      * @param string Mirror name, if any
      * @return array
      */
-     function getFunction($type, $name = null, $mirror = false)
+     function getFunction($type, $name = NULL, $mirror = FALSE)
      {
         $protocols = $this->getFunctions($type, $mirror);
         if (!$protocols) {
-            return false;
+            return FALSE;
         }
 
         foreach ($protocols as $protocol) {
-            if ($name === null) {
+            if ($name === NULL) {
                 return $protocol;
             }
 
@@ -873,7 +873,7 @@ class PEAR_ChannelFile
             return $protocol;
         }
 
-        return false;
+        return FALSE;
      }
 
     /**
@@ -883,11 +883,11 @@ class PEAR_ChannelFile
      * @param string mirror name
      * @return boolean
      */
-    function supports($type, $name = null, $mirror = false, $version = '1.0')
+    function supports($type, $name = NULL, $mirror = FALSE, $version = '1.0')
     {
         $protocols = $this->getFunctions($type, $mirror);
         if (!$protocols) {
-            return false;
+            return FALSE;
         }
 
         foreach ($protocols as $protocol) {
@@ -895,18 +895,18 @@ class PEAR_ChannelFile
                 continue;
             }
 
-            if ($name === null) {
-                return true;
+            if ($name === NULL) {
+                return TRUE;
             }
 
             if ($protocol['_content'] != $name) {
                 continue;
             }
 
-            return true;
+            return TRUE;
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
@@ -915,10 +915,10 @@ class PEAR_ChannelFile
      * @param string
      * @return bool
      */
-    function supportsREST($mirror = false)
+    function supportsREST($mirror = FALSE)
     {
         if ($mirror == $this->_channelInfo['name']) {
-            $mirror = false;
+            $mirror = FALSE;
         }
 
         if ($mirror) {
@@ -926,7 +926,7 @@ class PEAR_ChannelFile
                 return isset($mir['rest']);
             }
 
-            return false;
+            return FALSE;
         }
 
         return isset($this->_channelInfo['servers']['primary']['rest']);
@@ -939,16 +939,16 @@ class PEAR_ChannelFile
      * needed.  This allows extreme extensibility and flexibility in implementation
      * @param string Resource Type to retrieve
      */
-    function getBaseURL($resourceType, $mirror = false)
+    function getBaseURL($resourceType, $mirror = FALSE)
     {
         if ($mirror == $this->_channelInfo['name']) {
-            $mirror = false;
+            $mirror = FALSE;
         }
 
         if ($mirror) {
             $mir = $this->getMirror($mirror);
             if (!$mir) {
-                return false;
+                return FALSE;
             }
 
             $rest = $mir['rest'];
@@ -966,15 +966,15 @@ class PEAR_ChannelFile
             }
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
      * Since REST does not implement RPC, provide this as a logical wrapper around
      * resetFunctions for REST
-     * @param string|false mirror name, if any
+     * @param string|FALSE mirror name, if any
      */
-    function resetREST($mirror = false)
+    function resetREST($mirror = FALSE)
     {
         return $this->resetFunctions('rest', $mirror);
     }
@@ -982,9 +982,9 @@ class PEAR_ChannelFile
     /**
      * Empty all protocol definitions
      * @param string protocol type
-     * @param string|false mirror name, if any
+     * @param string|FALSE mirror name, if any
      */
-    function resetFunctions($type, $mirror = false)
+    function resetFunctions($type, $mirror = FALSE)
     {
         if ($mirror) {
             if (isset($this->_channelInfo['servers']['mirror'])) {
@@ -999,27 +999,27 @@ class PEAR_ChannelFile
                             unset($this->_channelInfo['servers']['mirror'][$i][$type]);
                         }
 
-                        return true;
+                        return TRUE;
                     }
                 }
 
-                return false;
+                return FALSE;
             }
 
-            return false;
+            return FALSE;
         }
 
         if (isset($this->_channelInfo['servers']['primary'][$type])) {
             unset($this->_channelInfo['servers']['primary'][$type]);
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
      * Set a channel's protocols to the protocols supported by pearweb
      */
-    function setDefaultPEARProtocols($version = '1.0', $mirror = false)
+    function setDefaultPEARProtocols($version = '1.0', $mirror = FALSE)
     {
         switch ($version) {
             case '1.0' :
@@ -1032,10 +1032,10 @@ class PEAR_ChannelFile
                     $this->_channelInfo['servers']['primary'] = array('rest' => array());
                 }
 
-                return true;
+                return TRUE;
             break;
             default :
-                return false;
+                return FALSE;
             break;
         }
     }
@@ -1059,7 +1059,7 @@ class PEAR_ChannelFile
 
     /**
      * Get the unserialized XML representing a mirror
-     * @return array|false
+     * @return array|FALSE
      */
     function getMirror($server)
     {
@@ -1069,12 +1069,12 @@ class PEAR_ChannelFile
             }
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
      * @param string
-     * @return string|false
+     * @return string|FALSE
      * @error PEAR_CHANNELFILE_ERROR_NO_NAME
      * @error PEAR_CHANNELFILE_ERROR_INVALID_NAME
      */
@@ -1086,50 +1086,50 @@ class PEAR_ChannelFile
     /**
      * Set the socket number (port) that is used to connect to this channel
      * @param integer
-     * @param string|false name of the mirror server, or false for the primary
+     * @param string|FALSE name of the mirror server, or FALSE for the primary
      */
-    function setPort($port, $mirror = false)
+    function setPort($port, $mirror = FALSE)
     {
         if ($mirror) {
             if (!isset($this->_channelInfo['servers']['mirror'])) {
                 $this->_validateError(PEAR_CHANNELFILE_ERROR_MIRROR_NOT_FOUND,
                     array('mirror' => $mirror));
-                return false;
+                return FALSE;
             }
 
             if (isset($this->_channelInfo['servers']['mirror'][0])) {
                 foreach ($this->_channelInfo['servers']['mirror'] as $i => $mir) {
                     if ($mirror == $mir['attribs']['host']) {
                         $this->_channelInfo['servers']['mirror'][$i]['attribs']['port'] = $port;
-                        return true;
+                        return TRUE;
                     }
                 }
 
-                return false;
+                return FALSE;
             } elseif ($this->_channelInfo['servers']['mirror']['attribs']['host'] == $mirror) {
                 $this->_channelInfo['servers']['mirror']['attribs']['port'] = $port;
-                $this->_isValid = false;
-                return true;
+                $this->_isValid = FALSE;
+                return TRUE;
             }
         }
 
         $this->_channelInfo['servers']['primary']['attribs']['port'] = $port;
-        $this->_isValid = false;
-        return true;
+        $this->_isValid = FALSE;
+        return TRUE;
     }
 
     /**
      * Set the socket number (port) that is used to connect to this channel
      * @param bool Determines whether to turn on SSL support or turn it off
-     * @param string|false name of the mirror server, or false for the primary
+     * @param string|FALSE name of the mirror server, or FALSE for the primary
      */
-    function setSSL($ssl = true, $mirror = false)
+    function setSSL($ssl = TRUE, $mirror = FALSE)
     {
         if ($mirror) {
             if (!isset($this->_channelInfo['servers']['mirror'])) {
                 $this->_validateError(PEAR_CHANNELFILE_ERROR_MIRROR_NOT_FOUND,
                     array('mirror' => $mirror));
-                return false;
+                return FALSE;
             }
 
             if (isset($this->_channelInfo['servers']['mirror'][0])) {
@@ -1144,11 +1144,11 @@ class PEAR_ChannelFile
                             $this->_channelInfo['servers']['mirror'][$i]['attribs']['ssl'] = 'yes';
                         }
 
-                        return true;
+                        return TRUE;
                     }
                 }
 
-                return false;
+                return FALSE;
             } elseif ($this->_channelInfo['servers']['mirror']['attribs']['host'] == $mirror) {
                 if (!$ssl) {
                     if (isset($this->_channelInfo['servers']['mirror']['attribs']['ssl'])) {
@@ -1158,8 +1158,8 @@ class PEAR_ChannelFile
                     $this->_channelInfo['servers']['mirror']['attribs']['ssl'] = 'yes';
                 }
 
-                $this->_isValid = false;
-                return true;
+                $this->_isValid = FALSE;
+                return TRUE;
             }
         }
 
@@ -1171,32 +1171,32 @@ class PEAR_ChannelFile
             }
         }
 
-        $this->_isValid = false;
-        return true;
+        $this->_isValid = FALSE;
+        return TRUE;
     }
 
     /**
      * @param string
-     * @return string|false
+     * @return string|FALSE
      * @error PEAR_CHANNELFILE_ERROR_NO_SERVER
      * @error PEAR_CHANNELFILE_ERROR_INVALID_SERVER
      */
-    function setServer($server, $mirror = false)
+    function setServer($server, $mirror = FALSE)
     {
         if (empty($server)) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_NO_SERVER);
-            return false;
+            return FALSE;
         } elseif (!$this->validChannelServer($server)) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_INVALID_NAME,
                 array('tag' => 'name', 'name' => $server));
-            return false;
+            return FALSE;
         }
 
         if ($mirror) {
-            $found = false;
+            $found = FALSE;
             foreach ($this->_channelInfo['servers']['mirror'] as $i => $mir) {
                 if ($mirror == $mir['attribs']['host']) {
-                    $found = true;
+                    $found = TRUE;
                     break;
                 }
             }
@@ -1204,15 +1204,15 @@ class PEAR_ChannelFile
             if (!$found) {
                 $this->_validateError(PEAR_CHANNELFILE_ERROR_MIRROR_NOT_FOUND,
                     array('mirror' => $mirror));
-                return false;
+                return FALSE;
             }
 
             $this->_channelInfo['mirror'][$i]['attribs']['host'] = $server;
-            return true;
+            return TRUE;
         }
 
         $this->_channelInfo['name'] = $server;
-        return true;
+        return TRUE;
     }
 
     /**
@@ -1225,14 +1225,14 @@ class PEAR_ChannelFile
     {
         if (empty($summary)) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_NO_SUMMARY);
-            return false;
-        } elseif (strpos(trim($summary), "\n") !== false) {
+            return FALSE;
+        } elseif (strpos(trim($summary), "\n") !== FALSE) {
             $this->_validateWarning(PEAR_CHANNELFILE_ERROR_MULTILINE_SUMMARY,
                 array('summary' => $summary));
         }
 
         $this->_channelInfo['summary'] = $summary;
-        return true;
+        return TRUE;
     }
 
     /**
@@ -1240,12 +1240,12 @@ class PEAR_ChannelFile
      * @param boolean determines whether the alias is in channel.xml or local
      * @return boolean success
      */
-    function setAlias($alias, $local = false)
+    function setAlias($alias, $local = FALSE)
     {
         if (!$this->validChannelServer($alias)) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_INVALID_NAME,
                 array('tag' => 'suggestedalias', 'name' => $alias));
-            return false;
+            return FALSE;
         }
 
         if ($local) {
@@ -1254,7 +1254,7 @@ class PEAR_ChannelFile
             $this->_channelInfo['suggestedalias'] = $alias;
         }
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -1278,7 +1278,7 @@ class PEAR_ChannelFile
      * Set the package validation object if it differs from PEAR's default
      * The class must be includeable via changing _ in the classname to path separator,
      * but no checking of this is made.
-     * @param string|false pass in false to reset to the default packagename regex
+     * @param string|FALSE pass in FALSE to reset to the default packagename regex
      * @return boolean success
      */
     function setValidationPackage($validateclass, $version)
@@ -1298,7 +1298,7 @@ class PEAR_ChannelFile
      * @param string mirror name, if this is a mirror's protocol
      * @return bool
      */
-    function addFunction($type, $version, $name = '', $mirror = false)
+    function addFunction($type, $version, $name = '', $mirror = FALSE)
     {
         if ($mirror) {
             return $this->addMirrorFunction($mirror, $type, $version, $name);
@@ -1314,15 +1314,15 @@ class PEAR_ChannelFile
             }
 
             $this->_channelInfo['servers']['primary'][$type]['function'] = $set;
-            $this->_isValid = false;
-            return true;
+            $this->_isValid = FALSE;
+            return TRUE;
         } elseif (!isset($this->_channelInfo['servers']['primary'][$type]['function'][0])) {
             $this->_channelInfo['servers']['primary'][$type]['function'] = array(
                 $this->_channelInfo['servers']['primary'][$type]['function']);
         }
 
         $this->_channelInfo['servers']['primary'][$type]['function'][] = $set;
-        return true;
+        return TRUE;
     }
     /**
      * Add a protocol to a mirror's provides section
@@ -1336,10 +1336,10 @@ class PEAR_ChannelFile
         if (!isset($this->_channelInfo['servers']['mirror'])) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_MIRROR_NOT_FOUND,
                 array('mirror' => $mirror));
-            return false;
+            return FALSE;
         }
 
-        $setmirror = false;
+        $setmirror = FALSE;
         if (isset($this->_channelInfo['servers']['mirror'][0])) {
             foreach ($this->_channelInfo['servers']['mirror'] as $i => $mir) {
                 if ($mirror == $mir['attribs']['host']) {
@@ -1356,38 +1356,38 @@ class PEAR_ChannelFile
         if (!$setmirror) {
             $this->_validateError(PEAR_CHANNELFILE_ERROR_MIRROR_NOT_FOUND,
                 array('mirror' => $mirror));
-            return false;
+            return FALSE;
         }
 
         $set = array('attribs' => array('version' => $version), '_content' => $name);
         if (!isset($setmirror[$type]['function'])) {
             $setmirror[$type]['function'] = $set;
-            $this->_isValid = false;
-            return true;
+            $this->_isValid = FALSE;
+            return TRUE;
         } elseif (!isset($setmirror[$type]['function'][0])) {
             $setmirror[$type]['function'] = array($setmirror[$type]['function']);
         }
 
         $setmirror[$type]['function'][] = $set;
-        $this->_isValid = false;
-        return true;
+        $this->_isValid = FALSE;
+        return TRUE;
     }
 
     /**
      * @param string Resource Type this url links to
      * @param string URL
-     * @param string|false mirror name, if this is not a primary server REST base URL
+     * @param string|FALSE mirror name, if this is not a primary server REST base URL
      */
-    function setBaseURL($resourceType, $url, $mirror = false)
+    function setBaseURL($resourceType, $url, $mirror = FALSE)
     {
         if ($mirror) {
             if (!isset($this->_channelInfo['servers']['mirror'])) {
                 $this->_validateError(PEAR_CHANNELFILE_ERROR_MIRROR_NOT_FOUND,
                     array('mirror' => $mirror));
-                return false;
+                return FALSE;
             }
 
-            $setmirror = false;
+            $setmirror = FALSE;
             if (isset($this->_channelInfo['servers']['mirror'][0])) {
                 foreach ($this->_channelInfo['servers']['mirror'] as $i => $mir) {
                     if ($mirror == $mir['attribs']['host']) {
@@ -1411,23 +1411,23 @@ class PEAR_ChannelFile
 
         if (!isset($setmirror['rest']['baseurl'])) {
             $setmirror['rest']['baseurl'] = $set;
-            $this->_isValid = false;
-            return true;
+            $this->_isValid = FALSE;
+            return TRUE;
         } elseif (!isset($setmirror['rest']['baseurl'][0])) {
             $setmirror['rest']['baseurl'] = array($setmirror['rest']['baseurl']);
         }
 
         foreach ($setmirror['rest']['baseurl'] as $i => $url) {
             if ($url['attribs']['type'] == $resourceType) {
-                $this->_isValid = false;
+                $this->_isValid = FALSE;
                 $setmirror['rest']['baseurl'][$i] = $set;
-                return true;
+                return TRUE;
             }
         }
 
         $setmirror['rest']['baseurl'][] = $set;
-        $this->_isValid = false;
-        return true;
+        $this->_isValid = FALSE;
+        return TRUE;
     }
 
     /**
@@ -1435,10 +1435,10 @@ class PEAR_ChannelFile
      * @param int mirror http port
      * @return boolean
      */
-    function addMirror($server, $port = null)
+    function addMirror($server, $port = NULL)
     {
         if ($this->_channelInfo['name'] == '__uri') {
-            return false; // the __uri channel cannot have mirrors by definition
+            return FALSE; // the __uri channel cannot have mirrors by definition
         }
 
         $set = array('attribs' => array('host' => $server));
@@ -1448,7 +1448,7 @@ class PEAR_ChannelFile
 
         if (!isset($this->_channelInfo['servers']['mirror'])) {
             $this->_channelInfo['servers']['mirror'] = $set;
-            return true;
+            return TRUE;
         }
 
         if (!isset($this->_channelInfo['servers']['mirror'][0])) {
@@ -1457,17 +1457,17 @@ class PEAR_ChannelFile
         }
 
         $this->_channelInfo['servers']['mirror'][] = $set;
-        return true;
+        return TRUE;
     }
 
     /**
      * Retrieve the name of the validation package for this channel
-     * @return string|false
+     * @return string|FALSE
      */
     function getValidationPackage()
     {
         if (!$this->_isValid && !$this->validate()) {
-            return false;
+            return FALSE;
         }
 
         if (!isset($this->_channelInfo['validatepackage'])) {
@@ -1480,12 +1480,12 @@ class PEAR_ChannelFile
 
     /**
      * Retrieve the object that can be used for custom validation
-     * @param string|false the name of the package to validate.  If the package is
+     * @param string|FALSE the name of the package to validate.  If the package is
      *                     the channel validation package, PEAR_Validate is returned
-     * @return PEAR_Validate|false false is returned if the validation package
+     * @return PEAR_Validate|FALSE FALSE is returned if the validation package
      *         cannot be located
      */
-    function &getValidationObject($package = false)
+    function &getValidationObject($package = FALSE)
     {
         if (!class_exists('PEAR_Validate')) {
             require_once 'PEAR/Validate.php';
@@ -1493,7 +1493,7 @@ class PEAR_ChannelFile
 
         if (!$this->_isValid) {
             if (!$this->validate()) {
-                $a = false;
+                $a = FALSE;
                 return $a;
             }
         }
@@ -1515,7 +1515,7 @@ class PEAR_ChannelFile
                         $this->_channelInfo['validatepackage']['_content']);
                     $val = &new $vclass;
                 } else {
-                    $a = false;
+                    $a = FALSE;
                     return $a;
                 }
             } else {
@@ -1536,11 +1536,11 @@ class PEAR_ChannelFile
         foreach ($possibilities as $dir) {
             if (file_exists($dir . DIRECTORY_SEPARATOR . $path)
                   && is_readable($dir . DIRECTORY_SEPARATOR . $path)) {
-                return true;
+                return TRUE;
             }
         }
 
-        return false;
+        return FALSE;
     }
 
     /**

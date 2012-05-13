@@ -135,12 +135,12 @@ class XML_Parser extends PEAR
     /**
      * Whether to do case folding
      *
-     * If set to true, all tag and attribute names will
+     * If set to TRUE, all tag and attribute names will
      * be converted to UPPER CASE.
      *
      * @var  boolean
      */
-    var $folding = true;
+    var $folding = TRUE;
 
     /**
      * Mode of operation, one of "event" or "func"
@@ -207,7 +207,7 @@ class XML_Parser extends PEAR
      *                       to have it call functions named after elements
      * @param string $tgtenc a valid target encoding
      */
-    function XML_Parser($srcenc = null, $mode = 'event', $tgtenc = null)
+    function XML_Parser($srcenc = NULL, $mode = 'event', $tgtenc = NULL)
     {
         XML_Parser::__construct($srcenc, $mode, $tgtenc);
     }
@@ -224,7 +224,7 @@ class XML_Parser extends PEAR
      *                       to have it call functions named after elements
      * @param string $tgtenc a valid target encoding
      */
-    function __construct($srcenc = null, $mode = 'event', $tgtenc = null)
+    function __construct($srcenc = NULL, $mode = 'event', $tgtenc = NULL)
     {
         $this->PEAR('XML_Parser_Error');
 
@@ -249,7 +249,7 @@ class XML_Parser extends PEAR
      *
      * @param string $mode mode, either 'func' or 'event'
      *
-     * @return boolean|object  true on success, PEAR_Error otherwise
+     * @return boolean|object  TRUE on success, PEAR_Error otherwise
      * @access public
      */
     function setMode($mode)
@@ -260,7 +260,7 @@ class XML_Parser extends PEAR
         }
 
         $this->mode = $mode;
-        return true;
+        return TRUE;
     }
 
     /**
@@ -275,14 +275,14 @@ class XML_Parser extends PEAR
      *
      * @param object &$obj object to handle the events
      *
-     * @return boolean will always return true
+     * @return boolean will always return TRUE
      * @access public
      * @since v1.2.0beta3
      */
     function setHandlerObj(&$obj)
     {
         $this->_handlerObj = &$obj;
-        return true;
+        return TRUE;
     }
 
     /**
@@ -294,7 +294,7 @@ class XML_Parser extends PEAR
     function _initHandlers()
     {
         if (!is_resource($this->parser)) {
-            return false;
+            return FALSE;
         }
 
         if (!is_object($this->_handlerObj)) {
@@ -342,19 +342,19 @@ class XML_Parser extends PEAR
      *
      * NOTE: uses '@' error suppresion in this method
      *
-     * @return bool|PEAR_Error true on success, PEAR_Error otherwise
+     * @return bool|PEAR_Error TRUE on success, PEAR_Error otherwise
      * @access private
      * @see xml_parser_create
      */
     function _create()
     {
-        if ($this->srcenc === null) {
+        if ($this->srcenc === NULL) {
             $xp = @xml_parser_create();
         } else {
             $xp = @xml_parser_create($this->srcenc);
         }
         if (is_resource($xp)) {
-            if ($this->tgtenc !== null) {
+            if ($this->tgtenc !== NULL) {
                 if (!@xml_parser_set_option($xp, XML_OPTION_TARGET_ENCODING, 
                     $this->tgtenc)
                 ) {
@@ -368,7 +368,7 @@ class XML_Parser extends PEAR
                 return $result;
             }
             xml_parser_set_option($xp, XML_OPTION_CASE_FOLDING, $this->folding);
-            return true;
+            return TRUE;
         }
         if (!in_array(strtoupper($this->srcenc), $this->_validEncodings)) {
             return $this->raiseError('invalid source encoding', 
@@ -388,7 +388,7 @@ class XML_Parser extends PEAR
      * to parse multiple XML documents.
      *
      * @access   public
-     * @return   boolean|object     true on success, PEAR_Error otherwise
+     * @return   boolean|object     TRUE on success, PEAR_Error otherwise
      */
     function reset()
     {
@@ -396,7 +396,7 @@ class XML_Parser extends PEAR
         if ($this->isError($result)) {
             return $result;
         }
-        return true;
+        return TRUE;
     }
 
     // }}}
@@ -444,12 +444,12 @@ class XML_Parser extends PEAR
      *
      * @param string $data a string containing the XML document
      *
-     * @return null
+     * @return NULL
      */
     function setInputString($data)
     {
         $this->fp = $data;
-        return null;
+        return NULL;
     }
 
     // }}}
@@ -473,7 +473,7 @@ class XML_Parser extends PEAR
     {
         if (is_resource($fp)) {
             $this->fp = $fp;
-            return true;
+            return TRUE;
         } elseif (preg_match('/^[a-z]+:\/\//i', substr($fp, 0, 10))) {
             // see if it's an absolute URL (has a scheme at the beginning)
             return $this->setInputFile($fp);
@@ -483,7 +483,7 @@ class XML_Parser extends PEAR
         } else {
             // it must be a string
             $this->fp = $fp;
-            return true;
+            return TRUE;
         }
 
         return $this->raiseError('Illegal input format', 
@@ -496,7 +496,7 @@ class XML_Parser extends PEAR
     /**
      * Central parsing function.
      *
-     * @return bool|PEAR_Error returns true on success, or a PEAR_Error otherwise
+     * @return bool|PEAR_Error returns TRUE on success, or a PEAR_Error otherwise
      * @access public
      */
     function parse()
@@ -520,7 +520,7 @@ class XML_Parser extends PEAR
             }
         } else {
             // otherwise, $this->fp must be a string
-            if (!$this->_parseString($this->fp, true)) {
+            if (!$this->_parseString($this->fp, TRUE)) {
                 $error = &$this->raiseError();
                 $this->free();
                 return $error;
@@ -528,7 +528,7 @@ class XML_Parser extends PEAR
         }
         $this->free();
 
-        return true;
+        return TRUE;
     }
 
     /**
@@ -541,7 +541,7 @@ class XML_Parser extends PEAR
      * @access private
      * @see parseString()
      **/
-    function _parseString($data, $eof = false)
+    function _parseString($data, $eof = FALSE)
     {
         return xml_parse($this->parser, $data, $eof);
     }
@@ -558,11 +558,11 @@ class XML_Parser extends PEAR
      * @param boolean $eof  If set and TRUE, data is the last piece 
      *                      of data sent in this parser
      *
-     * @return bool|PEAR_Error true on success or a PEAR Error
+     * @return bool|PEAR_Error TRUE on success or a PEAR Error
      * @throws XML_Parser_Error
      * @see _parseString()
      */
-    function parseString($data, $eof = false)
+    function parseString($data, $eof = FALSE)
     {
         if (!isset($this->parser) || !is_resource($this->parser)) {
             $this->reset();
@@ -574,10 +574,10 @@ class XML_Parser extends PEAR
             return $error;
         }
 
-        if ($eof === true) {
+        if ($eof === TRUE) {
             $this->free();
         }
-        return true;
+        return TRUE;
     }
 
     /**
@@ -585,7 +585,7 @@ class XML_Parser extends PEAR
      *
      * Free the internal resources associated with the parser
      *
-     * @return null
+     * @return NULL
      **/
     function free()
     {
@@ -597,7 +597,7 @@ class XML_Parser extends PEAR
             fclose($this->fp);
         }
         unset($this->fp);
-        return null;
+        return NULL;
     }
 
     /**
@@ -610,9 +610,9 @@ class XML_Parser extends PEAR
      *
      * @return XML_Parser_Error reference to the error object
      **/
-    function &raiseError($msg = null, $ecode = 0)
+    function &raiseError($msg = NULL, $ecode = 0)
     {
-        $msg = !is_null($msg) ? $msg : $this->parser;
+        $msg = !is_NULL($msg) ? $msg : $this->parser;
         $err = &new XML_Parser_Error($msg, $ecode);
         return parent::raiseError($err);
     }
@@ -673,12 +673,12 @@ class XML_Parser extends PEAR
      * @param mixed $elem     ??
      * @param mixed &$attribs ??
      *
-     * @return null
+     * @return NULL
      * @abstract
      */
     function startHandler($xp, $elem, &$attribs)
     {
-        return null;
+        return NULL;
     }
 
     // }}}
@@ -690,12 +690,12 @@ class XML_Parser extends PEAR
      * @param mixed $xp   ??
      * @param mixed $elem ??
      *
-     * @return null
+     * @return NULL
      * @abstract
      */
     function endHandler($xp, $elem)
     {
-        return null;
+        return NULL;
     }
 
 

@@ -5,15 +5,14 @@ use OptionModelSub;
 use File_CSV_DataSource;
 use XML_Serializer;
 use XML_Unserializer;
-use XmlArray;
+//use XmlArray;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
 
-
 /**
- * Form_Model
+ * Form_Model b
  * 
- * @package Wordpess Options API access class
+ * @package Affiliate Hoover
  * @author Andy Walpole
  * @copyright Andy Walpole
  * @link http://andywalpole.me/
@@ -23,15 +22,47 @@ use RecursiveArrayIterator;
  * 
  * Wordpress functions:
  * 
- * sanitize_text_field()
- * http://codex.wordpress.org/Data_Validation
+ * dbDelta()
+ * http://codex.wordpress.org/Creating_Tables_with_Plugins
  * 
- * is_email()
- * http://codex.wordpress.org/Function_Reference/is_email
+ * $wpdb->query()
+ * $wpdb->prepare()
+ * $wpdb->get_row()
+ * $wpdb->get_results()
+ * http://codex.wordpress.org/Class_Reference/wpdb
  * 
- * wp_strip_all_tags()
- * http://codex.wordpress.org/Data_Validation
+ * stripslashes_deep()
+ * http://codex.wordpress.org/Function_Reference/stripslashes_deep
  * 
+ * wp_create_category()http://codex.wordpress.org/Function_Reference/wp_create_category
+ * 
+ * wp_update_post()
+ * http://codex.wordpress.org/Function_Reference/wp_update_post
+ * 
+ * wp_insert_post()
+ * http://codex.wordpress.org/Function_Reference/wp_insert_post
+ * 
+ * add_post_meta()
+ * http://codex.wordpress.org/Function_Reference/add_post_meta
+ * 
+ * wp_delete_post()
+ * http://codex.wordpress.org/Function_Reference/wp_delete_post
+ * 
+ * update_option()
+ * http://codex.wordpress.org/Function_Reference/update_option
+ * 
+ * wp_redirect()
+ * http://codex.wordpress.org/Function_Reference/wp_redirect
+ * 
+ * get_option()
+ * http://codex.wordpress.org/Function_Reference/get_option
+ * 
+ * wp_verify_nonce()
+ * http://codex.wordpress.org/Function_Reference/wp_verify_nonce
+ * 
+ * force_balance_tags()
+ * http://codex.wordpress.org/Function_Reference/force_balance_tags
+ *
  */
 
 class Form_Model extends OptionModelSub\Form_Model_Sub {
@@ -130,6 +161,15 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    /**
+     * Form_Model::eempty_checkboxess()
+     * 
+     * Checks for empty checkboxes if used for validation 
+     * 
+     * @param array $form_output
+     * @return boolean
+     */
+
 
     protected function empty_checkboxes($form_output, $digit = 1) {
 
@@ -192,13 +232,13 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             } // end foreach
 
             // total 0 values minus original empty form
-            $total_null = (array_pop($error) - $total_checkboxes);
+            $total_NULL = (array_pop($error) - $total_checkboxes);
 
             // find total number of checkboxes minus the original empty form
             $total_checks = ($match * $total_checkboxes);
 
             // now do the maths and work out which
-            if ($total_null > ($total_checks - $digit)) {
+            if ($total_NULL > ($total_checks - $digit)) {
                 return FALSE;
             }
 
@@ -249,7 +289,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
      * @param mixed $form_output
      * @return boolean
      */
-    protected function empty_value($form_output, $single = null) {
+    protected function empty_value($form_output, $single = NULL) {
 
         extract(static::$form);
 
@@ -311,7 +351,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             if ($database && !empty($data[$option_name])) {
 
-                if ($single == null) {
+                if ($single == NULL) {
                     // if entire form is entered
 
                     // if new form without option database created yet make sure ALL fields are not empty
@@ -397,7 +437,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         extract(static::$form);
 
-        if ($single === null) {
+        if ($single === NULL) {
 
             // if new form without option database created yet make sure ALL fields are not empty
             foreach ($form_output[$option_name] as $n_key => $n_value) {
@@ -442,6 +482,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
      * Form_Model::create_table()
      * 
      * Creates database table when addon is enabled
+     * Creates two different tables
+     * The central database and one to record ALL posts
      * 
      */
 
@@ -493,6 +535,13 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    /**
+     * Form_Model::update_feed_details()
+     * 
+     * Updates the main datbase table
+     * 
+     */
+
     protected function update_feed_details($form_title, $form_title_contains, $form_body, $form_body_contains,
         $form_categories, $form_tags, $form_allow_comments, $form_allow_trackback, $form_name, $form_min_rows,
         $form_max_rows, $form_post_status) {
@@ -505,10 +554,20 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             $form_allow_comments, $form_allow_trackback, $form_min_rows, $form_max_rows, $form_post_status,
             $form_name));
 
-        $wpdb->print_error();
-
     }
-
+    /**
+     * Form_Model::create_post_items()
+     * 
+     * Updates the main datbase table
+     * 
+     * Very imporant function
+     * This take the data from the CSV file and the user-generated settings from the database 
+     * and then creates the post
+     * 
+     * @param array $var
+     * @param boolean TRUE
+     * 
+     */
 
     protected function create_post_items($var, $bol = TRUE) {
 
@@ -525,15 +584,15 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         $headers = unserialize($item->header_array);
 
         $new_post = array(
-            'post_title' => null,
-            'post_content' => null,
+            'post_title' => NULL,
+            'post_content' => NULL,
             'post_status' => 'open',
             'comment_status' => 'closed',
             'ping_status' => 'closed',
             'post_type' => 'post',
             'post_author' => $user_info->ID,
-            'tags_input' => null,
-            'post_category' => null,
+            'tags_input' => NULL,
+            'post_category' => NULL,
             'post_status' => 'publish');
 
         $post_meta = $this->get_post_meta();
@@ -626,9 +685,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                         if ($key === ($total_val - 1)) {
                             // Need to make sure title doesn't start with digits
                             $new_post['post_title'] = stripslashes_deep($this->check_utf($post_title));
-
-                            $new_post['post_title'] = "Warning: Don't start thread with numbers";
-
                             $new_post['post_content'] = stripslashes_deep($this->check_utf($post_content));
                             $new_post['comment_status'] = $comment_status;
                             $new_post['ping_status'] = $ping_status;
@@ -650,7 +706,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                     if ($bol === FALSE) continue;
 
-                                    // this is set to false if the update button is clicked
+                                    // this is set to FALSE if the update button is clicked
                                     // that way no old posts will not be updated
 
                                     // If the two values are the same then the post already exists
@@ -701,7 +757,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                             foreach ($cat_array as $result) {
 
-                                                $result = ($this->check_utf($result));
+                                                $result = stripslashes_deep($this->check_utf($result));
 
                                                 // make sure that the user doesn't accidently add numbers
                                                 if (!preg_match("/^[0-9]/", $result)) {
@@ -724,7 +780,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                                         $duplicate = TRUE;
                                         break;
 
-                                    } // end publish equals true
+                                    } // end publish equals TRUE
 
                                 } // end  if ((int)$result->meta_value === hexdec(substr(md5($post_title), 0, 7))) {
 
@@ -787,7 +843,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                         foreach ($cat_array as $result) {
 
-                                            $result = ($this->check_utf($result));
+                                            $result = stripslashes_deep($this->check_utf($result));
 
                                             // make sure that the user doesn't accidently add numbers
                                             if (!preg_match("/^[0-9]/", $result)) {
@@ -803,6 +859,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                     $new_post['post_category'] = $post_cat_array;
                                     $new_post['post_date'] = date('Y-m-d H:i:s');
+                                    $new_post['post_content'] = force_balance_tags($new_post['post_content']);
 
                                     //var_dump($new_post);
 
@@ -829,39 +886,42 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    /*
 
     private function recursive_array_find_key_digit($old_array, $new_array = array()) {
 
-        foreach ($old_array as $key => $value) {
+    foreach ($old_array as $key => $value) {
 
-            if (!is_int($key)) {
-                $new_array = $this->recursive_array_find_key_digit($value, $new_array);
+    if (!is_int($key)) {
+    $new_array = $this->recursive_array_find_key_digit($value, $new_array);
 
-            } else {
-                $new_array[] = $value;
+    } else {
+    $new_array[] = $value;
 
-            }
+    }
 
-        }
-        return $new_array;
+    }
+    return $new_array;
     }
 
 
     private function recursive_array_find_total_entries($old_array, $new_array = array()) {
 
-        foreach ($old_array as $key => $value) {
+    foreach ($old_array as $key => $value) {
 
-            if (!is_int($key)) {
-                $new_array = $this->recursive_array_find_total_entries($value, $new_array);
+    if (!is_int($key)) {
+    $new_array = $this->recursive_array_find_total_entries($value, $new_array);
 
-            } else {
-                $new_array[] = $key;
+    } else {
+    $new_array[] = $key;
 
-            }
-
-        }
-        return $new_array;
     }
+
+    }
+    return $new_array;
+    }
+    
+    */
 
 
     private function insert_total_feeds($id) {
@@ -882,10 +942,19 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    /**
+     * Form_Model::check_utf()
+     * 
+     * If not UTF-8 if then encodes the string
+     * 
+     * @param string $str
+     * @return string
+     */
+
 
     private function check_utf($str) {
 
-        if (mb_detect_encoding($str, 'UTF-8', true) == FALSE) {
+        if (mb_detect_encoding($str, 'UTF-8', TRUE) == FALSE) {
 
             return utf8_encode($str);
 
@@ -897,9 +966,18 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    /**
+     * Form_Model::synchronize_feeds()
+     * 
+     * Compares the remote and file and database, deletign database entries if not equal
+     * 
+     * @return string
+     */
+
+
     protected function synchronize_feeds($var) {
 
-        $filename = $this->find_filename_feed_details(urldecode($_GET['unique_form']));
+        $filename = $this->find_filename_feed_details(urlencode($_GET['unique_form']));
 
         $csv = new File_CSV_DataSource;
 
@@ -969,12 +1047,21 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    protected function get_all_feed_names() {
+
+        global $wpdb;
+
+        return $wpdb->get_results("SELECT name FROM ".AH_FEED_DETAILS_TABLE);
+
+    }
+
     private function get_post_meta() {
 
         global $wpdb;
 
         return $wpdb->get_results("SELECT post_id, meta_value FROM ".$wpdb->prefix.
             "postmeta WHERE meta_key = '_unique_post'");
+
 
     }
 
@@ -1128,6 +1215,16 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    /**
+     * Form_Model::update_ind_form())
+     * 
+     * Remove associated data from the feed details table and the feeds folder
+     * when the title is deleted from the options tables filed
+     * 
+     * @param boolean $form
+     * @param string $form_name
+     * 
+     */
 
     protected function update_ind_form($form, $form_name) {
 
@@ -1136,9 +1233,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         $regex = '/(\[#([0-9]+)#\])([,]*)/';
 
-        $form_categories = null;
+        $form_categories = NULL;
 
-        $form_tags = null;
+        $form_tags = NULL;
 
         foreach ($form[$option_name] as $key => $value) {
 
@@ -1150,7 +1247,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 if ($value != "") {
                     $form_title_contains = $value;
                 } else {
-                    $form_title_contains = null;
+                    $form_title_contains = NULL;
                 }
             }
 
@@ -1162,7 +1259,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 if ($value != "") {
                     $form_body_contains = $value;
                 } else {
-                    $form_body_contains = null;
+                    $form_body_contains = NULL;
                 }
 
             }
@@ -1173,7 +1270,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 if (!empty($match['0'])) {
                     $form_categories = $match['0']['0'];
                 } else {
-                    $form_categories = null;
+                    $form_categories = NULL;
                 }
 
             }
@@ -1182,7 +1279,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 if ($value != "") {
                     $form_min_rows = (int)$value;
                 } else {
-                    $form_min_rows = null;
+                    $form_min_rows = NULL;
                 }
 
             }
@@ -1191,7 +1288,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 if ($value != "") {
                     $form_max_rows = (int)$value;
                 } else {
-                    $form_max_rows = null;
+                    $form_max_rows = NULL;
                 }
 
             }
@@ -1208,11 +1305,10 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             if ($key === "formTags") {
 
                 preg_match_all($regex, $value, $match);
-
                 if (!empty($match['0'])) {
                     $form_tags = $match['0']['0'];
                 } else {
-                    $form_tags = null;
+                    $form_tags = NULL;
                 }
 
             }
@@ -1237,8 +1333,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             //return $this->success_message("You have successfully updated the form");
 
-            //wp_redirect(admin_url("/options-general.php?page=".$page_url));
-            //exit;
+            wp_redirect(admin_url("/options-general.php?page=".$page_url));
+            exit;
 
         }
 
@@ -1365,9 +1461,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 unset($header_array_amend[$key]);
             } // end foreach
 
-
         }
-
 
         if ($this->get_file_extension($fileName) === "csv") {
 
@@ -1389,13 +1483,24 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             if ($this->insert_table($form['indName'], $feed_url, $fileName, serialize($header_array),
                 serialize($header_array_amend), $num_rows)) {
-                //wp_redirect(admin_url("/options-general.php?page=".$page_url));
-                //exit;
+                wp_redirect(admin_url("/options-general.php?page=".$page_url));
+                exit;
             }
 
         }
 
     }
+
+    /**
+     * Form_Model::recursive_array()
+     * 
+     * Uses SPL to find header array
+     * 
+     * @param array $old_array
+     * @return array
+     * 
+     */
+
 
     private function recursive_array($old_array) {
 
@@ -1425,6 +1530,15 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         return $output;
     }
 
+    /**
+     * Form_Model::recursive_array()
+     * 
+     * Uses SPL to find all array info
+     * 
+     * @param array $old_array
+     * @return array
+     * 
+     */
 
     private function recursive_array_values($old_array, $new_array = array()) {
 
@@ -1442,13 +1556,24 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    /**
+     * Form_Model::xml_helper()
+     * 
+     * Uses SPL to find all array info
+     * 
+     * Uses XML_Serializer and XML_Unserializer objects to get the XXM data into a useable array
+     * 
+     * @param array $file
+     * @return array
+     * 
+     */
 
     private function xml_helper($file) {
 
         $xml = simplexml_load_file($file, 'SimpleXMLElement', LIBXML_NOCDATA);
 
-        $options = array(XML_SERIALIZER_OPTION_INDENT => '    ', XML_SERIALIZER_OPTION_RETURN_RESULT => true
-                //XML_SERIALIZER_OPTION_TYPEHINTS => true
+        $options = array(XML_SERIALIZER_OPTION_INDENT => '    ', XML_SERIALIZER_OPTION_RETURN_RESULT => TRUE
+                //XML_SERIALIZER_OPTION_TYPEHINTS => TRUE
                 );
 
         $serializer = &new XML_Serializer($options);
@@ -1460,7 +1585,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         $unserializer = &new XML_Unserializer($options);
 
         // userialize the document
-        $unserializer->unserialize($result, false);
+        $unserializer->unserialize($result, FALSE);
 
         $data = $unserializer->getUnserializedData();
 
@@ -1599,7 +1724,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                     if (is_string($value)) continue;
                     if (!isset($value['radio_number'])) continue;
-                    if ($value['radio_number'] == null) continue;
+                    if ($value['radio_number'] == NULL) continue;
                     if (preg_match("/^\d$/", $key)) continue;
                     $number = (int)$value['radio_number'];
                     break;
@@ -1609,7 +1734,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 $form_output[$option_name] = array_reverse($form_output[$option_name]);
 
                 $total_empties = array();
-                $t = null;
+                $t = NULL;
 
                 foreach ($form_output[$option_name] as $key => $value) {
 
@@ -1645,7 +1770,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                     $total_ars = $number + (($output - $number) * 2);
 
                     // remove empty form from entire array
-                    array_splice($form_output[$option_name], 0, $total_ars, null);
+                    array_splice($form_output[$option_name], 0, $total_ars, NULL);
 
                     // on successful completion rearrange array to previous order but without unwanted fields
                     $form_output[$option_name] = array_reverse($form_output[$option_name]);
@@ -1753,7 +1878,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         if (static::check_options_table() && $dynamic_output && !empty($database[$option_name])) {
 
-            $delete = null;
+            $delete = NULL;
 
             $output = (int)$form_output['total_user_fields'];
             $total_arrays = array();
@@ -1795,7 +1920,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                         if (is_string($value)) continue;
                         if (!isset($value['radio_number'])) continue;
-                        if ($value['radio_number'] == null) continue;
+                        if ($value['radio_number'] == NULL) continue;
 
                         $number = (int)$value['radio_number'];
                         break;
@@ -1810,7 +1935,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                         $b_element = $t_element - (int)(($output * 2) + 2) + ($number - 1); // include missing radio buttons in calcs
 
                         // use slice to remove unwanted forms from parent array
-                        array_splice($form_output[$option_name], $b_element, $t_element, null);
+                        array_splice($form_output[$option_name], $b_element, $t_element, NULL);
 
                     } // end foreach
 
@@ -1831,7 +1956,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                         $b_element = $t_element - (int)(($output * 2) + 2);
 
                         // use slice to remove unwanted forms from parent array
-                        array_splice($form_output[$option_name], $b_element, $t_element, null);
+                        array_splice($form_output[$option_name], $b_element, $t_element, NULL);
 
                     } // end foreach
 

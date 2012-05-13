@@ -274,7 +274,7 @@ class XML_Util
      * require_once 'XML/Util.php';
      *
      * // get an XML declaration:
-     * $xmlDecl = XML_Util::getXMLDeclaration('1.0', 'UTF-8', true);
+     * $xmlDecl = XML_Util::getXMLDeclaration('1.0', 'UTF-8', TRUE);
      * </code>
      *
      * @param string $version    xml version
@@ -286,23 +286,23 @@ class XML_Util
      * @static
      * @uses attributesToString() to serialize the attributes of the XML declaration
      */
-    function getXMLDeclaration($version = '1.0', $encoding = null, 
-        $standalone = null)
+    function getXMLDeclaration($version = '1.0', $encoding = NULL, 
+        $standalone = NULL)
     {
         $attributes = array(
             'version' => $version,
         );
         // add encoding
-        if ($encoding !== null) {
+        if ($encoding !== NULL) {
             $attributes['encoding'] = $encoding;
         }
         // add standalone, if specified
-        if ($standalone !== null) {
+        if ($standalone !== NULL) {
             $attributes['standalone'] = $standalone ? 'yes' : 'no';
         }
 
         return sprintf('<?xml%s?>', 
-            XML_Util::attributesToString($attributes, false));
+            XML_Util::attributesToString($attributes, FALSE));
     }
 
     /**
@@ -325,7 +325,7 @@ class XML_Util
      * @static
      * @since 0.2
      */
-    function getDocTypeDeclaration($root, $uri = null, $internalDtd = null)
+    function getDocTypeDeclaration($root, $uri = NULL, $internalDtd = NULL)
     {
         if (is_array($uri)) {
             $ref = sprintf(' PUBLIC "%s" "%s"', $uri['id'], $uri['uri']);
@@ -380,7 +380,7 @@ class XML_Util
      * @uses replaceEntities() to replace XML entities in attribute values
      * @todo allow sort also to be an options array
      */
-    function attributesToString($attributes, $sort = true, $multiline = false, 
+    function attributesToString($attributes, $sort = TRUE, $multiline = FALSE, 
         $indent = '    ', $linebreak = "\n", $entities = XML_UTIL_ENTITIES_XML)
     {
         /*
@@ -402,7 +402,7 @@ class XML_Util
             if (isset($sort['sort'])) {
                 $sort = $sort['sort'];
             } else {
-                $sort = true;
+                $sort = TRUE;
             }
         }
         $string = '';
@@ -421,14 +421,14 @@ class XML_Util
                     $string .= ' ' . $key . '="' . $value . '"';
                 }
             } else {
-                $first = true;
+                $first = TRUE;
                 foreach ($attributes as $key => $value) {
                     if ($entities != XML_UTIL_ENTITIES_NONE) {
                         $value = XML_Util::replaceEntities($value, $entities);
                     }
                     if ($first) {
                         $string .= ' ' . $key . '="' . $value . '"';
-                        $first   = false;
+                        $first   = FALSE;
                     } else {
                         $string .= $linebreak . $indent . $key . '="' . $value . '"';
                     }
@@ -501,10 +501,10 @@ class XML_Util
      * @see createTagFromArray()
      * @uses createTagFromArray() to create the tag
      */
-    function createTag($qname, $attributes = array(), $content = null, 
-        $namespaceUri = null, $replaceEntities = XML_UTIL_REPLACE_ENTITIES, 
-        $multiline = false, $indent = '_auto', $linebreak = "\n", 
-        $sortAttributes = true)
+    function createTag($qname, $attributes = array(), $content = NULL, 
+        $namespaceUri = NULL, $replaceEntities = XML_UTIL_REPLACE_ENTITIES, 
+        $multiline = FALSE, $indent = '_auto', $linebreak = "\n", 
+        $sortAttributes = TRUE)
     {
         $tag = array(
             'qname'      => $qname,
@@ -512,12 +512,12 @@ class XML_Util
         );
 
         // add tag content
-        if ($content !== null) {
+        if ($content !== NULL) {
             $tag['content'] = $content;
         }
 
         // add namespace Uri
-        if ($namespaceUri !== null) {
+        if ($namespaceUri !== NULL) {
             $tag['namespaceUri'] = $namespaceUri;
         }
 
@@ -585,8 +585,8 @@ class XML_Util
      * @uses raiseError()
      */
     function createTagFromArray($tag, $replaceEntities = XML_UTIL_REPLACE_ENTITIES,
-        $multiline = false, $indent = '_auto', $linebreak = "\n", 
-        $sortAttributes = true)
+        $multiline = FALSE, $indent = '_auto', $linebreak = "\n", 
+        $sortAttributes = TRUE)
     {
         if (isset($tag['content']) && !is_scalar($tag['content'])) {
             return XML_Util::raiseError('Supplied non-scalar value as tag content',
@@ -642,7 +642,7 @@ class XML_Util
         }
 
         // check for multiline attributes
-        if ($multiline === true) {
+        if ($multiline === TRUE) {
             if ($indent === '_auto') {
                 $indent = str_repeat(' ', (strlen($tag['qname'])+2));
             }
@@ -697,27 +697,27 @@ class XML_Util
      * @static
      * @see createEndElement(), createTag()
      */
-    function createStartElement($qname, $attributes = array(), $namespaceUri = null,
-        $multiline = false, $indent = '_auto', $linebreak = "\n", 
-        $sortAttributes = true)
+    function createStartElement($qname, $attributes = array(), $namespaceUri = NULL,
+        $multiline = FALSE, $indent = '_auto', $linebreak = "\n", 
+        $sortAttributes = TRUE)
     {
         // if no attributes hav been set, use empty attributes
         if (!isset($attributes) || !is_array($attributes)) {
             $attributes = array();
         }
 
-        if ($namespaceUri != null) {
+        if ($namespaceUri != NULL) {
             $parts = XML_Util::splitQualifiedName($qname);
         }
 
         // check for multiline attributes
-        if ($multiline === true) {
+        if ($multiline === TRUE) {
             if ($indent === '_auto') {
                 $indent = str_repeat(' ', (strlen($qname)+2));
             }
         }
 
-        if ($namespaceUri != null) {
+        if ($namespaceUri != NULL) {
             // is a namespace given
             if (isset($parts['namespace']) && !empty($parts['namespace'])) {
                 $attributes['xmlns:' . $parts['namespace']] = $namespaceUri;
@@ -826,7 +826,7 @@ class XML_Util
      * @access public
      * @static
      */
-    function splitQualifiedName($qname, $defaultNs = null)
+    function splitQualifiedName($qname, $defaultNs = NULL)
     {
         if (strstr($qname, ':')) {
             $tmp = explode(':', $qname);
@@ -862,7 +862,7 @@ class XML_Util
      *
      * @param string $string string that should be checked
      *
-     * @return mixed true, if string is a valid XML name, PEAR error otherwise
+     * @return mixed TRUE, if string is a valid XML name, PEAR error otherwise
      * @access public
      * @static
      * @todo support for other charsets
@@ -885,7 +885,7 @@ class XML_Util
                 XML_UTIL_ERROR_INVALID_CHARS);
         }
         // XML name is valid
-        return true;
+        return TRUE;
     }
 
     /**

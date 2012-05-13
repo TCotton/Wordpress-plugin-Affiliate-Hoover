@@ -91,7 +91,7 @@ class PEAR_Autoloader extends PEAR
      *
      * @access public
      */
-    function addAutoload($method, $classname = null)
+    function addAutoload($method, $classname = NULL)
     {
         if (is_array($method)) {
             array_walk($method, create_function('$a,&$b', '$b = strtolower($b);'));
@@ -168,13 +168,13 @@ class PEAR_Autoloader extends PEAR
      */
     function removeAggregateObject($classname)
     {
-        $ok = false;
+        $ok = FALSE;
         $classname = strtolower($classname);
         reset($this->_method_map);
         while (list($method, $obj) = each($this->_method_map)) {
             if (is_a($obj, $classname)) {
                 unset($this->_method_map[$method]);
-                $ok = true;
+                $ok = TRUE;
             }
         }
         return $ok;
@@ -205,9 +205,9 @@ class PEAR_Autoloader extends PEAR
         }
         if (isset($this->_method_map[$method])) {
             $retval = call_user_func_array(array($this->_method_map[$method], $method), $args);
-            return true;
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
     // }}}

@@ -47,11 +47,11 @@ class PEAR_PackageFile
     var $_config;
     var $_debug;
 
-    var $_logger = false;
+    var $_logger = FALSE;
     /**
      * @var boolean
      */
-    var $_rawReturn = false;
+    var $_rawReturn = FALSE;
 
     /**
      * helper for extracting Archive_Tar errors
@@ -67,7 +67,7 @@ class PEAR_PackageFile
      * @param   string @tmpdir Optional temporary directory for uncompressing
      *          files
      */
-    function PEAR_PackageFile(&$config, $debug = false)
+    function PEAR_PackageFile(&$config, $debug = FALSE)
     {
         $this->_config = $config;
         $this->_debug = $debug;
@@ -80,7 +80,7 @@ class PEAR_PackageFile
      */
     function rawReturn()
     {
-        $this->_rawReturn = true;
+        $this->_rawReturn = TRUE;
     }
 
     function setLogger(&$l)
@@ -96,7 +96,7 @@ class PEAR_PackageFile
     function &parserFactory($version)
     {
         if (!in_array($version{0}, array('1', '2'))) {
-            $a = false;
+            $a = FALSE;
             return $a;
         }
 
@@ -124,7 +124,7 @@ class PEAR_PackageFile
     function &factory($version)
     {
         if (!in_array($version{0}, array('1', '2'))) {
-            $a = false;
+            $a = FALSE;
             return $a;
         }
 
@@ -184,7 +184,7 @@ class PEAR_PackageFile
      * @return  PEAR_PackageFile_v1|PEAR_PackageFile_v2
      * @uses    parserFactory() to construct a parser to load the package.
      */
-    function &fromXmlString($data, $state, $file, $archive = false)
+    function &fromXmlString($data, $state, $file, $archive = FALSE)
     {
         if (preg_match('/<package[^>]+version=[\'"]([0-9]+\.[0-9]+)[\'"]/', $data, $packageversion)) {
             if (!in_array($packageversion[1], array('1.0', '2.0', '2.1'))) {
@@ -209,19 +209,19 @@ class PEAR_PackageFile
 
             if (!$pf->validate($state)) {;
                 if ($this->_config->get('verbose') > 0
-                    && $this->_logger && $pf->getValidationWarnings(false)
+                    && $this->_logger && $pf->getValidationWarnings(FALSE)
                 ) {
-                    foreach ($pf->getValidationWarnings(false) as $warning) {
+                    foreach ($pf->getValidationWarnings(FALSE) as $warning) {
                         $this->_logger->log(0, 'ERROR: ' . $warning['message']);
                     }
                 }
 
                 $a = PEAR::raiseError('Parsing of package.xml from file "' . $file . '" failed',
-                    2, null, null, $pf->getValidationWarnings());
+                    2, NULL, NULL, $pf->getValidationWarnings());
                 return $a;
             }
 
-            if ($this->_logger && $pf->getValidationWarnings(false)) {
+            if ($this->_logger && $pf->getValidationWarnings(FALSE)) {
                 foreach ($pf->getValidationWarnings() as $warning) {
                     $this->_logger->log(0, 'WARNING: ' . $warning['message']);
                 }
@@ -258,11 +258,11 @@ class PEAR_PackageFile
 
             if (!$pf->validate($state)) {
                 $a = PEAR::raiseError('Parsing of package.xml from file "' . $file . '" failed',
-                    2, null, null, $pf->getValidationWarnings());
+                    2, NULL, NULL, $pf->getValidationWarnings());
                 return $a;
             }
 
-            if ($this->_logger && $pf->getValidationWarnings(false)) {
+            if ($this->_logger && $pf->getValidationWarnings(FALSE)) {
                 foreach ($pf->getValidationWarnings() as $warning) {
                     $this->_logger->log(0, 'WARNING: ' . $warning['message']);
                 }
@@ -333,7 +333,7 @@ class PEAR_PackageFile
             return $ret;
         }
 
-        $xml      = null;
+        $xml      = NULL;
         $origfile = $file;
         foreach ($content as $file) {
             $name = $file['filename'];
@@ -352,7 +352,7 @@ class PEAR_PackageFile
         }
 
         $tmpdir = System::mktemp('-t "' . $this->_config->get('temp_dir') . '" -d pear');
-        if ($tmpdir === false) {
+        if ($tmpdir === FALSE) {
             $ret = PEAR::raiseError("there was a problem with getting the configured temp directory");
             return $ret;
         }
@@ -382,14 +382,14 @@ class PEAR_PackageFile
     /**
      * helper callback for extracting Archive_Tar errors
      *
-     * @param PEAR_Error|null $err
+     * @param PEAR_Error|NULL $err
      * @return array
      * @access private
      */
-    function _extractErrors($err = null)
+    function _extractErrors($err = NULL)
     {
         static $errors = array();
-        if ($err === null) {
+        if ($err === NULL) {
             $e = $errors;
             $errors = array();
             return $e;
@@ -403,15 +403,15 @@ class PEAR_PackageFile
      * @access public
      * @param   string  $descfile  name of package xml file
      * @param   int     $state package state (one of PEAR_VALIDATE_* constants)
-     * @param   string|false $archive name of the archive this package.xml came
+     * @param   string|FALSE $archive name of the archive this package.xml came
      *          from, if any
      * @return  PEAR_PackageFile_v1|PEAR_PackageFile_v2
      * @uses    PEAR_PackageFile::fromXmlString to create the oject after the
      *          XML is loaded from the package.xml file.
      */
-    function &fromPackageFile($descfile, $state, $archive = false)
+    function &fromPackageFile($descfile, $state, $archive = FALSE)
     {
-        $fp = false;
+        $fp = FALSE;
         if (is_string($descfile) && strlen($descfile) < 255 &&
              (
               !file_exists($descfile) || !is_file($descfile) || !is_readable($descfile)
@@ -458,7 +458,7 @@ class PEAR_PackageFile
             return $info;
         }
 
-        $fp = false;
+        $fp = FALSE;
         if (is_string($info) && strlen($info) < 255 &&
              (file_exists($info) || ($fp = @fopen($info, 'r')))
         ) {

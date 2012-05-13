@@ -27,7 +27,7 @@ $GLOBALS['_System_temp_files'] = array();
 *
 * Static functions for different operations. Should work under
 * Unix and Windows. The names and usage has been taken from its respectively
-* GNU commands. The functions will return (bool) false on error and will
+* GNU commands. The functions will return (bool) FALSE on error and will
 * trigger the error with the PHP trigger_error() function (you can silence
 * the error by prefixing a '@' sign after the function call, but this
 * is not recommended practice.  Instead use an error handler with
@@ -68,9 +68,9 @@ class System
      * @static
      * @access private
      */
-    function _parseArgs($argv, $short_options, $long_options = null)
+    function _parseArgs($argv, $short_options, $long_options = NULL)
     {
-        if (!is_array($argv) && $argv !== null) {
+        if (!is_array($argv) && $argv !== NULL) {
             // Find all items, quoted or otherwise
             preg_match_all("/(?:[\"'])(.*?)(?:['\"])|([^\s]+)/", $argv, $av);
             $argv = $av[1];
@@ -89,7 +89,7 @@ class System
      * with prefixing a "@" sign to the function call: @System::mkdir(..);
      *
      * @param mixed $error a PEAR error or a string with the error message
-     * @return bool false
+     * @return bool FALSE
      * @static
      * @access private
      */
@@ -99,7 +99,7 @@ class System
             $error = $error->getMessage();
         }
         trigger_error($error, E_USER_WARNING);
-        return false;
+        return FALSE;
     }
 
     /**
@@ -122,15 +122,15 @@ class System
      * @param    string  $sPath      Name of the directory
      * @param    integer $maxinst    max. deep of the lookup
      * @param    integer $aktinst    starting deep of the lookup
-     * @param    bool    $silent     if true, do not emit errors.
+     * @param    bool    $silent     if TRUE, do not emit errors.
      * @return   array   the structure of the dir
      * @static
      * @access   private
      */
-    function _dirToStruct($sPath, $maxinst, $aktinst = 0, $silent = false)
+    function _dirToStruct($sPath, $maxinst, $aktinst = 0, $silent = FALSE)
     {
         $struct = array('dirs' => array(), 'files' => array());
-        if (($dir = @opendir($sPath)) === false) {
+        if (($dir = @opendir($sPath)) === FALSE) {
             if (!$silent) {
                 System::raiseError("Could not open dir $sPath");
             }
@@ -139,7 +139,7 @@ class System
 
         $struct['dirs'][] = $sPath = realpath($sPath); // XXX don't add if '.' or '..' ?
         $list = array();
-        while (false !== ($file = readdir($dir))) {
+        while (FALSE !== ($file = readdir($dir))) {
             if ($file != '.' && $file != '..') {
                 $list[] = $file;
             }
@@ -192,7 +192,7 @@ class System
      * Supports multiple files and dirs and also recursive deletes
      *
      * @param    string  $args   the arguments for rm
-     * @return   mixed   PEAR_Error or true for success
+     * @return   mixed   PEAR_Error or TRUE for success
      * @static
      * @access   public
      */
@@ -204,29 +204,29 @@ class System
         }
         foreach ($opts[0] as $opt) {
             if ($opt[0] == 'r') {
-                $do_recursive = true;
+                $do_recursive = TRUE;
             }
         }
-        $ret = true;
+        $ret = TRUE;
         if (isset($do_recursive)) {
             $struct = System::_multipleToStruct($opts[1]);
             foreach ($struct['files'] as $file) {
                 if (!@unlink($file)) {
-                    $ret = false;
+                    $ret = FALSE;
                 }
             }
 
             rsort($struct['dirs']);
             foreach ($struct['dirs'] as $dir) {
                 if (!@rmdir($dir)) {
-                    $ret = false;
+                    $ret = FALSE;
                 }
             }
         } else {
             foreach ($opts[1] as $file) {
                 $delete = (is_dir($file)) ? 'rmdir' : 'unlink';
                 if (!@$delete($file)) {
-                    $ret = false;
+                    $ret = FALSE;
                 }
             }
         }
@@ -238,7 +238,7 @@ class System
      *
      * The -p option will create parent directories
      * @param    string  $args    the name of the director(y|ies) to create
-     * @return   bool    True for success
+     * @return   bool    TRUE for success
      * @static
      * @access   public
      */
@@ -252,7 +252,7 @@ class System
         $mode = 0777; // default mode
         foreach ($opts[0] as $opt) {
             if ($opt[0] == 'p') {
-                $create_parents = true;
+                $create_parents = TRUE;
             } elseif ($opt[0] == 'm') {
                 // if the mode is clearly an octal number (starts with 0)
                 // convert it to decimal
@@ -266,7 +266,7 @@ class System
             }
         }
 
-        $ret = true;
+        $ret = TRUE;
         if (isset($create_parents)) {
             foreach ($opts[1] as $dir) {
                 $dirstack = array();
@@ -278,19 +278,19 @@ class System
 
                 while ($newdir = array_shift($dirstack)) {
                     if (!is_writeable(dirname($newdir))) {
-                        $ret = false;
+                        $ret = FALSE;
                         break;
                     }
 
                     if (!mkdir($newdir, $mode)) {
-                        $ret = false;
+                        $ret = FALSE;
                     }
                 }
             }
         } else {
             foreach($opts[1] as $dir) {
                 if ((@file_exists($dir) || !is_dir($dir)) && !mkdir($dir, $mode)) {
-                    $ret = false;
+                    $ret = FALSE;
                 }
             }
         }
@@ -309,13 +309,13 @@ class System
      * Note: as the class use fopen, urls should work also (test that)
      *
      * @param    string  $args   the arguments
-     * @return   boolean true on success
+     * @return   boolean TRUE on success
      * @static
      * @access   public
      */
     function &cat($args)
     {
-        $ret = null;
+        $ret = NULL;
         $files = array();
         if (!is_array($args)) {
             $args = preg_split('/\s+/', $args, -1, PREG_SPLIT_NO_EMPTY);
@@ -335,13 +335,13 @@ class System
                 $files[] = $args[$i];
             }
         }
-        $outputfd = false;
+        $outputfd = FALSE;
         if (isset($mode)) {
             if (!$outputfd = fopen($outputfile, $mode)) {
                 $err = System::raiseError("Could not open $outputfile");
                 return $err;
             }
-            $ret = true;
+            $ret = TRUE;
         }
         foreach ($files as $file) {
             if (!$fd = fopen($file, 'r')) {
@@ -382,14 +382,14 @@ class System
      *           c:\windows\temp or /tmp will be used.
      *
      * @param   string  $args  The arguments
-     * @return  mixed   the full path of the created (file|dir) or false
+     * @return  mixed   the full path of the created (file|dir) or FALSE
      * @see System::tmpdir()
      * @static
      * @access  public
      */
-    function mktemp($args = null)
+    function mktemp($args = NULL)
     {
-        static $first_time = true;
+        static $first_time = TRUE;
         $opts = System::_parseArgs($args, 't:d');
         if (PEAR::isError($opts)) {
             return System::raiseError($opts);
@@ -397,7 +397,7 @@ class System
 
         foreach ($opts[0] as $opt) {
             if ($opt[0] == 'd') {
-                $tmp_is_dir = true;
+                $tmp_is_dir = TRUE;
             } elseif ($opt[0] == 't') {
                 $tmpdir = $opt[1];
             }
@@ -409,7 +409,7 @@ class System
         }
 
         if (!System::mkDir(array('-p', $tmpdir))) {
-            return false;
+            return FALSE;
         }
 
         $tmp = tempnam($tmpdir, $prefix);
@@ -427,7 +427,7 @@ class System
 
         if ($first_time) {
             PEAR::registerShutdownFunc(array('System', '_removeTmpFiles'));
-            $first_time = false;
+            $first_time = FALSE;
         }
 
         return $tmp;
@@ -488,11 +488,11 @@ class System
      * @param string $program The command to search for
      * @param mixed  $fallback Value to return if $program is not found
      *
-     * @return mixed A string with the full path or false if not found
+     * @return mixed A string with the full path or FALSE if not found
      * @static
      * @author Stig Bakken <ssb@php.net>
      */
-    function which($program, $fallback = false)
+    function which($program, $fallback = FALSE)
     {
         // enforce API
         if (!is_string($program) || '' == $program) {
@@ -519,7 +519,7 @@ class System
                                 ? explode(PATH_SEPARATOR, getenv('PATHEXT'))
                                 : array('.exe','.bat','.cmd','.com');
             // allow passing a command.exe param
-            if (strpos($program, '.') !== false) {
+            if (strpos($program, '.') !== FALSE) {
                 array_unshift($exe_suffixes, '');
             }
             // is_executable() is not available on windows for PHP4
@@ -575,16 +575,16 @@ class System
         }
         $patterns = array();
         $depth = 0;
-        $do_files = $do_dirs = true;
+        $do_files = $do_dirs = TRUE;
         $args_count = count($args);
         for ($i = 0; $i < $args_count; $i++) {
             switch ($args[$i]) {
                 case '-type':
                     if (in_array($args[$i+1], array('d', 'f'))) {
                         if ($args[$i+1] == 'd') {
-                            $do_files = false;
+                            $do_files = FALSE;
                         } else {
-                            $do_dirs = false;
+                            $do_dirs = FALSE;
                         }
                     }
                     $i++;
@@ -602,7 +602,7 @@ class System
                     break;
             }
         }
-        $path = System::_dirToStruct($dir, $depth, 0, true);
+        $path = System::_dirToStruct($dir, $depth, 0, TRUE);
         if ($do_files && $do_dirs) {
             $files = array_merge($path['files'], $path['dirs']);
         } elseif ($do_dirs) {

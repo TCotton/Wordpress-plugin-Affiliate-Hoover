@@ -106,7 +106,7 @@ class PEAR_Task_Common
      * @param array
      * @param PEAR_Config
      * @param array the entire parsed <file> tag
-     * @return true|array On error, return an array in format:
+     * @return TRUE|array On error, return an array in format:
      *    array(PEAR_TASK_ERROR_???[, param1][, param2][, ...])
      *
      *    For PEAR_TASK_ERROR_MISSING_ATTRIB, pass the attribute name in
@@ -123,7 +123,7 @@ class PEAR_Task_Common
      * Initialize a task instance with the parameters
      * @param array raw, parsed xml
      * @param array attributes from the <file> tag containing this task
-     * @param string|null last installed version of this package
+     * @param string|NULL last installed version of this package
      * @abstract
      */
     function init($xml, $fileAttributes, $lastVersion)
@@ -139,7 +139,7 @@ class PEAR_Task_Common
      * @param PEAR_PackageFile_v2
      * @param string file contents
      * @param string the eventual final file location (informational only)
-     * @return string|false|PEAR_Error false to skip this file, PEAR_Error to fail
+     * @return string|FALSE|PEAR_Error FALSE to skip this file, PEAR_Error to fail
      *         (use $this->throwError), otherwise return the new contents
      * @abstract
      */

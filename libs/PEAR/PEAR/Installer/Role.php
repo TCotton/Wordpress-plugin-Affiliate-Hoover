@@ -68,7 +68,7 @@ class PEAR_Installer_Role
         }
 
         if (!in_array($role, PEAR_Installer_Role::getValidRoles($pkg->getPackageType()))) {
-            $a = false;
+            $a = FALSE;
             return $a;
         }
 
@@ -90,7 +90,7 @@ class PEAR_Installer_Role
      * @return array
      * @static
      */
-    function getValidRoles($release, $clear = false)
+    function getValidRoles($release, $clear = FALSE)
     {
         if (!isset($GLOBALS['_PEAR_INSTALLER_ROLES'])) {
             PEAR_Installer_Role::registerRoles();
@@ -125,7 +125,7 @@ class PEAR_Installer_Role
      * @return array
      * @static
      */
-    function getInstallableRoles($clear = false)
+    function getInstallableRoles($clear = FALSE)
     {
         if (!isset($GLOBALS['_PEAR_INSTALLER_ROLES'])) {
             PEAR_Installer_Role::registerRoles();
@@ -160,7 +160,7 @@ class PEAR_Installer_Role
      * @return array
      * @static
      */
-    function getBaseinstallRoles($clear = false)
+    function getBaseinstallRoles($clear = FALSE)
     {
         if (!isset($GLOBALS['_PEAR_INSTALLER_ROLES'])) {
             PEAR_Installer_Role::registerRoles();
@@ -192,7 +192,7 @@ class PEAR_Installer_Role
      * @return array
      * @static
      */
-    function getPhpRoles($clear = false)
+    function getPhpRoles($clear = FALSE)
     {
         if (!isset($GLOBALS['_PEAR_INSTALLER_ROLES'])) {
             PEAR_Installer_Role::registerRoles();
@@ -229,11 +229,11 @@ class PEAR_Installer_Role
      * @access public
      * @static
      */
-    function registerRoles($dir = null)
+    function registerRoles($dir = NULL)
     {
         $GLOBALS['_PEAR_INSTALLER_ROLES'] = array();
         $parser = new PEAR_XMLParser;
-        if ($dir === null) {
+        if ($dir === NULL) {
             $dir = dirname(__FILE__) . '/Role';
         }
 
@@ -267,10 +267,10 @@ class PEAR_Installer_Role
 
         closedir($dp);
         ksort($GLOBALS['_PEAR_INSTALLER_ROLES']);
-        PEAR_Installer_Role::getBaseinstallRoles(true);
-        PEAR_Installer_Role::getInstallableRoles(true);
-        PEAR_Installer_Role::getPhpRoles(true);
-        PEAR_Installer_Role::getValidRoles('****', true);
-        return true;
+        PEAR_Installer_Role::getBaseinstallRoles(TRUE);
+        PEAR_Installer_Role::getInstallableRoles(TRUE);
+        PEAR_Installer_Role::getPhpRoles(TRUE);
+        PEAR_Installer_Role::getValidRoles('****', TRUE);
+        return TRUE;
     }
 }

@@ -132,7 +132,7 @@ class PEAR_Command_Common extends PEAR
             return $this->commands[$command]['options'];
         }
 
-        return null;
+        return NULL;
     }
 
     function getGetoptArgs($command, &$short_args, &$long_args)
@@ -181,7 +181,7 @@ class PEAR_Command_Common extends PEAR
             return "No such command \"$command\"";
         }
 
-        $help = null;
+        $help = NULL;
         if (isset($this->commands[$command]['doc'])) {
             $help = $this->commands[$command]['doc'];
         }
@@ -244,7 +244,7 @@ class PEAR_Command_Common extends PEAR
             return $help;
         }
 
-        return null;
+        return NULL;
     }
 
     function run($command, $options, $params)

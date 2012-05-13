@@ -81,10 +81,10 @@ class PEAR_RunTest
     );
 
     /**
-     * An object that supports the PEAR_Common->log() signature, or null
-     * @param PEAR_Common|null
+     * An object that supports the PEAR_Common->log() signature, or NULL
+     * @param PEAR_Common|NULL
      */
-    function PEAR_RunTest($logger = null, $options = array())
+    function PEAR_RunTest($logger = NULL, $options = array())
     {
         if (!defined('E_DEPRECATED')) {
             define('E_DEPRECATED', 0);
@@ -93,7 +93,7 @@ class PEAR_RunTest
             define('E_STRICT', 0);
         }
         $this->ini_overwrites[] = 'error_reporting=' . (E_ALL & ~(E_DEPRECATED | E_STRICT));
-        if (is_null($logger)) {
+        if (is_NULL($logger)) {
             require_once 'PEAR/Common.php';
             $logger = new PEAR_Common;
         }
@@ -112,7 +112,7 @@ class PEAR_RunTest
      * @param string $stdin standard input to pass to the command
      * @return unknown
      */
-    function system_with_timeout($commandline, $env = null, $stdin = null)
+    function system_with_timeout($commandline, $env = NULL, $stdin = NULL)
     {
         $data = '';
         if (version_compare(phpversion(), '5.0.0', '<')) {
@@ -126,11 +126,11 @@ class PEAR_RunTest
                 0 => array('pipe', 'r'),
                 1 => array('pipe', 'w'),
                 2 => array('pipe', 'w')
-                ), $pipes, null, $env, array('suppress_errors' => true));
+                ), $pipes, NULL, $env, array('suppress_errors' => TRUE));
         }
 
         if (!$proc) {
-            return false;
+            return FALSE;
         }
 
         if (is_string($stdin)) {
@@ -138,10 +138,10 @@ class PEAR_RunTest
         }
         fclose($pipes[0]);
 
-        while (true) {
+        while (TRUE) {
             /* hide errors from interrupted syscalls */
             $r = $pipes;
-            $e = $w = null;
+            $e = $w = NULL;
             $n = @stream_select($r, $w, $e, 60);
 
             if ($n === 0) {
@@ -202,7 +202,7 @@ class PEAR_RunTest
     function settings2array($settings, $ini_settings)
     {
         foreach ($settings as $setting) {
-            if (strpos($setting, '=') !== false) {
+            if (strpos($setting, '=') !== FALSE) {
                 $setting = explode('=', $setting, 2);
                 $name  = trim(strtolower($setting[0]));
                 $value = trim($setting[1]);
@@ -282,7 +282,7 @@ class PEAR_RunTest
         if (empty($this->_options['cgi'])) {
             // try to see if php-cgi is in the path
             $res = $this->system_with_timeout('php-cgi -v');
-            if (false !== $res && !(is_array($res) && in_array($res[0], array(-1, 127)))) {
+            if (FALSE !== $res && !(is_array($res) && in_array($res[0], array(-1, 127)))) {
                 $this->_options['cgi'] = 'php-cgi';
             }
         }
@@ -316,7 +316,7 @@ class PEAR_RunTest
 
         $ini_settings = $this->settings2array($this->ini_overwrites, $ini_settings);
         if ($section_text['INI']) {
-            if (strpos($section_text['INI'], '{PWD}') !== false) {
+            if (strpos($section_text['INI'], '{PWD}') !== FALSE) {
                 $section_text['INI'] = str_replace('{PWD}', dirname($file), $section_text['INI']);
             }
             $ini = preg_split( "/[\n\r]+/", $section_text['INI']);
@@ -371,10 +371,10 @@ class PEAR_RunTest
         if (isset($this->_options['coverage']) && $this->xdebug_loaded) {
             $xdebug_file = $temp_dir . DIRECTORY_SEPARATOR . $main_file_name . 'xdebug';
             $text = "\n" . 'function coverage_shutdown() {' .
-                    "\n" . '    $xdebug = var_export(xdebug_get_code_coverage(), true);';
+                    "\n" . '    $xdebug = var_export(xdebug_get_code_coverage(), TRUE);';
             if (!function_exists('file_put_contents')) {
                 $text .= "\n" . '    $fh = fopen(\'' . $xdebug_file . '\', "wb");' .
-                        "\n" . '    if ($fh !== false) {' .
+                        "\n" . '    if ($fh !== FALSE) {' .
                         "\n" . '        fwrite($fh, $xdebug);' .
                         "\n" . '        fclose($fh);' .
                         "\n" . '    }';
@@ -437,7 +437,7 @@ class PEAR_RunTest
             $raw_lines = explode("\n", $post);
 
             $request = '';
-            $started = false;
+            $started = FALSE;
             foreach ($raw_lines as $i => $line) {
                 if (empty($env['CONTENT_TYPE']) &&
                     preg_match('/^Content-Type:(.*)/i', $line, $res)) {
@@ -447,7 +447,7 @@ class PEAR_RunTest
                 if ($started) {
                     $request .= "\n";
                 }
-                $started = true;
+                $started = TRUE;
                 $request .= $line;
             }
 
@@ -480,8 +480,8 @@ class PEAR_RunTest
             $section_text['RETURNS'] = (int) trim($section_text['RETURNS']);
             $returnfail = ($return_value != $section_text['RETURNS']);
         } else {
-            $returnfail = false;
-            $stdin = isset($section_text['STDIN']) ? $section_text['STDIN'] : null;
+            $returnfail = FALSE;
+            $stdin = isset($section_text['STDIN']) ? $section_text['STDIN'] : NULL;
             $out = $this->system_with_timeout($cmd, $env, $stdin);
             $return_value = $out[0];
             $out = $out[1];
@@ -591,13 +591,13 @@ class PEAR_RunTest
                     return 'PASSED';
                 }
             }
-        } while (false);
+        } while (FALSE);
 
         if (array_key_exists('FAIL', $section_text)) {
             // we expect a particular failure
             // this is only used for testing PEAR_RunTest
-            $expectf  = isset($section_text['EXPECTF']) ? $wanted_re : null;
-            $faildiff = $this->generate_diff($wanted, $output, null, $expectf);
+            $expectf  = isset($section_text['EXPECTF']) ? $wanted_re : NULL;
+            $faildiff = $this->generate_diff($wanted, $output, NULL, $expectf);
             $faildiff = preg_replace('/\r/', '', $faildiff);
             $wanted   = preg_replace('/\r/', '', trim($section_text['FAIL']));
             if ($faildiff == $wanted) {
@@ -635,8 +635,8 @@ class PEAR_RunTest
 
         // write .diff
         $returns = isset($section_text['RETURNS']) ?
-                        array(trim($section_text['RETURNS']), $return_value) : null;
-        $expectf = isset($section_text['EXPECTF']) ? $wanted_re : null;
+                        array(trim($section_text['RETURNS']), $return_value) : NULL;
+        $expectf = isset($section_text['EXPECTF']) ? $wanted_re : NULL;
         $data = $this->generate_diff($wanted, $output, $returns, $expectf);
         $res  = $this->_writeLog($diff_filename, $data);
         if (PEAR::isError($res)) {
@@ -746,7 +746,7 @@ $text
     function _runSkipIf($section_text, $temp_skipif, $tested, $ini_settings)
     {
         $info = '';
-        $warn = false;
+        $warn = FALSE;
         if (array_key_exists('SKIPIF', $section_text) && trim($section_text['SKIPIF'])) {
             $this->save_text($temp_skipif, $section_text['SKIPIF']);
             $output = $this->system_with_timeout("$this->_php$ini_settings -f \"$temp_skipif\"");
@@ -774,7 +774,7 @@ $text
 
             if (!strncasecmp('warn', $loutput, 4)
                 && preg_match('/^\s*warn\s*(.+)\s*/i', $output, $m)) {
-                $warn = true; /* only if there is a reason */
+                $warn = TRUE; /* only if there is a reason */
                 $info = " (warn: $m[1])";
             }
         }
@@ -805,7 +805,7 @@ $text
         $headers = array();
         $rh = preg_split("/[\n\r]+/", $text);
         foreach ($rh as $line) {
-            if (strpos($line, ':')!== false) {
+            if (strpos($line, ':')!== FALSE) {
                 $line = explode(':', $line, 2);
                 $headers[trim($line[0])] = trim($line[1]);
             }
@@ -873,7 +873,7 @@ $text
         $env['CONTENT_TYPE']    = '';
         $env['CONTENT_LENGTH']  = '';
         if (!empty($section_text['ENV'])) {
-            if (strpos($section_text['ENV'], '{PWD}') !== false) {
+            if (strpos($section_text['ENV'], '{PWD}') !== FALSE) {
                 $section_text['ENV'] = str_replace('{PWD}', dirname($temp_file), $section_text['ENV']);
             }
             foreach (explode("\n", trim($section_text['ENV'])) as $e) {
@@ -934,8 +934,8 @@ $text
                     if (count($post_info) != 2) {
                         return PEAR::raiseError("Invalid POST data in test file: $file");
                     }
-                    $post_info[0] = rawurldecode($post_info[0]);
-                    $post_info[1] = rawurldecode($post_info[1]);
+                    $post_info[0] = rawurlencode($post_info[0]);
+                    $post_info[1] = rawurlencode($post_info[1]);
                     $post[$i] = $post_info;
                 }
                 foreach ($post as $post_info) {

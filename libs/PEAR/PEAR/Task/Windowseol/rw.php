@@ -40,7 +40,7 @@ class PEAR_Task_Windowseol_rw extends PEAR_Task_Windowseol
 
     function validate()
     {
-        return true;
+        return TRUE;
     }
 
     function getName()

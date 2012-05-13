@@ -1,6 +1,7 @@
 <?php
 
 namespace Config;
+
 include_once ("constants.php");
 /**
  * Configuration

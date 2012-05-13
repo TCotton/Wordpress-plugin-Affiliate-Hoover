@@ -6,7 +6,7 @@ use OptionModel;
 /**
  * Form_Controller
  * 
- * @package Wordpess Options API access class
+ * @package Affiliate Hoover
  * @author Andy Walpole
  * @copyright Andy Walpole
  * @link http://andywalpole.me/
@@ -344,7 +344,7 @@ class Form_Controller extends OptionModel\Form_Model {
         if ($database && $dynamic_output && !empty($data[$option_name]) && $form_elms['4'] === TRUE) {
 
             $form = '<fieldset>';
-            $form .= "<legend><span>From the database</span></legend>";
+            $form .= "<legend><h3>Feeds in database:</h3><h4>Add new feeds below</h4></legend>";
             $form .= '<table class="form-table">';
             $form .= '<tbody>';
             echo $form;
@@ -533,13 +533,14 @@ class Form_Controller extends OptionModel\Form_Model {
                         $text .= "<input type=\"hidden\" name=\"{$option_name}[$i][file_name]\" value=\"\">";
                         if ($add_link === TRUE) {
                             $text .= '<span class="description"><p><a href="';
-                            $text .= '?page='.$page_url.'&unique_name='.urlencode($name_value);
+                            $text .= '?page='.$page_url.'&feed-list=total&unique_name='.urlencode($name_value);
                             $text .= '">Edit feed details</a></p>';
 
                             if ($this->check_feed_details_table($name_value) != "") {
 
                                 $text .= '<p><a href="';
-                                $text .= '?page='.$page_url.'&unique_form='.urlencode($name_value);
+                                $text .= '?page='.$page_url.'&feed-list=total&unique_form='.
+                                    urlencode($name_value);
                                 $text .= '">Feed form</a></p>';
 
                             }
@@ -620,7 +621,7 @@ class Form_Controller extends OptionModel\Form_Model {
                     case 'checkbox': // checkbox input
 
                         $form = 'input type="checkbox" ';
-                        $max_value = null;
+                        $max_value = NULL;
                         foreach ($fields_essentials as $key => $value) {
 
                             if ($key === "name") {
@@ -921,7 +922,7 @@ class Form_Controller extends OptionModel\Form_Model {
 
                                     if (!isset($_POST[$option_name][$name])) {
 
-                                        if ($dynamic_output && $max_value != null) {
+                                        if ($dynamic_output && $max_value != NULL) {
 
                                             if ($value === $max_value) {
                                                 $output[] = "<option selected=\"selected\" value=\"$value\">$value</option>";

@@ -346,7 +346,7 @@ Run post-installation scripts in package <package>, if any exist.
 
     function enableExtension($binaries, $type)
     {
-        if (!($phpini = $this->config->get('php_ini', null, 'pear.php.net'))) {
+        if (!($phpini = $this->config->get('php_ini', NULL, 'pear.php.net'))) {
             return PEAR::raiseError('configuration option "php_ini" is not set to php.ini location');
         }
         $ini = $this->_parseIni($phpini);
@@ -368,10 +368,10 @@ Run post-installation scripts in package <package>, if any exist.
             $enable = 'zend_extension' . $debug . $ts;
         }
         foreach ($ini[$search] as $line => $extension) {
-            if (in_array($extension, $binaries, true) || in_array(
-                  $ini['extension_dir'] . DIRECTORY_SEPARATOR . $extension, $binaries, true)) {
+            if (in_array($extension, $binaries, TRUE) || in_array(
+                  $ini['extension_dir'] . DIRECTORY_SEPARATOR . $extension, $binaries, TRUE)) {
                 // already enabled - assume if one is, all are
-                return true;
+                return TRUE;
             }
         }
         if ($line) {
@@ -394,12 +394,12 @@ Run post-installation scripts in package <package>, if any exist.
             fwrite($fp, $line);
         }
         fclose($fp);
-        return true;
+        return TRUE;
     }
 
     function disableExtension($binaries, $type)
     {
-        if (!($phpini = $this->config->get('php_ini', null, 'pear.php.net'))) {
+        if (!($phpini = $this->config->get('php_ini', NULL, 'pear.php.net'))) {
             return PEAR::raiseError('configuration option "php_ini" is not set to php.ini location');
         }
         $ini = $this->_parseIni($phpini);
@@ -420,17 +420,17 @@ Run post-installation scripts in package <package>, if any exist.
             $ts = preg_match('/Thread Safety.+enabled/', $info) ? '_ts' : '';
             $enable = 'zend_extension' . $debug . $ts;
         }
-        $found = false;
+        $found = FALSE;
         foreach ($ini[$search] as $line => $extension) {
-            if (in_array($extension, $binaries, true) || in_array(
-                  $ini['extension_dir'] . DIRECTORY_SEPARATOR . $extension, $binaries, true)) {
-                $found = true;
+            if (in_array($extension, $binaries, TRUE) || in_array(
+                  $ini['extension_dir'] . DIRECTORY_SEPARATOR . $extension, $binaries, TRUE)) {
+                $found = TRUE;
                 break;
             }
         }
         if (!$found) {
             // not enabled
-            return true;
+            return TRUE;
         }
         $fp = @fopen($phpini, 'wb');
         if (!$fp) {
@@ -447,7 +447,7 @@ Run post-installation scripts in package <package>, if any exist.
             fwrite($fp, $line);
         }
         fclose($fp);
-        return true;
+        return TRUE;
     }
 
     function _parseIni($filename)
@@ -546,7 +546,7 @@ Run post-installation scripts in package <package>, if any exist.
             if ($command == 'upgrade' && empty($params)) {
                 return $this->doUpgradeAll($command, $options, $params);
             }
-            $options['upgrade'] = true;
+            $options['upgrade'] = TRUE;
         } else {
             $packages = $params;
         }
@@ -554,7 +554,7 @@ Run post-installation scripts in package <package>, if any exist.
         $instreg = &$reg; // instreg used to check if package is installed
         if (isset($options['packagingroot']) && !isset($options['upgrade'])) {
             $packrootphp_dir = $this->installer->_prependPath(
-                $this->config->get('php_dir', null, 'pear.php.net'),
+                $this->config->get('php_dir', NULL, 'pear.php.net'),
                 $options['packagingroot']);
             $instreg = new PEAR_Registry($packrootphp_dir); // other instreg!
 
@@ -573,7 +573,7 @@ Run post-installation scripts in package <package>, if any exist.
                 continue;
             }
 
-            if (strpos($param, 'channel://') === false && @file_exists($param)) {
+            if (strpos($param, 'channel://') === FALSE && @file_exists($param)) {
                 if (isset($options['force'])) {
                     $otherpackages[] = $param;
                     continue;
@@ -594,7 +594,7 @@ Run post-installation scripts in package <package>, if any exist.
                         $this->ui->outputData('Ignoring installed package ' .
                             $reg->parsedPackageNameToString(
                             array('package' => $pf->getPackage(),
-                                  'channel' => $pf->getChannel()), true));
+                                  'channel' => $pf->getChannel()), TRUE));
                     }
                     continue;
                 }
@@ -629,12 +629,12 @@ Run post-installation scripts in package <package>, if any exist.
                         if ($count > 1) {
                             if ($this->config->get('verbose')) {
                                 $this->ui->outputData('Ignoring installed package ' .
-                                    $reg->parsedPackageNameToString($package, true));
+                                    $reg->parsedPackageNameToString($package, TRUE));
                             }
                             unset($abstractpackages[$i]);
                         } elseif ($count === 1) {
                             // Lets try to upgrade it since it's already installed
-                            $options['upgrade'] = true;
+                            $options['upgrade'] = TRUE;
                         }
                     }
                 }
@@ -653,7 +653,7 @@ Run post-installation scripts in package <package>, if any exist.
                 $c .= ' in channel "' . $options['channel'] . '"';
             }
             $this->ui->outputData('Nothing to ' . $command . $c);
-            return true;
+            return TRUE;
         }
 
         $this->downloader = &$this->getDownloader($this->ui, $options, $this->config);
@@ -668,7 +668,7 @@ Run post-installation scripts in package <package>, if any exist.
             $err = array();
             $err['data'] = array();
             foreach ($errors as $error) {
-                if ($error !== null) {
+                if ($error !== NULL) {
                     $err['data'][] = array($error);
                 }
             }
@@ -692,14 +692,14 @@ Run post-installation scripts in package <package>, if any exist.
                 $data['data'][] = array($reg->parsedPackageNameToString($package->getParsedPackage()));
             }
             $this->ui->outputData($data, 'pretend');
-            return true;
+            return TRUE;
         }
 
         $this->installer->setOptions($options);
         $this->installer->sortPackagesForInstall($downloaded);
         if (PEAR::isError($err = $this->installer->setDownloadedPackages($downloaded))) {
             $this->raiseError($err->getMessage());
-            return true;
+            return TRUE;
         }
 
         $binaries = $extrainfo = array();
@@ -839,7 +839,7 @@ Run post-installation scripts in package <package>, if any exist.
                         ': To install optional features use "pear install ' .
                         $reg->parsedPackageNameToString(
                             array('package' => $param->getPackage(),
-                                  'channel' => $param->getChannel()), true) .
+                                  'channel' => $param->getChannel()), TRUE) .
                               '#featurename"';
                 }
             }
@@ -850,7 +850,7 @@ Run post-installation scripts in package <package>, if any exist.
                 $pkg->setConfig($this->config);
                 if ($list = $pkg->listPostinstallScripts()) {
                     $pn = $reg->parsedPackageNameToString(array('channel' =>
-                       $param->getChannel(), 'package' => $param->getPackage()), true);
+                       $param->getChannel(), 'package' => $param->getPackage()), TRUE);
                     $extrainfo[] = $pn . ' has post-install scripts:';
                     foreach ($list as $file) {
                         $extrainfo[] = $file;
@@ -868,7 +868,7 @@ Run post-installation scripts in package <package>, if any exist.
             }
         }
 
-        return true;
+        return TRUE;
     }
 
     // }}}
@@ -941,17 +941,17 @@ Run post-installation scripts in package <package>, if any exist.
             $package = $parsed['package'];
             $channel = $parsed['channel'];
             $info = &$reg->getPackage($package, $channel);
-            if ($info === null &&
+            if ($info === NULL &&
                  ($channel == 'pear.php.net' || $channel == 'pecl.php.net')) {
                 // make sure this isn't a package that has flipped from pear to pecl but
                 // used a package.xml 1.0
                 $testc = ($channel == 'pear.php.net') ? 'pecl.php.net' : 'pear.php.net';
                 $info = &$reg->getPackage($package, $testc);
-                if ($info !== null) {
+                if ($info !== NULL) {
                     $channel = $testc;
                 }
             }
-            if ($info === null) {
+            if ($info === NULL) {
                 $badparams[] = $pkg;
             } else {
                 $newparams[] = &$info;
@@ -959,7 +959,7 @@ Run post-installation scripts in package <package>, if any exist.
                 if ($installedbinary = $info->getInstalledBinary()) {
                     $this->ui->log('adding binary package ' .
                         $reg->parsedPackageNameToString(array('channel' => $channel,
-                            'package' => $installedbinary), true));
+                            'package' => $installedbinary), TRUE));
                     $newparams[] = &$reg->getPackage($installedbinary, $channel);
                 }
                 // add the contents of a dependency group to the list of installed packages
@@ -979,7 +979,7 @@ Run post-installation scripts in package <package>, if any exist.
         $err = $this->installer->sortPackagesForUninstall($newparams);
         if (PEAR::isError($err)) {
             $this->ui->outputData($err->getMessage(), $command);
-            return true;
+            return TRUE;
         }
         $params = $newparams;
         // twist this to use it to check on whether dependent packages are also being uninstalled
@@ -1077,7 +1077,7 @@ Run post-installation scripts in package <package>, if any exist.
             }
         }
 
-        return true;
+        return TRUE;
     }
 
     // }}}
@@ -1093,10 +1093,10 @@ Run post-installation scripts in package <package>, if any exist.
     function doBundle($command, $options, $params)
     {
         $opts = array(
-            'force'        => true,
-            'nodeps'       => true,
-            'soft'         => true,
-            'downloadonly' => true
+            'force'        => TRUE,
+            'nodeps'       => TRUE,
+            'soft'         => TRUE,
+            'downloadonly' => TRUE
         );
         $downloader = &$this->getDownloader($this->ui, $opts, $this->config);
         $reg = &$this->config->getRegistry();
@@ -1168,7 +1168,7 @@ Run post-installation scripts in package <package>, if any exist.
         $package->setConfig($this->config);
         $package->runPostinstallScripts();
         $this->ui->outputData('Install scripts complete', $command);
-        return true;
+        return TRUE;
     }
 
     /**
@@ -1203,20 +1203,20 @@ Run post-installation scripts in package <package>, if any exist.
                     return $this->raiseError($chan);
                 }
 
-                $base2 = false;
-                $preferred_mirror = $this->config->get('preferred_mirror', null, $channel);
+                $base2 = FALSE;
+                $preferred_mirror = $this->config->get('preferred_mirror', NULL, $channel);
                 if ($chan->supportsREST($preferred_mirror) &&
                     (
                        //($base2 = $chan->getBaseURL('REST1.4', $preferred_mirror)) ||
                        ($base  = $chan->getBaseURL('REST1.0', $preferred_mirror))
                     )
                 ) {
-                    $dorest = true;
+                    $dorest = TRUE;
                 }
 
                 PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
                 if (!isset($package['state'])) {
-                    $state = $this->config->get('preferred_state', null, $channel);
+                    $state = $this->config->get('preferred_state', NULL, $channel);
                 } else {
                     $state = $package['state'];
                 }

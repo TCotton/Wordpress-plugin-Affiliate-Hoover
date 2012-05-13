@@ -139,7 +139,7 @@ installed package.'
                 return PEAR::raiseError($errors[0]);
             }
 
-            return true;
+            return TRUE;
         }
 
         if (count($params) === 1) {
@@ -156,13 +156,13 @@ installed package.'
             $channel = $this->config->get('default_channel');
         }
 
-        $installed = $reg->packageInfo(null, null, $channel);
+        $installed = $reg->packageInfo(NULL, NULL, $channel);
         usort($installed, array(&$this, '_sortinfo'));
 
         $data = array(
             'caption' => 'Installed packages, channel ' .
                 $channel . ':',
-            'border' => true,
+            'border' => TRUE,
             'headline' => array('Package', 'Version', 'State'),
             'channel' => $channel,
             );
@@ -179,10 +179,10 @@ installed package.'
                                         $package['package'] : $package['name'], $channel);
             if ($channelinfo) {
                 $packageinfo = array($pobj->getChannel(), $pobj->getPackage(), $pobj->getVersion(),
-                                    $pobj->getState() ? $pobj->getState() : null);
+                                    $pobj->getState() ? $pobj->getState() : NULL);
             } else {
                 $packageinfo = array($pobj->getPackage(), $pobj->getVersion(),
-                                    $pobj->getState() ? $pobj->getState() : null);
+                                    $pobj->getState() ? $pobj->getState() : NULL);
             }
             $data['data'][] = $packageinfo;
         }
@@ -194,7 +194,7 @@ installed package.'
                 $data = array(
                     'caption' => 'Installed packages, channel ' .
                         $channel . ':',
-                    'border' => true,
+                    'border' => TRUE,
                     'channel' => $channel,
                     'data' => array(array('(no packages installed)')),
                 );
@@ -202,7 +202,7 @@ installed package.'
         }
 
         $this->ui->outputData($data, $command);
-        return true;
+        return TRUE;
     }
 
     function doListAll($command, $options, $params)
@@ -211,12 +211,12 @@ installed package.'
         // list --channelinfo, which gives identical
         // output for list and list --allchannels.
         $reg = &$this->config->getRegistry();
-        $installed = $reg->packageInfo(null, null, null);
+        $installed = $reg->packageInfo(NULL, NULL, NULL);
         foreach ($installed as $channel => $packages) {
             usort($packages, array($this, '_sortinfo'));
             $data = array(
                 'caption'  => 'Installed packages, channel ' . $channel . ':',
-                'border'   => true,
+                'border'   => TRUE,
                 'headline' => array('Package', 'Version', 'State'),
                 'channel'  => $channel
             );
@@ -225,7 +225,7 @@ installed package.'
                 $p = isset($package['package']) ? $package['package'] : $package['name'];
                 $pobj = $reg->getPackage($p, $channel);
                 $data['data'][] = array($pobj->getPackage(), $pobj->getVersion(),
-                                        $pobj->getState() ? $pobj->getState() : null);
+                                        $pobj->getState() ? $pobj->getState() : NULL);
             }
 
             // Adds a blank line after each section
@@ -234,14 +234,14 @@ installed package.'
             if (count($packages) === 0) {
                 $data = array(
                     'caption' => 'Installed packages, channel ' . $channel . ':',
-                    'border' => true,
+                    'border' => TRUE,
                     'data' => array(array('(no packages installed)'), array()),
                     'channel' => $channel
                     );
             }
             $this->ui->outputData($data, $command);
         }
-        return true;
+        return TRUE;
     }
 
     function doFileList($command, $options, $params)
@@ -251,7 +251,7 @@ installed package.'
         }
 
         $reg = &$this->config->getRegistry();
-        $fp = false;
+        $fp = FALSE;
         if (!is_dir($params[0]) && (file_exists($params[0]) || $fp = @fopen($params[0], 'r'))) {
             if ($fp) {
                 fclose($fp);
@@ -266,7 +266,7 @@ installed package.'
             $info = &$pkg->fromAnyFile($params[0], PEAR_VALIDATE_NORMAL);
             PEAR::staticPopErrorHandling();
             $headings = array('Package File', 'Install Path');
-            $installed = false;
+            $installed = FALSE;
         } else {
             PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
             $parsed = $reg->parsePackageName($params[0], $this->config->get('default_channel'));
@@ -277,14 +277,14 @@ installed package.'
 
             $info = &$reg->getPackage($parsed['package'], $parsed['channel']);
             $headings = array('Type', 'Install Path');
-            $installed = true;
+            $installed = TRUE;
         }
 
         if (PEAR::isError($info)) {
             return $this->raiseError($info);
         }
 
-        if ($info === null) {
+        if ($info === NULL) {
             return $this->raiseError("`$params[0]' not installed");
         }
 
@@ -298,7 +298,7 @@ installed package.'
 
         $data = array(
             'caption' => $caption,
-            'border' => true,
+            'border' => TRUE,
             'headline' => $headings);
         if ($info->getPackagexmlVersion() == '1.0' || $installed) {
             foreach ($list as $file => $att) {
@@ -366,7 +366,7 @@ installed package.'
         }
 
         $this->ui->outputData($data, $command);
-        return true;
+        return TRUE;
     }
 
     function doShellTest($command, $options, $params)
@@ -422,7 +422,7 @@ installed package.'
             return $this->raiseError('pear info expects 1 parameter');
         }
 
-        $info = $fp = false;
+        $info = $fp = FALSE;
         $reg = &$this->config->getRegistry();
         if (is_file($params[0]) && !is_dir($params[0]) &&
             (file_exists($params[0]) || $fp = @fopen($params[0], 'r'))
@@ -454,7 +454,7 @@ installed package.'
             }
 
             if ($obj->getPackagexmlVersion() != '1.0') {
-                return $this->_doInfo2($command, $options, $params, $obj, false);
+                return $this->_doInfo2($command, $options, $params, $obj, FALSE);
             }
 
             $info = $obj->toArray();
@@ -466,10 +466,10 @@ installed package.'
 
             $package = $parsed['package'];
             $channel = $parsed['channel'];
-            $info = $reg->packageInfo($package, null, $channel);
+            $info = $reg->packageInfo($package, NULL, $channel);
             if (isset($info['old'])) {
                 $obj = $reg->getPackage($package, $channel);
-                return $this->_doInfo2($command, $options, $params, $obj, true);
+                return $this->_doInfo2($command, $options, $params, $obj, TRUE);
             }
         }
 
@@ -585,7 +585,7 @@ installed package.'
                     }
                     case 'configure_options' : {
                         foreach ($info[$key] as $i => $p) {
-                            $info[$key][$i] = array_map(null, array_keys($p), array_values($p));
+                            $info[$key][$i] = array_map(NULL, array_keys($p), array_values($p));
                             $info[$key][$i] = array_map(create_function('$a',
                                 'return join(" = ",$a);'), $info[$key][$i]);
                             $info[$key][$i] = implode(', ', $info[$key][$i]);
@@ -618,7 +618,7 @@ installed package.'
         $caption = 'About ' . $info['package'] . '-' . $info['version'];
         $data = array(
             'caption' => $caption,
-            'border' => true);
+            'border' => TRUE);
         foreach ($info as $key => $value) {
             $key = ucwords(trim(str_replace('_', ' ', $key)));
             $data['data'][] = array($key, $value);
@@ -638,7 +638,7 @@ installed package.'
             $obj->getVersion();
         $data = array(
             'caption' => $caption,
-            'border' => true);
+            'border' => TRUE);
         switch ($obj->getPackageType()) {
             case 'php' :
                 $release = 'PEAR-style PHP-based Package';
@@ -755,7 +755,7 @@ installed package.'
                 }
 
                 if (isset($roledata['package'])) {
-                    $rolepackage = $reg->parsedPackageNameToString($roledata, true);
+                    $rolepackage = $reg->parsedPackageNameToString($roledata, TRUE);
                 } else {
                     $rolepackage = $roledata['uri'];
                 }
@@ -777,7 +777,7 @@ installed package.'
                 }
 
                 if (isset($taskdata['package'])) {
-                    $taskpackage = $reg->parsedPackageNameToString($taskdata, true);
+                    $taskpackage = $reg->parsedPackageNameToString($taskdata, TRUE);
                 } else {
                     $taskpackage = $taskdata['uri'];
                 }
@@ -900,7 +900,7 @@ installed package.'
                             $info['Not Compatible with'] .= '=> except ';
                         }
                        $info['Not Compatible with'] .= 'Package ' .
-                            $reg->parsedPackageNameToString($package, true);
+                            $reg->parsedPackageNameToString($package, TRUE);
                         $info['Not Compatible with'] .= "\n  Versions " . $package['exclude'];
                     }
                 }

@@ -62,7 +62,7 @@ class PEAR_Task_Replace extends PEAR_Task_Common
             }
         } elseif ($xml['attribs']['type'] == 'php-const') {
             if (defined($xml['attribs']['to'])) {
-                return true;
+                return TRUE;
             } else {
                 return array(PEAR_TASK_ERROR_WRONG_ATTRIB_VALUE, 'to', $xml['attribs']['to'],
                     array('valid PHP constant'));
@@ -73,7 +73,7 @@ class PEAR_Task_Replace extends PEAR_Task_Common
                     'release_notes', 'license', 'release-license', 'license-uri',
                     'version', 'api-version', 'state', 'api-state', 'release_date',
                     'date', 'time'))) {
-                return true;
+                return TRUE;
             } else {
                 return array(PEAR_TASK_ERROR_WRONG_ATTRIB_VALUE, 'to', $xml['attribs']['to'],
                     array('name', 'summary', 'channel', 'notes', 'extends', 'description',
@@ -85,7 +85,7 @@ class PEAR_Task_Replace extends PEAR_Task_Common
             return array(PEAR_TASK_ERROR_WRONG_ATTRIB_VALUE, 'type', $xml['attribs']['type'],
                 array('pear-config', 'package-info', 'php-const'));
         }
-        return true;
+        return TRUE;
     }
 
     /**
@@ -105,7 +105,7 @@ class PEAR_Task_Replace extends PEAR_Task_Common
      * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2
      * @param string file contents
      * @param string the eventual final file location (informational only)
-     * @return string|false|PEAR_Error false to skip this file, PEAR_Error to fail
+     * @return string|FALSE|PEAR_Error FALSE to skip this file, PEAR_Error to fail
      *         (use $this->throwError), otherwise return the new contents
      */
     function startSession($pkg, $contents, $dest)
@@ -116,7 +116,7 @@ class PEAR_Task_Replace extends PEAR_Task_Common
             $to = '';
             if ($a['type'] == 'pear-config') {
                 if ($this->installphase == PEAR_TASK_PACKAGE) {
-                    return false;
+                    return FALSE;
                 }
                 if ($a['to'] == 'master_server') {
                     $chan = $this->registry->getChannel($pkg->getChannel());
@@ -124,43 +124,43 @@ class PEAR_Task_Replace extends PEAR_Task_Common
                         $to = $chan->getServer();
                     } else {
                         $this->logger->log(0, "$dest: invalid pear-config replacement: $a[to]");
-                        return false;
+                        return FALSE;
                     }
                 } else {
                     if ($this->config->isDefinedLayer('ftp')) {
                         // try the remote config file first
                         $to = $this->config->get($a['to'], 'ftp', $pkg->getChannel());
-                        if (is_null($to)) {
+                        if (is_NULL($to)) {
                             // then default to local
-                            $to = $this->config->get($a['to'], null, $pkg->getChannel());
+                            $to = $this->config->get($a['to'], NULL, $pkg->getChannel());
                         }
                     } else {
-                        $to = $this->config->get($a['to'], null, $pkg->getChannel());
+                        $to = $this->config->get($a['to'], NULL, $pkg->getChannel());
                     }
                 }
-                if (is_null($to)) {
+                if (is_NULL($to)) {
                     $this->logger->log(0, "$dest: invalid pear-config replacement: $a[to]");
-                    return false;
+                    return FALSE;
                 }
             } elseif ($a['type'] == 'php-const') {
                 if ($this->installphase == PEAR_TASK_PACKAGE) {
-                    return false;
+                    return FALSE;
                 }
                 if (defined($a['to'])) {
                     $to = constant($a['to']);
                 } else {
                     $this->logger->log(0, "$dest: invalid php-const replacement: $a[to]");
-                    return false;
+                    return FALSE;
                 }
             } else {
                 if ($t = $pkg->packageInfo($a['to'])) {
                     $to = $t;
                 } else {
                     $this->logger->log(0, "$dest: invalid package-info replacement: $a[to]");
-                    return false;
+                    return FALSE;
                 }
             }
-            if (!is_null($to)) {
+            if (!is_NULL($to)) {
                 $subst_from[] = $a['from'];
                 $subst_to[] = $to;
             }

@@ -239,9 +239,9 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
         $run->tests_count = $tests_count;
 
         if (isset($options['coverage']) && extension_loaded('xdebug')){
-            $run->xdebug_loaded = true;
+            $run->xdebug_loaded = TRUE;
         } else {
-            $run->xdebug_loaded = false;
+            $run->xdebug_loaded = FALSE;
         }
 
         $j = $i = 1;
@@ -332,6 +332,6 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
             }
         }
 
-        return true;
+        return TRUE;
     }
 }

@@ -140,9 +140,9 @@ and uninstall).
 
     function doConfigShow($command, $options, $params)
     {
-        $layer = null;
+        $layer = NULL;
         if (is_array($params)) {
-            $layer = isset($params[0]) ? $params[0] : null;
+            $layer = isset($params[0]) ? $params[0] : NULL;
         }
 
         // $params[0] -> the layer
@@ -168,10 +168,10 @@ and uninstall).
                 $value = '********';
             }
 
-            if ($value === false) {
-                $value = 'false';
-            } elseif ($value === true) {
-                $value = 'true';
+            if ($value === FALSE) {
+                $value = 'FALSE';
+            } elseif ($value === TRUE) {
+                $value = 'TRUE';
             }
 
             $data['data'][$this->config->getGroup($key)][] = array($this->config->getPrompt($key) , $key, $value);
@@ -182,7 +182,7 @@ and uninstall).
         }
 
         $this->ui->outputData($data, $command);
-        return true;
+        return TRUE;
     }
 
     function doConfigGet($command, $options, $params)
@@ -191,7 +191,7 @@ and uninstall).
         switch ($args_cnt) {
             case 1:
                 $config_key = $params[0];
-                $layer = null;
+                $layer = NULL;
                 break;
             case 2:
                 $config_key = $params[0];
@@ -213,7 +213,7 @@ and uninstall).
 
         $channel = $reg->channelName($channel);
         $this->ui->outputData($this->config->get($config_key, $layer, $channel), $command);
-        return true;
+        return TRUE;
     }
 
     function doConfigSet($command, $options, $params)
@@ -277,7 +277,7 @@ and uninstall).
         }
 
         $this->ui->outputData('config-set succeeded', $command);
-        return true;
+        return TRUE;
     }
 
     function doConfigHelp($command, $options, $params)
@@ -288,7 +288,7 @@ and uninstall).
 
         $data['caption']  = "Config help" . ((count($params) == 1) ? " for $params[0]" : '');
         $data['headline'] = array('Name', 'Type', 'Description');
-        $data['border']   = true;
+        $data['border']   = TRUE;
         foreach ($params as $name) {
             $type = $this->config->getType($name);
             $docs = $this->config->getDocs($name);
@@ -338,7 +338,7 @@ and uninstall).
         }
 
         $params[1] = realpath($params[1]);
-        $config = &new PEAR_Config($params[1], '#no#system#config#', false, false);
+        $config = &new PEAR_Config($params[1], '#no#system#config#', FALSE, FALSE);
         if ($root{strlen($root) - 1} == '/') {
             $root = substr($root, 0, strlen($root) - 1);
         }
@@ -375,10 +375,10 @@ and uninstall).
                 $value = '********';
             }
 
-            if ($value === false) {
-                $value = 'false';
-            } elseif ($value === true) {
-                $value = 'true';
+            if ($value === FALSE) {
+                $value = 'FALSE';
+            } elseif ($value === TRUE) {
+                $value = 'TRUE';
             }
             $data['data'][$config->getGroup($key)][] =
                 array($config->getPrompt($key) , $key, $value);
@@ -391,16 +391,16 @@ and uninstall).
         }
 
         $this->ui->outputData($data, 'config-show');
-        return true;
+        return TRUE;
     }
 
     /**
      * Checks if a layer is defined or not
      *
      * @param string $layer The layer to search for
-     * @return mixed False on no error or the error message
+     * @return mixed FALSE on no error or the error message
      */
-    function _checkLayer($layer = null)
+    function _checkLayer($layer = NULL)
     {
         if (!empty($layer) && $layer != 'default') {
             $layers = $this->config->getLayers();
@@ -409,6 +409,6 @@ and uninstall).
             }
         }
 
-        return false;
+        return FALSE;
     }
 }

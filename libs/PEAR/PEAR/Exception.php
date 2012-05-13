@@ -115,14 +115,14 @@ class PEAR_Exception extends Exception
      *  - PEAR_Exception(string $message, array $causes);
      *  - PEAR_Exception(string $message, array $causes, int $code);
      * @param string exception message
-     * @param int|Exception|PEAR_Error|array|null exception cause
-     * @param int|null exception code or null
+     * @param int|Exception|PEAR_Error|array|NULL exception cause
+     * @param int|NULL exception code or NULL
      */
-    public function __construct($message, $p2 = null, $p3 = null)
+    public function __construct($message, $p2 = NULL, $p3 = NULL)
     {
         if (is_int($p2)) {
             $code = $p2;
-            $this->cause = null;
+            $this->cause = NULL;
         } elseif (is_object($p2) || is_array($p2)) {
             // using is_object allows both Exception and PEAR_Error
             if (is_object($p2) && !($p2 instanceof Exception)) {
@@ -138,8 +138,8 @@ class PEAR_Exception extends Exception
             }
             $this->cause = $p2;
         } else {
-            $code = null;
-            $this->cause = null;
+            $code = NULL;
+            $this->cause = NULL;
         }
         parent::__construct($message, $code);
         $this->signal();
@@ -348,10 +348,10 @@ class PEAR_Exception extends Exception
             $args = array();
             if (!empty($v['args'])) {
                 foreach ($v['args'] as $arg) {
-                    if (is_null($arg)) $args[] = 'null';
+                    if (is_NULL($arg)) $args[] = 'NULL';
                     elseif (is_array($arg)) $args[] = 'Array';
                     elseif (is_object($arg)) $args[] = 'Object('.get_class($arg).')';
-                    elseif (is_bool($arg)) $args[] = $arg ? 'true' : 'false';
+                    elseif (is_bool($arg)) $args[] = $arg ? 'TRUE' : 'FALSE';
                     elseif (is_int($arg) || is_double($arg)) $args[] = $arg;
                     else {
                         $arg = (string)$arg;

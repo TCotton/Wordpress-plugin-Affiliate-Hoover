@@ -69,11 +69,11 @@ class PEAR_Task_Postinstallscript extends PEAR_Task_Common
             return array(PEAR_TASK_ERROR_INVALID, 'Post-install script "' .
                 $fileXml['name'] . '" is not valid: ' .
                 $file->getMessage());
-        } elseif ($file === null) {
+        } elseif ($file === NULL) {
             return array(PEAR_TASK_ERROR_INVALID, 'Post-install script "' .
                 $fileXml['name'] . '" could not be retrieved for processing!');
         } else {
-            $analysis = $pkg->analyzeSourceCode($file, true);
+            $analysis = $pkg->analyzeSourceCode($file, TRUE);
             if (!$analysis) {
                 PEAR::popErrorHandling();
                 $warnings = '';
@@ -219,14 +219,14 @@ class PEAR_Task_Postinstallscript extends PEAR_Task_Common
                 }
             }
         }
-        return true;
+        return TRUE;
     }
 
     /**
      * Initialize a task instance with the parameters
      * @param array raw, parsed xml
      * @param array attributes from the <file> tag containing this task
-     * @param string|null last installed version of this package, if any (useful for upgrades)
+     * @param string|NULL last installed version of this package, if any (useful for upgrades)
      */
     function init($xml, $fileattribs, $lastversion)
     {
@@ -242,9 +242,9 @@ class PEAR_Task_Postinstallscript extends PEAR_Task_Common
      *
      * @access private
      */
-    function _stripNamespace($params = null)
+    function _stripNamespace($params = NULL)
     {
-        if ($params === null) {
+        if ($params === NULL) {
             $params = array();
             if (!is_array($this->_params)) {
                 return;
@@ -273,13 +273,13 @@ class PEAR_Task_Postinstallscript extends PEAR_Task_Common
      * because this task is handled post-installation
      * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2
      * @param string file name
-     * @return bool|PEAR_Error false to skip this file, PEAR_Error to fail
+     * @return bool|PEAR_Error FALSE to skip this file, PEAR_Error to fail
      *         (use $this->throwError)
      */
     function startSession($pkg, $contents)
     {
         if ($this->installphase != PEAR_TASK_INSTALL) {
-            return false;
+            return FALSE;
         }
         // remove the tasks: namespace if present
         $this->_pkg = $pkg;
@@ -305,7 +305,7 @@ class PEAR_Task_Postinstallscript extends PEAR_Task_Common
                 '->init()" failed');
         }
         $this->_contents = $contents;
-        return true;
+        return TRUE;
     }
 
     /**

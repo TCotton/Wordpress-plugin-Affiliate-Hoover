@@ -40,7 +40,7 @@ class PEAR_PackageFile_Parser_v1
      */
     function fromV2($packagefile)
     {
-        $info = $packagefile->getArray(true);
+        $info = $packagefile->getArray(TRUE);
         $ret = new PEAR_PackageFile_v1;
         $ret->fromArray($info['old']);
     }
@@ -60,7 +60,7 @@ class PEAR_PackageFile_Parser_v1
      * @param string contents of package.xml file, version 1.0
      * @return bool success of parsing
      */
-    function &parse($data, $file, $archive = false)
+    function &parse($data, $file, $archive = FALSE)
     {
         if (!extension_loaded('xml')) {
             return PEAR::raiseError('Cannot create xml parser for parsing package.xml, no xml extension');
@@ -73,19 +73,19 @@ class PEAR_PackageFile_Parser_v1
         xml_set_object($xp, $this);
         xml_set_element_handler($xp, '_element_start_1_0', '_element_end_1_0');
         xml_set_character_data_handler($xp, '_pkginfo_cdata_1_0');
-        xml_parser_set_option($xp, XML_OPTION_CASE_FOLDING, false);
+        xml_parser_set_option($xp, XML_OPTION_CASE_FOLDING, FALSE);
 
         $this->element_stack = array();
         $this->_packageInfo = array('provides' => array());
-        $this->current_element = false;
+        $this->current_element = FALSE;
         unset($this->dir_install);
         $this->_packageInfo['filelist'] = array();
         $this->filelist =& $this->_packageInfo['filelist'];
         $this->dir_names = array();
-        $this->in_changelog = false;
+        $this->in_changelog = FALSE;
         $this->d_i = 0;
         $this->cdata = '';
-        $this->_isValid = true;
+        $this->_isValid = TRUE;
 
         if (!xml_parse($xp, $data, 1)) {
             $code = xml_get_error_code($xp);
@@ -230,7 +230,7 @@ class PEAR_PackageFile_Parser_v1
             case 'changelog':
                 $this->_packageInfo['changelog'] = array();
                 $this->c_i = 0; // changelog array index
-                $this->in_changelog = true;
+                $this->in_changelog = TRUE;
                 break;
             case 'release':
                 if ($this->in_changelog) {
@@ -249,7 +249,7 @@ class PEAR_PackageFile_Parser_v1
                 // dependencies array index
                 if (!$this->in_changelog) {
                     $this->d_i++;
-                    isset($attribs['type']) ? ($attribs['type'] = strtolower($attribs['type'])) : false;
+                    isset($attribs['type']) ? ($attribs['type'] = strtolower($attribs['type'])) : FALSE;
                     $this->_packageInfo['release_deps'][$this->d_i] = $attribs;
                 }
                 break;
@@ -267,7 +267,7 @@ class PEAR_PackageFile_Parser_v1
                 if (empty($attribs['type']) || empty($attribs['name'])) {
                     break;
                 }
-                $attribs['explicit'] = true;
+                $attribs['explicit'] = TRUE;
                 $this->_packageInfo['provides']["$attribs[type];$attribs[name]"] = $attribs;
                 break;
             case 'package' :
@@ -424,7 +424,7 @@ class PEAR_PackageFile_Parser_v1
                 }
                 break;
             case 'changelog':
-                $this->in_changelog = false;
+                $this->in_changelog = FALSE;
                 break;
         }
         array_pop($this->element_stack);

@@ -25,7 +25,7 @@ class PEAR5
         }
 
         if (!array_key_exists($var, $properties[$class])) {
-            $properties[$class][$var] = null;
+            $properties[$class][$var] = NULL;
         }
 
         return $properties[$class][$var];

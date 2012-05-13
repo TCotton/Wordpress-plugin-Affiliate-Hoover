@@ -43,9 +43,9 @@ class PEAR_REST_11
         $this->_rest = &new PEAR_REST($config, $options);
     }
 
-    function listAll($base, $dostable, $basic = true, $searchpackage = false, $searchsummary = false, $channel = false)
+    function listAll($base, $dostable, $basic = TRUE, $searchpackage = FALSE, $searchsummary = FALSE, $channel = FALSE)
     {
-        $categorylist = $this->_rest->retrieveData($base . 'c/categories.xml', false, false, $channel);
+        $categorylist = $this->_rest->retrieveData($base . 'c/categories.xml', FALSE, FALSE, $channel);
         if (PEAR::isError($categorylist)) {
             return $categorylist;
         }
@@ -60,7 +60,7 @@ class PEAR_REST_11
         foreach ($categorylist['c'] as $progress => $category) {
             $category = $category['_content'];
             $packagesinfo = $this->_rest->retrieveData($base .
-                'c/' . urlencode($category) . '/packagesinfo.xml', false, false, $channel);
+                'c/' . urlencode($category) . '/packagesinfo.xml', FALSE, FALSE, $channel);
 
             if (PEAR::isError($packagesinfo)) {
                 continue;
@@ -81,7 +81,7 @@ class PEAR_REST_11
 
                 $info     = $packageinfo['p'];
                 $package  = $info['n'];
-                $releases = isset($packageinfo['a']) ? $packageinfo['a'] : false;
+                $releases = isset($packageinfo['a']) ? $packageinfo['a'] : FALSE;
                 unset($latest);
                 unset($unstable);
                 unset($stable);
@@ -128,7 +128,7 @@ class PEAR_REST_11
 
                 if ($basic) { // remote-list command
                     if (!isset($latest)) {
-                        $latest = false;
+                        $latest = FALSE;
                     }
 
                     if ($dostable) {
@@ -147,7 +147,7 @@ class PEAR_REST_11
 
                 // list-all command
                 if (!isset($unstable)) {
-                    $unstable = false;
+                    $unstable = FALSE;
                     $state = 'stable';
                     if (isset($stable)) {
                         $latest = $unstable = $stable;
@@ -157,7 +157,7 @@ class PEAR_REST_11
                 }
 
                 if (!isset($latest)) {
-                    $latest = false;
+                    $latest = FALSE;
                 }
 
                 $deps = array();
@@ -168,7 +168,7 @@ class PEAR_REST_11
                         $packageinfo['deps'] = array($packageinfo['deps']);
                     }
 
-                    $d = false;
+                    $d = FALSE;
                     foreach ($packageinfo['deps'] as $dep) {
                         if ($dep['v'] == $latest) {
                             $d = unserialize($dep['d']);
@@ -224,9 +224,9 @@ class PEAR_REST_11
      * @param string $base base URL of the server
      * @return array of categorynames
      */
-    function listCategories($base, $channel = false)
+    function listCategories($base, $channel = FALSE)
     {
-        $categorylist = $this->_rest->retrieveData($base . 'c/categories.xml', false, false, $channel);
+        $categorylist = $this->_rest->retrieveData($base . 'c/categories.xml', FALSE, FALSE, $channel);
         if (PEAR::isError($categorylist)) {
             return $categorylist;
         }
@@ -251,9 +251,9 @@ class PEAR_REST_11
      * @param boolean $info also download full package info
      * @return array of packagenames
      */
-    function listCategory($base, $category, $info = false, $channel = false)
+    function listCategory($base, $category, $info = FALSE, $channel = FALSE)
     {
-        if ($info == false) {
+        if ($info == FALSE) {
             $url = '%s'.'c/%s/packages.xml';
         } else {
             $url = '%s'.'c/%s/packagesinfo.xml';
@@ -263,7 +263,7 @@ class PEAR_REST_11
                     urlencode($category));
 
         // gives '404 Not Found' error when category doesn't exist
-        $packagelist = $this->_rest->retrieveData($url, false, false, $channel);
+        $packagelist = $this->_rest->retrieveData($url, FALSE, FALSE, $channel);
         if (PEAR::isError($packagelist)) {
             return $packagelist;
         }
@@ -271,7 +271,7 @@ class PEAR_REST_11
             return array();
         }
 
-        if ($info == false) {
+        if ($info == FALSE) {
             if (!isset($packagelist['p'])) {
                 return array();
             }
@@ -284,7 +284,7 @@ class PEAR_REST_11
             return $packagelist;
         }
 
-        // info == true
+        // info == TRUE
         if (!isset($packagelist['pi'])) {
             return array();
         }
@@ -323,14 +323,14 @@ class PEAR_REST_11
      *
      * @param string Release state
      * @param boolean Determines whether to include $state in the list
-     * @return false|array False if $state is not a valid release state
+     * @return FALSE|array FALSE if $state is not a valid release state
      */
-    function betterStates($state, $include = false)
+    function betterStates($state, $include = FALSE)
     {
         static $states = array('snapshot', 'devel', 'alpha', 'beta', 'stable');
         $i = array_search($state, $states);
-        if ($i === false) {
-            return false;
+        if ($i === FALSE) {
+            return FALSE;
         }
         if ($include) {
             $i--;

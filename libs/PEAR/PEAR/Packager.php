@@ -42,7 +42,7 @@ class PEAR_Packager extends PEAR_Common
      */
     var $_registry;
 
-    function package($pkgfile = null, $compress = true, $pkg2 = null)
+    function package($pkgfile = NULL, $compress = TRUE, $pkg2 = NULL)
     {
         // {{{ validate supplied package.xml file
         if (empty($pkgfile)) {
@@ -125,7 +125,7 @@ class PEAR_Packager extends PEAR_Common
 
         if ($pkg2) {
             $other->setLogger($this);
-            $a = false;
+            $a = FALSE;
             if (!$other->validate(PEAR_VALIDATE_NORMAL) || $a = !$main->isEquivalent($other)) {
                 foreach ($other->getValidationWarnings() as $warning) {
                     $this->log(0, 'Error: ' . $warning['message']);

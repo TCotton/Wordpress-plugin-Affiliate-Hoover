@@ -171,7 +171,7 @@ parameter.
         }
         $rest = new PEAR_REST($this->config);
         PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-        $mirror = $this->config->get('preferred_mirror', null,
+        $mirror = $this->config->get('preferred_mirror', NULL,
                                      $channel);
         $a = $rest->downloadHttp('http://' . $channel .
             '/channel.xml', $chan->lastModified());
@@ -222,7 +222,7 @@ parameter.
             return $this->raiseError('No remote package "' . $package . '" was found');
         }
 
-        $installed = $reg->packageInfo($info['name'], null, $channel);
+        $installed = $reg->packageInfo($info['name'], NULL, $channel);
         $info['installed'] = $installed['version'] ? $installed['version'] : '- no -';
         if (is_array($info['installed'])) {
             $info['installed'] = $info['installed']['release'];
@@ -231,7 +231,7 @@ parameter.
         $this->ui->outputData($info, $command);
         $this->config->set('default_channel', $savechannel);
 
-        return true;
+        return TRUE;
     }
 
     function doRemoteList($command, $options, $params)
@@ -252,9 +252,9 @@ parameter.
             return $e;
         }
 
-        $list_options = false;
+        $list_options = FALSE;
         if ($this->config->get('preferred_state') == 'stable') {
-            $list_options = true;
+            $list_options = TRUE;
         }
 
         $available = array();
@@ -263,11 +263,11 @@ parameter.
         ) {
             // use faster list-all if available
             $rest = &$this->config->getREST('1.1', array());
-            $available = $rest->listAll($base, $list_options, true, false, false, $chan->getName());
+            $available = $rest->listAll($base, $list_options, TRUE, FALSE, FALSE, $chan->getName());
         } elseif ($chan->supportsREST($this->config->get('preferred_mirror')) &&
               $base = $chan->getBaseURL('REST1.0', $this->config->get('preferred_mirror'))) {
             $rest = &$this->config->getREST('1.0', array());
-            $available = $rest->listAll($base, $list_options, true, false, false, $chan->getName());
+            $available = $rest->listAll($base, $list_options, TRUE, FALSE, FALSE, $chan->getName());
         }
 
         if (PEAR::isError($available)) {
@@ -278,7 +278,7 @@ parameter.
         $i = $j = 0;
         $data = array(
             'caption' => 'Channel ' . $channel . ' Available packages:',
-            'border' => true,
+            'border' => TRUE,
             'headline' => array('Package', 'Version'),
             'channel' => $channel
             );
@@ -293,7 +293,7 @@ parameter.
         }
         $this->ui->outputData($data, $command);
         $this->config->set('default_channel', $savechannel);
-        return true;
+        return TRUE;
     }
 
     function doListAll($command, $options, $params)
@@ -309,9 +309,9 @@ parameter.
             $this->config->set('default_channel', $channel);
         }
 
-        $list_options = false;
+        $list_options = FALSE;
         if ($this->config->get('preferred_state') == 'stable') {
-            $list_options = true;
+            $list_options = TRUE;
         }
 
         $chan = $reg->getChannel($channel);
@@ -323,11 +323,11 @@ parameter.
               $base = $chan->getBaseURL('REST1.1', $this->config->get('preferred_mirror'))) {
             // use faster list-all if available
             $rest = &$this->config->getREST('1.1', array());
-            $available = $rest->listAll($base, $list_options, false, false, false, $chan->getName());
+            $available = $rest->listAll($base, $list_options, FALSE, FALSE, FALSE, $chan->getName());
         } elseif ($chan->supportsREST($this->config->get('preferred_mirror')) &&
               $base = $chan->getBaseURL('REST1.0', $this->config->get('preferred_mirror'))) {
             $rest = &$this->config->getREST('1.0', array());
-            $available = $rest->listAll($base, $list_options, false, false, false, $chan->getName());
+            $available = $rest->listAll($base, $list_options, FALSE, FALSE, FALSE, $chan->getName());
         }
 
         if (PEAR::isError($available)) {
@@ -337,7 +337,7 @@ parameter.
 
         $data = array(
             'caption' => 'All packages [Channel ' . $channel . ']:',
-            'border' => true,
+            'border' => TRUE,
             'headline' => array('Package', 'Latest', 'Local'),
             'channel' => $channel,
             );
@@ -351,7 +351,7 @@ parameter.
         $local_pkgs = $reg->listPackages($channel);
 
         foreach ($available as $name => $info) {
-            $installed = $reg->packageInfo($name, null, $channel);
+            $installed = $reg->packageInfo($name, NULL, $channel);
             if (is_array($installed['version'])) {
                 $installed['version'] = $installed['version']['release'];
             }
@@ -374,12 +374,12 @@ parameter.
                 }
             }
             $pos = array_search(strtolower($name), $local_pkgs);
-            if ($pos !== false) {
+            if ($pos !== FALSE) {
                 unset($local_pkgs[$pos]);
             }
 
             if (isset($info['stable']) && !$info['stable']) {
-                $info['stable'] = null;
+                $info['stable'] = NULL;
             }
 
             if (isset($options['channelinfo'])) {
@@ -401,16 +401,16 @@ parameter.
                     $name,
                     $latest,
                     $local,
-                    isset($desc) ? $desc : null,
-                    isset($info['deps']) ? $info['deps'] : null,
+                    isset($desc) ? $desc : NULL,
+                    isset($info['deps']) ? $info['deps'] : NULL,
                 );
             } else {
                 $packageinfo = array(
                     $reg->channelAlias($channel) . '/' . $name,
-                    isset($info['stable']) ? $info['stable'] : null,
-                    isset($installed['version']) ? $installed['version'] : null,
-                    isset($desc) ? $desc : null,
-                    isset($info['deps']) ? $info['deps'] : null,
+                    isset($info['stable']) ? $info['stable'] : NULL,
+                    isset($installed['version']) ? $installed['version'] : NULL,
+                    isset($desc) ? $desc : NULL,
+                    isset($info['deps']) ? $info['deps'] : NULL,
                 );
             }
             $data['data'][$info['category']][] = $packageinfo;
@@ -419,7 +419,7 @@ parameter.
         if (isset($options['mode']) && in_array($options['mode'], array('notinstalled', 'upgrades'))) {
             $this->config->set('default_channel', $savechannel);
             $this->ui->outputData($data, $command);
-            return true;
+            return TRUE;
         }
 
         foreach ($local_pkgs as $name) {
@@ -435,7 +435,7 @@ parameter.
 
         $this->config->set('default_channel', $savechannel);
         $this->ui->outputData($data, $command);
-        return true;
+        return TRUE;
     }
 
     function doSearch($command, $options, $params)
@@ -470,12 +470,12 @@ parameter.
                 return PEAR::raiseError($errors[0]);
             }
 
-            return true;
+            return TRUE;
         }
 
         $savechannel = $channel = $this->config->get('default_channel');
         $package = strtolower($params[0]);
-        $summary = isset($params[1]) ? $params[1] : false;
+        $summary = isset($params[1]) ? $params[1] : FALSE;
         if (isset($options['channel'])) {
             $reg = &$this->config->getRegistry();
             $channel = $options['channel'];
@@ -494,7 +494,7 @@ parameter.
         if ($chan->supportsREST($this->config->get('preferred_mirror')) &&
               $base = $chan->getBaseURL('REST1.0', $this->config->get('preferred_mirror'))) {
             $rest = &$this->config->getREST('1.0', array());
-            $available = $rest->listAll($base, false, false, $package, $summary, $chan->getName());
+            $available = $rest->listAll($base, FALSE, FALSE, $package, $summary, $chan->getName());
         }
 
         if (PEAR::isError($available)) {
@@ -507,20 +507,20 @@ parameter.
             $data = 'no packages found that match pattern "' . $package . '", for channel '.$channel.'.';
             $this->ui->outputData($data);
             $this->config->set('default_channel', $channel);
-            return true;
+            return TRUE;
         }
 
         if ($channelinfo) {
             $data = array(
                 'caption' => 'Matched packages, channel ' . $channel . ':',
-                'border' => true,
+                'border' => TRUE,
                 'headline' => array('Channel', 'Package', 'Stable/(Latest)', 'Local'),
                 'channel' => $channel
                 );
         } else {
             $data = array(
                 'caption' => 'Matched packages, channel ' . $channel . ':',
-                'border' => true,
+                'border' => TRUE,
                 'headline' => array('Package', 'Stable/(Latest)', 'Local'),
                 'channel' => $channel
                 );
@@ -533,7 +533,7 @@ parameter.
         }
 
         foreach ($available as $name => $info) {
-            $installed = $reg->packageInfo($name, null, $channel);
+            $installed = $reg->packageInfo($name, NULL, $channel);
             $desc = $info['summary'];
             if (isset($params[$name]))
                 $desc .= "\n\n".$info['description'];
@@ -571,7 +571,7 @@ parameter.
 
         $this->ui->outputData($data, $command);
         $this->config->set('default_channel', $channel);
-        return true;
+        return TRUE;
     }
 
     function &getDownloader($options)
@@ -612,7 +612,7 @@ parameter.
         $errors = $downloader->getErrorMsgs();
         if (count($errors)) {
             foreach ($errors as $error) {
-                if ($error !== null) {
+                if ($error !== NULL) {
                     $this->ui->outputData($error);
                 }
             }
@@ -625,10 +625,10 @@ parameter.
             $this->ui->outputData("File $pkg[file] downloaded", $command);
         }
 
-        return true;
+        return TRUE;
     }
 
-    function downloadCallback($msg, $params = null)
+    function downloadCallback($msg, $params = NULL)
     {
         if ($msg == 'done') {
             $this->bytes_downloaded = $params;
@@ -664,7 +664,7 @@ parameter.
             }
 
             $latest = array();
-            $base2  = false;
+            $base2  = FALSE;
             $preferred_mirror = $this->config->get('preferred_mirror');
             if ($chan->supportsREST($preferred_mirror) &&
                 (
@@ -681,9 +681,9 @@ parameter.
                 }
 
                 if (empty($state) || $state == 'any') {
-                    $state = false;
+                    $state = FALSE;
                 } else {
-                    $caption .= ' (' . implode(', ', PEAR_Common::betterStates($state, true)) . ')';
+                    $caption .= ' (' . implode(', ', PEAR_Common::betterStates($state, TRUE)) . ')';
                 }
 
                 PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
@@ -757,7 +757,7 @@ parameter.
         }
 
         $this->config->set('default_channel', $savechannel);
-        return true;
+        return TRUE;
     }
 
     function doClearCache($command, $options, $params)
@@ -784,7 +784,7 @@ parameter.
                 if (file_exists($path)) {
                     $ok = @unlink($path);
                 } else {
-                    $ok = false;
+                    $ok = FALSE;
                     $php_errormsg = '';
                 }
 

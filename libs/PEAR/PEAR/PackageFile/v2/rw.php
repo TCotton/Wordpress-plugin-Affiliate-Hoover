@@ -46,9 +46,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                     $extension, 'providesextension');
             }
             $this->_packageInfo['providesextension'] = $extension;
-            return true;
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
     function setPackage($package)
@@ -185,7 +185,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
     function addMaintainer($role, $handle, $name, $email, $active = 'yes')
     {
         if (!in_array($role, array('lead', 'developer', 'contributor', 'helper'))) {
-            return false;
+            return FALSE;
         }
         if (isset($this->_packageInfo[$role])) {
             if (!isset($this->_packageInfo[$role][0])) {
@@ -229,7 +229,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
 
     function updateMaintainer($newrole, $handle, $name, $email, $active = 'yes')
     {
-        $found = false;
+        $found = FALSE;
         foreach (array('lead', 'developer', 'contributor', 'helper') as $role) {
             if (!isset($this->_packageInfo[$role])) {
                 continue;
@@ -237,7 +237,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
             $info = $this->_packageInfo[$role];
             if (!isset($info[0])) {
                 if ($info['user'] == $handle) {
-                    $found = true;
+                    $found = TRUE;
                     break;
                 }
             }
@@ -248,11 +248,11 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                 }
             }
         }
-        if ($found === false) {
+        if ($found === FALSE) {
             return $this->addMaintainer($newrole, $handle, $name, $email, $active);
         }
-        if ($found !== false) {
-            if ($found === true) {
+        if ($found !== FALSE) {
+            if ($found === TRUE) {
                 unset($this->_packageInfo[$role]);
             } else {
                 unset($this->_packageInfo[$role][$found]);
@@ -265,7 +265,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
 
     function deleteMaintainer($handle)
     {
-        $found = false;
+        $found = FALSE;
         foreach (array('lead', 'developer', 'contributor', 'helper') as $role) {
             if (!isset($this->_packageInfo[$role])) {
                 continue;
@@ -279,27 +279,27 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                     break;
                 }
             }
-            if ($found !== false) {
+            if ($found !== FALSE) {
                 unset($this->_packageInfo[$role][$found]);
                 if (!count($this->_packageInfo[$role]) && $role == 'lead') {
                     $this->_isValid = 0;
                 }
                 if (!count($this->_packageInfo[$role])) {
                     unset($this->_packageInfo[$role]);
-                    return true;
+                    return TRUE;
                 }
                 $this->_packageInfo[$role] =
                     array_values($this->_packageInfo[$role]);
                 if (count($this->_packageInfo[$role]) == 1) {
                     $this->_packageInfo[$role] = $this->_packageInfo[$role][0];
                 }
-                return true;
+                return TRUE;
             }
             if (count($this->_packageInfo[$role]) == 1) {
                 $this->_packageInfo[$role] = $this->_packageInfo[$role][0];
             }
         }
-        return false;
+        return FALSE;
     }
 
     function setReleaseVersion($version)
@@ -368,7 +368,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         $this->_isValid = 0;
     }
 
-    function setLicense($license, $uri = false, $filesource = false)
+    function setLicense($license, $uri = FALSE, $filesource = FALSE)
     {
         if (!isset($this->_packageInfo['license'])) {
             // ensure that the license tag is set up in the right location
@@ -383,7 +383,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
             if ($uri) {
                 $attribs['uri'] = $uri;
             }
-            $uri = true; // for test below
+            $uri = TRUE; // for test below
             if ($filesource) {
                 $attribs['filesource'] = $filesource;
             }
@@ -439,9 +439,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * Reset the listing of package contents
      * @param string base installation dir for the whole package, if any
      */
-    function clearContents($baseinstall = false)
+    function clearContents($baseinstall = FALSE)
     {
-        $this->_filesValid = false;
+        $this->_filesValid = FALSE;
         $this->_isValid = 0;
         if (!isset($this->_packageInfo['contents'])) {
             $this->_packageInfo = $this->_insertBefore($this->_packageInfo,
@@ -468,9 +468,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
     function addBundledPackage($path)
     {
         if ($this->getPackageType() != 'bundle') {
-            return false;
+            return FALSE;
         }
-        $this->_filesValid = false;
+        $this->_filesValid = FALSE;
         $this->_isValid = 0;
         $this->_packageInfo = $this->_mergeTag($this->_packageInfo, $path, array(
                 'contents' => array('compatible', 'dependencies', 'providesextension',
@@ -487,27 +487,27 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
     function addTaskToFile($filename, $task)
     {
         if (!method_exists($task, 'getXml')) {
-            return false;
+            return FALSE;
         }
         if (!method_exists($task, 'getName')) {
-            return false;
+            return FALSE;
         }
         if (!method_exists($task, 'validate')) {
-            return false;
+            return FALSE;
         }
         if (!$task->validate()) {
-            return false;
+            return FALSE;
         }
         if (!isset($this->_packageInfo['contents']['dir']['file'])) {
-            return false;
+            return FALSE;
         }
         $this->getTasksNs(); // discover the tasks namespace if not done already
         $files = $this->_packageInfo['contents']['dir']['file'];
         if (!isset($files[0])) {
             $files = array($files);
-            $ind = false;
+            $ind = FALSE;
         } else {
-            $ind = true;
+            $ind = TRUE;
         }
         foreach ($files as $i => $file) {
             if (isset($file['attribs'])) {
@@ -518,7 +518,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                               ':' . $task->getName()]) ?
                               $this->_packageInfo['contents']['dir']['file'][$i]
                               ['attribs'][$this->_tasksNs .
-                              ':' . $task->getName()] : false;
+                              ':' . $task->getName()] : FALSE;
                         if ($t && !isset($t[0])) {
                             $this->_packageInfo['contents']['dir']['file'][$i]
                                 [$this->_tasksNs . ':' . $task->getName()] = array($t);
@@ -530,7 +530,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                               ['attribs'][$this->_tasksNs .
                               ':' . $task->getName()]) ? $this->_packageInfo['contents']['dir']['file']
                               ['attribs'][$this->_tasksNs .
-                              ':' . $task->getName()] : false;
+                              ':' . $task->getName()] : FALSE;
                         if ($t && !isset($t[0])) {
                             $this->_packageInfo['contents']['dir']['file']
                                 [$this->_tasksNs . ':' . $task->getName()] = array($t);
@@ -538,11 +538,11 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                         $this->_packageInfo['contents']['dir']['file'][$this->_tasksNs .
                             ':' . $task->getName()][] = $task->getXml();
                     }
-                    return true;
+                    return TRUE;
                 }
             }
         }
-        return false;
+        return FALSE;
     }
 
     /**
@@ -553,9 +553,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
     function addFile($dir, $file, $attrs)
     {
         if ($this->getPackageType() == 'bundle') {
-            return false;
+            return FALSE;
         }
-        $this->_filesValid = false;
+        $this->_filesValid = FALSE;
         $this->_isValid = 0;
         $dir = preg_replace(array('!\\\\+!', '!/+!'), array('/', '/'), $dir);
         if ($dir == '/' || $dir == '') {
@@ -592,7 +592,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      *               compatible with
      * @param string versions of specified package that this release is not compatible with
      */
-    function addCompatiblePackage($name, $channel, $min, $max, $exclude = false)
+    function addCompatiblePackage($name, $channel, $min, $max, $exclude = FALSE)
     {
         $this->_isValid = 0;
         $set = array(
@@ -627,7 +627,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string package name or uri
      * @param string channel name if non-uri
      */
-    function addUsesrole($role, $packageOrUri, $channel = false) {
+    function addUsesrole($role, $packageOrUri, $channel = FALSE) {
         $set = array('role' => $role);
         if ($channel) {
             $set['package'] = $packageOrUri;
@@ -659,7 +659,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string package name or uri
      * @param string channel name if non-uri
      */
-    function addUsestask($task, $packageOrUri, $channel = false) {
+    function addUsestask($task, $packageOrUri, $channel = FALSE) {
         $set = array('task' => $task);
         if ($channel) {
             $set['package'] = $packageOrUri;
@@ -703,7 +703,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string maximum PHP version allowed
      * @param array $exclude incompatible PHP versions
      */
-    function setPhpDep($min, $max = false, $exclude = false)
+    function setPhpDep($min, $max = FALSE, $exclude = FALSE)
     {
         $this->_isValid = 0;
         $dep =
@@ -733,7 +733,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                 'required' => array('optional', 'group'),
                 'php' => array('pearinstaller', 'package', 'subpackage', 'extension', 'os', 'arch')
             ));
-        return true;
+        return TRUE;
     }
 
     /**
@@ -742,7 +742,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string recommended PEAR installer version
      * @param array incompatible version of the PEAR installer
      */
-    function setPearinstallerDep($min, $max = false, $recommended = false, $exclude = false)
+    function setPearinstallerDep($min, $max = FALSE, $recommended = FALSE, $exclude = FALSE)
     {
         $this->_isValid = 0;
         $dep =
@@ -782,16 +782,16 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string package name
      * @param string package channel
      * @param string extension this package provides, if any
-     * @param string|false minimum version required
-     * @param string|false maximum version allowed
-     * @param array|false versions to exclude from installation
+     * @param string|FALSE minimum version required
+     * @param string|FALSE maximum version allowed
+     * @param array|FALSE versions to exclude from installation
      */
     function addConflictingPackageDepWithChannel($name, $channel,
-                $providesextension = false, $min = false, $max = false, $exclude = false)
+                $providesextension = FALSE, $min = FALSE, $max = FALSE, $exclude = FALSE)
     {
         $this->_isValid = 0;
-        $dep = $this->_constructDep($name, $channel, false, $min, $max, false,
-            $exclude, $providesextension, false, true);
+        $dep = $this->_constructDep($name, $channel, FALSE, $min, $max, FALSE,
+            $exclude, $providesextension, FALSE, TRUE);
         $this->_packageInfo = $this->_mergeTag($this->_packageInfo, $dep,
             array(
                 'dependencies' => array('providesextension', 'usesrole', 'usestask',
@@ -808,7 +808,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string package channel
      * @param string extension this package provides, if any
      */
-    function addConflictingPackageDepWithUri($name, $uri, $providesextension = false)
+    function addConflictingPackageDepWithUri($name, $uri, $providesextension = FALSE)
     {
         $this->_isValid = 0;
         $dep =
@@ -845,22 +845,22 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
 
     /**
      * @param string package name
-     * @param string|false channel name, false if this is a uri
-     * @param string|false uri name, false if this is a channel
-     * @param string|false minimum version required
-     * @param string|false maximum version allowed
-     * @param string|false recommended installation version
-     * @param array|false versions to exclude from installation
+     * @param string|FALSE channel name, FALSE if this is a uri
+     * @param string|FALSE uri name, FALSE if this is a channel
+     * @param string|FALSE minimum version required
+     * @param string|FALSE maximum version allowed
+     * @param string|FALSE recommended installation version
+     * @param array|FALSE versions to exclude from installation
      * @param string extension this package provides, if any
-     * @param bool if true, tells the installer to ignore the default optional dependency group
+     * @param bool if TRUE, tells the installer to ignore the default optional dependency group
      *             when installing this package
-     * @param bool if true, tells the installer to negate this dependency (conflicts)
+     * @param bool if TRUE, tells the installer to negate this dependency (conflicts)
      * @return array
      * @access private
      */
     function _constructDep($name, $channel, $uri, $min, $max, $recommended, $exclude,
-                           $providesextension = false, $nodefault = false,
-                           $conflicts = false)
+                           $providesextension = FALSE, $nodefault = FALSE,
+                           $conflicts = FALSE)
     {
         $dep =
             array(
@@ -906,22 +906,22 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string minimum version
      * @param string maximum version
      * @param string recommended version
-     * @param array|false optional excluded versions
+     * @param array|FALSE optional excluded versions
      * @param string extension this package provides, if any
-     * @param bool if true, tells the installer to ignore the default optional dependency group
+     * @param bool if TRUE, tells the installer to ignore the default optional dependency group
      *             when installing this package
-     * @return bool false if the dependency group has not been initialized with
+     * @return bool FALSE if the dependency group has not been initialized with
      *              {@link addDependencyGroup()}, or a subpackage is added with
      *              a providesextension
      */
-    function addGroupPackageDepWithChannel($type, $groupname, $name, $channel, $min = false,
-                                      $max = false, $recommended = false, $exclude = false,
-                                      $providesextension = false, $nodefault = false)
+    function addGroupPackageDepWithChannel($type, $groupname, $name, $channel, $min = FALSE,
+                                      $max = FALSE, $recommended = FALSE, $exclude = FALSE,
+                                      $providesextension = FALSE, $nodefault = FALSE)
     {
         if ($type == 'subpackage' && $providesextension) {
-            return false; // subpackages must be php packages
+            return FALSE; // subpackages must be php packages
         }
-        $dep = $this->_constructDep($name, $channel, false, $min, $max, $recommended, $exclude,
+        $dep = $this->_constructDep($name, $channel, FALSE, $min, $max, $recommended, $exclude,
             $providesextension, $nodefault);
         return $this->_addGroupDependency($type, $dep, $groupname);
     }
@@ -932,18 +932,18 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string package name
      * @param string package uri
      * @param string extension this package provides, if any
-     * @param bool if true, tells the installer to ignore the default optional dependency group
+     * @param bool if TRUE, tells the installer to ignore the default optional dependency group
      *             when installing this package
-     * @return bool false if the dependency group has not been initialized with
+     * @return bool FALSE if the dependency group has not been initialized with
      *              {@link addDependencyGroup()}
      */
-    function addGroupPackageDepWithURI($type, $groupname, $name, $uri, $providesextension = false,
-                                       $nodefault = false)
+    function addGroupPackageDepWithURI($type, $groupname, $name, $uri, $providesextension = FALSE,
+                                       $nodefault = FALSE)
     {
         if ($type == 'subpackage' && $providesextension) {
-            return false; // subpackages must be php packages
+            return FALSE; // subpackages must be php packages
         }
-        $dep = $this->_constructDep($name, false, $uri, false, false, false, false,
+        $dep = $this->_constructDep($name, FALSE, $uri, FALSE, FALSE, FALSE, FALSE,
             $providesextension, $nodefault);
         return $this->_addGroupDependency($type, $dep, $groupname);
     }
@@ -956,11 +956,11 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string recommended version
      * @param array incompatible versions
      */
-    function addGroupExtensionDep($groupname, $name, $min = false, $max = false,
-                                         $recommended = false, $exclude = false)
+    function addGroupExtensionDep($groupname, $name, $min = FALSE, $max = FALSE,
+                                         $recommended = FALSE, $exclude = FALSE)
     {
         $this->_isValid = 0;
-        $dep = $this->_constructDep($name, false, false, $min, $max, $recommended, $exclude);
+        $dep = $this->_constructDep($name, FALSE, FALSE, $min, $max, $recommended, $exclude);
         return $this->_addGroupDependency('extension', $dep, $groupname);
     }
 
@@ -981,7 +981,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
             array_shift($arr);
         }
         if (!isset($this->_packageInfo['dependencies']['group'])) {
-            return false;
+            return FALSE;
         } else {
             if (!isset($this->_packageInfo['dependencies']['group'][0])) {
                 if ($this->_packageInfo['dependencies']['group']['attribs']['name'] == $groupname) {
@@ -991,9 +991,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                             $type => $arr
                         ));
                     $this->_isValid = 0;
-                    return true;
+                    return TRUE;
                 } else {
-                    return false;
+                    return FALSE;
                 }
             } else {
                 foreach ($this->_packageInfo['dependencies']['group'] as $i => $group) {
@@ -1004,10 +1004,10 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                             $type => $arr
                         ));
                         $this->_isValid = 0;
-                        return true;
+                        return TRUE;
                     }
                 }
-                return false;
+                return FALSE;
             }
         }
     }
@@ -1020,15 +1020,15 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string maximum version
      * @param string recommended version
      * @param string extension this package provides, if any
-     * @param bool if true, tells the installer to ignore the default optional dependency group
+     * @param bool if TRUE, tells the installer to ignore the default optional dependency group
      *             when installing this package
-     * @param array|false optional excluded versions
+     * @param array|FALSE optional excluded versions
      */
-    function addPackageDepWithChannel($type, $name, $channel, $min = false, $max = false,
-                                      $recommended = false, $exclude = false,
-                                      $providesextension = false, $nodefault = false)
+    function addPackageDepWithChannel($type, $name, $channel, $min = FALSE, $max = FALSE,
+                                      $recommended = FALSE, $exclude = FALSE,
+                                      $providesextension = FALSE, $nodefault = FALSE)
     {
-        if (!in_array($type, array('optional', 'required'), true)) {
+        if (!in_array($type, array('optional', 'required'), TRUE)) {
             $type = 'required';
         }
         $this->_isValid = 0;
@@ -1036,7 +1036,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         if ($type != 'required') {
             array_shift($arr);
         }
-        $dep = $this->_constructDep($name, $channel, false, $min, $max, $recommended, $exclude,
+        $dep = $this->_constructDep($name, $channel, FALSE, $min, $max, $recommended, $exclude,
             $providesextension, $nodefault);
         $this->_packageInfo = $this->_mergeTag($this->_packageInfo, $dep,
             array(
@@ -1053,18 +1053,18 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string name of the package
      * @param string uri of the package
      * @param string extension this package provides, if any
-     * @param bool if true, tells the installer to ignore the default optional dependency group
+     * @param bool if TRUE, tells the installer to ignore the default optional dependency group
      *             when installing this package
      */
-    function addPackageDepWithUri($type, $name, $uri, $providesextension = false,
-                                  $nodefault = false)
+    function addPackageDepWithUri($type, $name, $uri, $providesextension = FALSE,
+                                  $nodefault = FALSE)
     {
         $this->_isValid = 0;
         $arr = array('optional', 'group');
         if ($type != 'required') {
             array_shift($arr);
         }
-        $dep = $this->_constructDep($name, false, $uri, false, false, false, false,
+        $dep = $this->_constructDep($name, FALSE, $uri, FALSE, FALSE, FALSE, FALSE,
             $providesextension, $nodefault);
         $this->_packageInfo = $this->_mergeTag($this->_packageInfo, $dep,
             array(
@@ -1084,19 +1084,19 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string maximum version
      * @param string recommended version
      * @param array incompatible versions
-     * @param bool if true, tells the installer to ignore the default optional dependency group
+     * @param bool if TRUE, tells the installer to ignore the default optional dependency group
      *             when installing this package
      */
-    function addSubpackageDepWithChannel($type, $name, $channel, $min = false, $max = false,
-                                         $recommended = false, $exclude = false,
-                                         $nodefault = false)
+    function addSubpackageDepWithChannel($type, $name, $channel, $min = FALSE, $max = FALSE,
+                                         $recommended = FALSE, $exclude = FALSE,
+                                         $nodefault = FALSE)
     {
         $this->_isValid = 0;
         $arr = array('optional', 'group');
         if ($type != 'required') {
             array_shift($arr);
         }
-        $dep = $this->_constructDep($name, $channel, false, $min, $max, $recommended, $exclude,
+        $dep = $this->_constructDep($name, $channel, FALSE, $min, $max, $recommended, $exclude,
             $nodefault);
         $this->_packageInfo = $this->_mergeTag($this->_packageInfo, $dep,
             array(
@@ -1112,17 +1112,17 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param optional|required optional, required
      * @param string package name
      * @param string package uri for download
-     * @param bool if true, tells the installer to ignore the default optional dependency group
+     * @param bool if TRUE, tells the installer to ignore the default optional dependency group
      *             when installing this package
      */
-    function addSubpackageDepWithUri($type, $name, $uri, $nodefault = false)
+    function addSubpackageDepWithUri($type, $name, $uri, $nodefault = FALSE)
     {
         $this->_isValid = 0;
         $arr = array('optional', 'group');
         if ($type != 'required') {
             array_shift($arr);
         }
-        $dep = $this->_constructDep($name, false, $uri, false, false, false, false, $nodefault);
+        $dep = $this->_constructDep($name, FALSE, $uri, FALSE, FALSE, FALSE, FALSE, $nodefault);
         $this->_packageInfo = $this->_mergeTag($this->_packageInfo, $dep,
             array(
                 'dependencies' => array('providesextension', 'usesrole', 'usestask',
@@ -1141,15 +1141,15 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string recommended version
      * @param array incompatible versions
      */
-    function addExtensionDep($type, $name, $min = false, $max = false, $recommended = false,
-                             $exclude = false)
+    function addExtensionDep($type, $name, $min = FALSE, $max = FALSE, $recommended = FALSE,
+                             $exclude = FALSE)
     {
         $this->_isValid = 0;
         $arr = array('optional', 'group');
         if ($type != 'required') {
             array_shift($arr);
         }
-        $dep = $this->_constructDep($name, false, false, $min, $max, $recommended, $exclude);
+        $dep = $this->_constructDep($name, FALSE, FALSE, $min, $max, $recommended, $exclude);
         $this->_packageInfo = $this->_mergeTag($this->_packageInfo, $dep,
             array(
                 'dependencies' => array('providesextension', 'usesrole', 'usestask',
@@ -1162,9 +1162,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
 
     /**
      * @param string Operating system name
-     * @param boolean true if this package cannot be installed on this OS
+     * @param boolean TRUE if this package cannot be installed on this OS
      */
-    function addOsDep($name, $conflicts = false)
+    function addOsDep($name, $conflicts = FALSE)
     {
         $this->_isValid = 0;
         $dep = array('name' => $name);
@@ -1183,9 +1183,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
 
     /**
      * @param string Architecture matching pattern
-     * @param boolean true if this package cannot be installed on this architecture
+     * @param boolean TRUE if this package cannot be installed on this architecture
      */
-    function addArchDep($pattern, $conflicts = false)
+    function addArchDep($pattern, $conflicts = FALSE)
     {
         $this->_isValid = 0;
         $dep = array('pattern' => $pattern);
@@ -1219,7 +1219,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         $this->_isValid = 0;
         if (!in_array($type, array('php', 'extbin', 'extsrc', 'zendextsrc',
                                    'zendextbin', 'bundle'))) {
-            return false;
+            return FALSE;
         }
 
         if (in_array($type, array('zendextsrc', 'zendextbin'))) {
@@ -1242,11 +1242,11 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         }
 
         $this->_packageInfo[$type] = array();
-        return true;
+        return TRUE;
     }
 
     /**
-     * @return bool true if package type is set up
+     * @return bool TRUE if package type is set up
      */
     function addRelease()
     {
@@ -1256,22 +1256,22 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
             }
             $this->_packageInfo = $this->_mergeTag($this->_packageInfo, array(),
                 array($type => array('changelog')));
-            return true;
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
     /**
      * Get the current release tag in order to add to it
-     * @param bool returns only releases that have installcondition if true
-     * @return array|null
+     * @param bool returns only releases that have installcondition if TRUE
+     * @return array|NULL
      */
-    function &_getCurrentRelease($strict = true)
+    function &_getCurrentRelease($strict = TRUE)
     {
         if ($p = $this->getPackageType()) {
             if ($strict) {
                 if ($p == 'extsrc' || $p == 'zendextsrc') {
-                    $a = null;
+                    $a = NULL;
                     return $a;
                 }
             }
@@ -1284,7 +1284,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                 return $this->_packageInfo[$p];
             }
         } else {
-            $a = null;
+            $a = NULL;
             return $a;
         }
     }
@@ -1297,8 +1297,8 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
     function addInstallAs($path, $as)
     {
         $r = &$this->_getCurrentRelease();
-        if ($r === null) {
-            return false;
+        if ($r === NULL) {
+            return FALSE;
         }
         $this->_isValid = 0;
         $r = $this->_mergeTag($r, array('attribs' => array('name' => $path, 'as' => $as)),
@@ -1316,8 +1316,8 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
     function addIgnore($path)
     {
         $r = &$this->_getCurrentRelease();
-        if ($r === null) {
-            return false;
+        if ($r === NULL) {
+            return FALSE;
         }
         $this->_isValid = 0;
         $r = $this->_mergeTag($r, array('attribs' => array('name' => $path)),
@@ -1336,11 +1336,11 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
     function addBinarypackage($package)
     {
         if ($this->getPackageType() != 'extsrc' && $this->getPackageType() != 'zendextsrc') {
-            return false;
+            return FALSE;
         }
-        $r = &$this->_getCurrentRelease(false);
-        if ($r === null) {
-            return false;
+        $r = &$this->_getCurrentRelease(FALSE);
+        if ($r === NULL) {
+            return FALSE;
         }
         $this->_isValid = 0;
         $r = $this->_mergeTag($r, $package,
@@ -1355,19 +1355,19 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string
      * @param string
      */
-    function addConfigureOption($name, $prompt, $default = null)
+    function addConfigureOption($name, $prompt, $default = NULL)
     {
         if ($this->getPackageType() != 'extsrc' && $this->getPackageType() != 'zendextsrc') {
-            return false;
+            return FALSE;
         }
 
-        $r = &$this->_getCurrentRelease(false);
-        if ($r === null) {
-            return false;
+        $r = &$this->_getCurrentRelease(FALSE);
+        if ($r === NULL) {
+            return FALSE;
         }
 
         $opt = array('attribs' => array('name' => $name, 'prompt' => $prompt));
-        if ($default !== null) {
+        if ($default !== NULL) {
             $opt['attribs']['default'] = $default;
         }
 
@@ -1382,13 +1382,13 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * Set an installation condition based on php version for the current release set
      * @param string minimum version
      * @param string maximum version
-     * @param false|array incompatible versions of PHP
+     * @param FALSE|array incompatible versions of PHP
      */
-    function setPhpInstallCondition($min, $max, $exclude = false)
+    function setPhpInstallCondition($min, $max, $exclude = FALSE)
     {
         $r = &$this->_getCurrentRelease();
-        if ($r === null) {
-            return false;
+        if ($r === NULL) {
+            return FALSE;
         }
         $this->_isValid = 0;
         if (isset($r['installconditions']['php'])) {
@@ -1425,15 +1425,15 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string recommended version
      * @param array incompatible versions
      */
-    function addExtensionInstallCondition($name, $min = false, $max = false, $recommended = false,
-                                          $exclude = false)
+    function addExtensionInstallCondition($name, $min = FALSE, $max = FALSE, $recommended = FALSE,
+                                          $exclude = FALSE)
     {
         $r = &$this->_getCurrentRelease();
-        if ($r === null) {
-            return false;
+        if ($r === NULL) {
+            return FALSE;
         }
         $this->_isValid = 0;
-        $dep = $this->_constructDep($name, false, false, $min, $max, $recommended, $exclude);
+        $dep = $this->_constructDep($name, FALSE, FALSE, $min, $max, $recommended, $exclude);
         if ($this->getPackageType() == 'extsrc' || $this->getPackageType() == 'zendextsrc') {
             $r = $this->_mergeTag($r, $dep,
                 array(
@@ -1455,11 +1455,11 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string OS name
      * @param bool whether this OS is incompatible with the current release
      */
-    function setOsInstallCondition($name, $conflicts = false)
+    function setOsInstallCondition($name, $conflicts = FALSE)
     {
         $r = &$this->_getCurrentRelease();
-        if ($r === null) {
-            return false;
+        if ($r === NULL) {
+            return FALSE;
         }
         $this->_isValid = 0;
         if (isset($r['installconditions']['os'])) {
@@ -1490,11 +1490,11 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string architecture pattern
      * @param bool whether this arch is incompatible with the current release
      */
-    function setArchInstallCondition($pattern, $conflicts = false)
+    function setArchInstallCondition($pattern, $conflicts = FALSE)
     {
         $r = &$this->_getCurrentRelease();
-        if ($r === null) {
-            return false;
+        if ($r === NULL) {
+            return FALSE;
         }
         $this->_isValid = 0;
         if (isset($r['installconditions']['arch'])) {
@@ -1543,9 +1543,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
 
     /**
      * Generate a valid change log entry from the current package.xml
-     * @param string|false
+     * @param string|FALSE
      */
-    function generateChangeLogEntry($notes = false)
+    function generateChangeLogEntry($notes = FALSE)
     {
         return array(
             'version' =>
@@ -1556,7 +1556,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
             'stability' =>
                 $this->getStability(),
             'date' => $this->getDate(),
-            'license' => $this->getLicense(true),
+            'license' => $this->getLicense(TRUE),
             'notes' => $notes ? $notes : $this->getNotes()
             );
     }

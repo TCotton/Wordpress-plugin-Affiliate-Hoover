@@ -88,14 +88,14 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                     exit(1);
                 }
 
-                $raised = false;
+                $raised = FALSE;
                 foreach (debug_backtrace() as $i => $frame) {
                     if (!$raised) {
                         if (isset($frame['class'])
                             && strtolower($frame['class']) == 'pear'
                             && strtolower($frame['function']) == 'raiseerror'
                         ) {
-                            $raised = true;
+                            $raised = TRUE;
                         } else {
                             continue;
                         }
@@ -124,7 +124,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
      */
     function skipParamgroup($id)
     {
-        $this->_skipSections[$id] = true;
+        $this->_skipSections[$id] = TRUE;
     }
 
     function runPostinstallScripts(&$scripts)
@@ -262,7 +262,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             $answers[$param['name']] = isset($param['default']) ? $param['default'] : '';
         }
 
-        $tried = false;
+        $tried = FALSE;
         do {
             if ($tried) {
                 $i = 1;
@@ -275,7 +275,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             }
 
             $answers = $this->userDialog('', $prompts, $types, $answers);
-            $tried   = true;
+            $tried   = TRUE;
         } while (is_array($answers) && count(array_filter($answers)) != count($prompts));
 
         return $answers;
@@ -308,15 +308,15 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             return $result;
         }
 
-        $first_run = true;
-        while (true) {
+        $first_run = TRUE;
+        while (TRUE) {
             $descLength = max(array_map('strlen', $prompts));
             $descFormat = "%-{$descLength}s";
             $last       = count($prompts);
 
             $i = 0;
             foreach ($prompts as $n => $var) {
-                $res = isset($result[$n]) ? $result[$n] : null;
+                $res = isset($result[$n]) ? $result[$n] : NULL;
                 printf("%2d. $descFormat : %s\n", ++$i, $prompts[$n], $res);
             }
             print "\n1-$last, 'all', 'abort', or Enter to continue: ";
@@ -327,7 +327,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             }
 
             if ($tmp == 'abort') {
-                return false;
+                return FALSE;
             }
 
             if (isset($testprompts[(int)$tmp - 1])) {
@@ -350,7 +350,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 }
             }
 
-            $first_run = false;
+            $first_run = FALSE;
         }
 
         return $result;
@@ -370,15 +370,15 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             $answer = $default;
         }
         if (in_array($answer, $positives)) {
-            return true;
+            return TRUE;
         }
         if (in_array($answer, $negatives)) {
-            return false;
+            return FALSE;
         }
         if (in_array($default, $positives)) {
-            return true;
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
     function outputData($data, $command = '_default')
@@ -399,10 +399,10 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 if (is_array($data) && isset($data['release_warnings'])) {
                     $this->_displayLine('');
                     $this->_startTable(array(
-                        'border' => false,
+                        'border' => FALSE,
                         'caption' => 'Release Warnings'
                     ));
-                    $this->_tableRow(array($data['release_warnings']), null, array(1 => array('wrap' => 55)));
+                    $this->_tableRow(array($data['release_warnings']), NULL, array(1 => array('wrap' => 55)));
                     $this->_endTable();
                     $this->_displayLine('');
                 }
@@ -412,7 +412,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             case 'search':
                 $this->_startTable($data);
                 if (isset($data['headline']) && is_array($data['headline'])) {
-                    $this->_tableRow($data['headline'], array('bold' => true), array(1 => array('wrap' => 55)));
+                    $this->_tableRow($data['headline'], array('bold' => TRUE), array(1 => array('wrap' => 55)));
                 }
 
                 $packages = array();
@@ -425,7 +425,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 $p = array_keys($packages);
                 natcasesort($p);
                 foreach ($p as $name) {
-                    $this->_tableRow($packages[$name], null, array(1 => array('wrap' => 55)));
+                    $this->_tableRow($packages[$name], NULL, array(1 => array('wrap' => 55)));
                 }
 
                 $this->_endTable();
@@ -438,7 +438,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
 
                 $this->_startTable($data);
                 if (isset($data['headline']) && is_array($data['headline'])) {
-                    $this->_tableRow($data['headline'], array('bold' => true), array(1 => array('wrap' => 55)));
+                    $this->_tableRow($data['headline'], array('bold' => TRUE), array(1 => array('wrap' => 55)));
                 }
 
                 $packages = array();
@@ -453,13 +453,13 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 foreach ($p as $name) {
                     $pkg = $packages[$name];
                     unset($pkg[4], $pkg[5]);
-                    $this->_tableRow($pkg, null, array(1 => array('wrap' => 55)));
+                    $this->_tableRow($pkg, NULL, array(1 => array('wrap' => 55)));
                 }
 
                 $this->_endTable();
                 break;
             case 'config-show':
-                $data['border'] = false;
+                $data['border'] = FALSE;
                 $opts = array(
                     0 => array('wrap' => 30),
                     1 => array('wrap' => 20),
@@ -468,7 +468,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
 
                 $this->_startTable($data);
                 if (isset($data['headline']) && is_array($data['headline'])) {
-                    $this->_tableRow($data['headline'], array('bold' => true), $opts);
+                    $this->_tableRow($data['headline'], array('bold' => TRUE), $opts);
                 }
 
                 foreach ($data['data'] as $group) {
@@ -477,7 +477,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                             $value[2] = "<not set>";
                         }
 
-                        $this->_tableRow($value, null, $opts);
+                        $this->_tableRow($value, NULL, $opts);
                     }
                 }
 
@@ -487,7 +487,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 $d = $data;
                 $data = array(
                     'caption' => 'Package details:',
-                    'border'  => false,
+                    'border'  => FALSE,
                     'data'    => array(
                         array("Latest",      $data['stable']),
                         array("Installed",   $data['installed']),
@@ -502,7 +502,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 if (isset($d['deprecated']) && $d['deprecated']) {
                     $conf = &PEAR_Config::singleton();
                     $reg = $conf->getRegistry();
-                    $name = $reg->parsedPackageNameToString($d['deprecated'], true);
+                    $name = $reg->parsedPackageNameToString($d['deprecated'], TRUE);
                     $data['data'][] = array('Deprecated! use', $name);
                 }
             default: {
@@ -519,20 +519,20 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                                       2 => array('wrap' => 35)
                         );
                     } else {
-                        $opts = null;
+                        $opts = NULL;
                     }
                     if (isset($data['headline']) && is_array($data['headline'])) {
                         $this->_tableRow($data['headline'],
-                                         array('bold' => true),
+                                         array('bold' => TRUE),
                                          $opts);
                     }
 
                     if (is_array($data['data'])) {
                         foreach($data['data'] as $row) {
-                            $this->_tableRow($row, null, $opts);
+                            $this->_tableRow($row, NULL, $opts);
                         }
                     } else {
-                        $this->_tableRow(array($data['data']), null, $opts);
+                        $this->_tableRow(array($data['data']), NULL, $opts);
                      }
                     $this->_endTable();
                 } else {
@@ -542,7 +542,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
         }
     }
 
-    function log($text, $append_crlf = true)
+    function log($text, $append_crlf = TRUE)
     {
         if ($append_crlf) {
             return $this->_displayLine($text);
@@ -584,7 +584,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 $col = wordwrap($col, $colparams[$i]['wrap']);
             }
 
-            if (strpos($col, "\n") !== false) {
+            if (strpos($col, "\n") !== FALSE) {
                 $multiline = explode("\n", $col);
                 $w = 0;
                 foreach ($multiline as $n => $line) {
@@ -648,18 +648,18 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             }
         }
 
-        $border = false;
+        $border = FALSE;
         if (empty($border)) {
             $cellstart  = '';
             $cellend    = ' ';
             $rowend     = '';
-            $padrowend  = false;
+            $padrowend  = FALSE;
             $borderline = '';
         } else {
             $cellstart  = '| ';
             $cellend    = ' ';
             $rowend     = '|';
-            $padrowend  = true;
+            $padrowend  = TRUE;
             $borderline = '+';
             foreach ($width as $w) {
                 $borderline .= str_repeat('-', $w + strlen($cellstart) + strlen($cellend) - 1);

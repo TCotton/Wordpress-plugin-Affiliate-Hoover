@@ -9,7 +9,7 @@ use File_CSV_DataSource;
 /**
  * Form_View
  * 
- * @package Wordpess Options API access class
+ * @package Affiliate Hoover
  * @author Andy Walpole
  * @copyright Andy Walpole
  * @link http://andywalpole.me/
@@ -26,9 +26,6 @@ use File_CSV_DataSource;
  * screen_icon()
  * http://codex.wordpress.org/Function_Reference/screen_icon
  * 
- * wp_die()
- * http://codex.wordpress.org/Function_Reference/wp_die 
- * 
  * wp_enqueue_script()
  * http://codex.wordpress.org/Function_Reference/wp_enqueue_script
  * 
@@ -38,19 +35,6 @@ use File_CSV_DataSource;
  * wp_enqueue_style
  * http://codex.wordpress.org/Function_Reference/wp_enqueue_style
  * 
- * One set of radio buttons per form
- * And the checkbox must have different name attribute
- * 
- * To do:
- * 
- * Replace strtr for preg_replace() for performance
- * Replace stripos() for preg_replace() for performance
- * 
- * Refactor methods in the model class
- * 
- * Take a loot at remove_empty() & delete() calculations not correct on dynamic form
- * 
- * Need to display error message if number of checkboxes not used in the field array
  */
 
 class Form_View extends OptionController\Form_Controller {
@@ -92,14 +76,18 @@ class Form_View extends OptionController\Form_Controller {
 
     } // end construct
 
-
+    /**
+     * Form_View::scripts_enqueue_cov(
+     * 
+     * Callback function of add_action above
+     * 
+     */
     public function scripts_enqueue_cov() {
 
         // essential.
         extract(self::$form);
 
         if (strpos($this->find_url(), $page_url)) {
-
 
             // Only display script on plugin admin page. Is there a Wordpress way of doing this?
             $plugin_url = plugin_dir_url(__DIR__ );
@@ -109,7 +97,7 @@ class Form_View extends OptionController\Form_Controller {
                 wp_localize_script("option_scripts", "option_plugin_params", get_option($option_name));
             }
 
-            //wp_enqueue_style("option_styles", $plugin_url."css/styles.css");
+            wp_enqueue_style("option_styles", $plugin_url."css/styles.css");
 
         } // emd of strpos
 
@@ -164,20 +152,57 @@ class Form_View extends OptionController\Form_Controller {
 
         $form = '<div class="wrap">';
         $form .= '<table class="widefat"><tr><td class="left">';
-        $form .= screen_icon();
         $form .= "<h2>{$page_title}</h2>";
         $form .= '<p>This is the admin section for Affiliate Hoover plugin</p>';
 
+        echo '<h2 class="nav-tab-wrapper">';
+        echo '<a href="options-general.php?page='.$page_url.'" class="nav-tab">Main Page</a>';
+        echo '<a href="options-general.php?page='.$page_url.
+            '&feed-list=total" class="nav-tab">Feed lists</a>';
+        echo '<a href="options-general.php?page='.$page_url.
+            '&instructions=here" class="nav-tab">Instructions</a>';
+        echo '</h2>';
+
         echo $form;
 
-        $this->add_ind_items();
+        switch ($_GET) {
 
-        $this->add_ind_form();
+                // This displays the appropiate section on the appropiate page
 
+            case ($_GET['page'] === $page_url && !isset($_GET['feed-list']) && !isset($_GET['instructions']) ? TRUE : FALSE):
+                $this->main_form();
+                break;
+            case (isset($_GET['feed-list']) && $_GET['feed-list'] === "total" ? TRUE : FALSE):
+                $this->add_ind_items();
+                $this->add_ind_form();
+                $this->list_feeds();
+                break;
+            case (isset($_GET['instructions']) && $_GET['instructions'] === "here" ? TRUE : FALSE):
+                $this->instructions();
+                break;
 
-        $form = '<div id="result">';
+                //feed-list
 
-        echo $form;
+        } // end switch
+
+        echo '</td> <!-- [left] -->'; // right block here for widgets
+
+        echo '<td class="right">';
+        echo '<div class="postbox">';
+        echo '<div class="inside">';
+        echo '<h3 class="hndle">Author details</h3>';
+        echo '<p>This plugin has been created by <a href="http://andywalpole.me/">Andy Walpole</a></p>';
+        echo '<p>At the moment it is optimised to work with Affiliate Window, Paid on Demand and TradeDoubler but it should be okay to upload a CSV file from any company.</p>';
+        echo '<p>Please report any bugs or feature requests to...</p>';
+        echo '</div><!-- end inside -->';
+        echo '</div><!-- end postbox -->';
+        echo '</td> <!-- [right] --></tr>';
+        echo '</table> <!-- [outer] -->';
+        echo '</div><!-- end of wrap div -->';
+
+    } // end create_html_cov()
+
+    private function main_form() {
 
         if (isset($_POST['submitLar'])) {
 
@@ -233,31 +258,61 @@ class Form_View extends OptionController\Form_Controller {
             'method' => 'post',
             'action' => '#result',
             'enctype' => 'application/x-www-form-urlencoded',
-            'description' => 'Add your new feeds here',
+            'description' => '<h3>Add your new feeds here</h3>',
             'option' => TRUE,
             'submit' => "submitLar",
-            'submtiTwo' => null,
-            'synchronize' => null);
+            'submtiTwo' => NULL,
+            'synchronize' => NULL);
 
-        if (!isset($_GET['unique_name'])) {
-            $this->create_form($form, $site_name);
-        }
+        $this->create_form($form, $site_name);
 
-        echo '</td> <!-- [left] -->'; // right block here for widgets
+    } // end private function main_form
 
-        echo '<td class="right">';
-        echo '<div class="postbox">';
-        echo '<div class="inside">';
-        echo '<h3 class="hndle">Author details</h3>';
-        echo '<p>This plugin has been created by <a href="http://andywalpole.me/">Andy Walpole</a></p>';
-        echo '<p>At the moment it is optimised to work with Affiliate Window, Paid on Demand and TradeDoubler but it should be okay to upload a CSV file from any company.</p>';
-        echo '<p>Please report any bugs or feature requests to...</p>';
-        echo '</div><!-- end inside -->';
-        echo '</div><!-- end postbox -->';
-        echo '</td> <!-- [right] --></tr>';
-        echo '</table> <!-- [outer] -->';
-        echo '</div><!-- end of wrap div -->';
-    }
+    /**
+     * Form_View::list_feeds()
+     * 
+     * Lists current feeds in the database
+     * 
+     */
+
+    private function list_feeds() {
+
+        // essential.
+        extract(self::$form);
+
+        $feed_names = $this->get_all_feed_names();
+        
+         echo '<h3>List of total feeds</h3>';
+
+        if (empty($feed_names)) {
+
+            echo '<p>You have not created any feeds yet</p>';
+
+        } else {
+
+            echo '<ul>';
+
+            foreach ($feed_names as $result) {
+                echo '<li><a href="?page='.$page_url.'&feed-list=total&unique_name='.urlencode($result->
+                    name).'">'.$result->name.'</a></li>';
+            }
+
+            echo '</ul>';
+
+        } // end if statement
+
+    } // end list_feeds()
+
+    /**
+     * Form_View::add_ind_form_validate()
+     * 
+     * Validation for use with add_ind_form()
+     * 
+     * @param array $error
+     * @param array $form
+     * 
+     */
+
 
     private function add_ind_form_validate(&$error, $form) {
         // validation and sanitization for form below
@@ -278,8 +333,8 @@ class Form_View extends OptionController\Form_Controller {
                 "Only include one code such as [#3#] and nothing else for the title. You can change the title once the form has been created.";
         }
 
-        $formMinRows = false;
-        $formMaxRows = false;
+        $formMinRows = FALSE;
+        $formMaxRows = FALSE;
         if ($this->empty_value($form, 'formMinRows') === FALSE) {
             $formMinRows = TRUE;
         }
@@ -294,7 +349,15 @@ class Form_View extends OptionController\Form_Controller {
         }
 
         return $error;
-    }
+
+    } //  end add_ind_form_validate(&$error, $form)
+
+    /**
+     * Form_View::add_ind_form()
+     * 
+     * Function for editing individual feed detaails
+     * 
+     */
 
     private function add_ind_form() {
 
@@ -302,13 +365,12 @@ class Form_View extends OptionController\Form_Controller {
 
             // essential.
             extract(self::$form);
-            echo "<h3>Form for ".urldecode($_GET['unique_form'])." feed</h3>";
+            echo "<h3>Form for ".$_GET['unique_form']." feed</h3>";
             echo "<p>Once you have created the form you are happy with click on process feed at the bottom.</p>";
             echo "<p><strong>Warning! </strong>Clicking \"save changes\" will create new posts AND update all existing posts.</p>";
             echo "<p>Clicking update will only change the content of NEW posts.</p>";
             echo "<p>Clicking on \"synchronize\" will check the current feed file against published items</p>";
             echo "<p>If published items are not in the feed file it will delete them.</p>";
-            echo "<p>This ensures that your content is up to date with that being released by the company</p>";
             echo "<p>Below are the codes corresponding with the file.</p>";
             echo "<p>The only mandatory fields are the title and the body.</p>";
             $post_types = get_post_types('', 'names');
@@ -322,320 +384,338 @@ class Form_View extends OptionController\Form_Controller {
             }
 
             $form_data = $this->select_all($_GET['unique_form']);
-            if ($form_data->form_title != "") {
-                $form_title = $form_data->form_title;
-            } else {
-                $form_title = "YES";
-            }
 
-            if ($form_data->form_title_contains != "") {
-                $form_title_contains = $form_data->form_title_contains;
-            } else {
-                $form_title_contains = "YES";
-            }
+            if ($form_data !== NULL) {
 
-            if ($form_data->form_body != "") {
-                $form_body = $form_data->form_body;
-            } else {
-                $form_body = "YES";
-            }
+                if ($form_data->form_title != "") {
+                    $form_title = $form_data->form_title;
+                } else {
+                    $form_title = "YES";
+                }
 
-            if ($form_data->form_body_contains != "") {
-                $form_body_contains = $form_data->form_body_contains;
-            } else {
-                $form_body_contains = "YES";
-            }
+                if ($form_data->form_title_contains != "") {
+                    $form_title_contains = $form_data->form_title_contains;
+                } else {
+                    $form_title_contains = "YES";
+                }
 
-            if ($form_data->form_categories != "") {
-                $form_categories = $form_data->form_categories;
-            } else {
-                $form_categories = "YES";
-            }
+                if ($form_data->form_body != "") {
+                    $form_body = $form_data->form_body;
+                } else {
+                    $form_body = "YES";
+                }
 
-            if ($form_data->form_tags != "") {
-                $form_tags = $form_data->form_tags;
-            } else {
-                $form_tags = "YES";
-            }
+                if ($form_data->form_body_contains != "") {
+                    $form_body_contains = $form_data->form_body_contains;
+                } else {
+                    $form_body_contains = "YES";
+                }
 
-            if ($form_data->form_allow_comments != "") {
+                if ($form_data->form_categories != "") {
+                    $form_categories = $form_data->form_categories;
+                } else {
+                    $form_categories = "YES";
+                }
 
-                if ($form_data->form_allow_comments === "1") {
-                    $form_allow_comments = 1;
+                if ($form_data->form_tags != "") {
+                    $form_tags = $form_data->form_tags;
+                } else {
+                    $form_tags = "YES";
+                }
+
+                if ($form_data->form_allow_comments != "") {
+
+                    if ($form_data->form_allow_comments === "1") {
+                        $form_allow_comments = 1;
+                    } else {
+                        $form_allow_comments = 0;
+                    }
+
                 } else {
                     $form_allow_comments = 0;
                 }
 
-            } else {
-                $form_allow_comments = 0;
-            }
+                if ($form_data->form_allow_trackback != "") {
 
-            if ($form_data->form_allow_trackback != "") {
+                    if ($form_data->form_allow_trackback === "1") {
+                        $form_allow_trackback = 1;
+                    } else {
+                        $form_allow_trackback = 0;
+                    }
 
-                if ($form_data->form_allow_trackback === "1") {
-                    $form_allow_trackback = 1;
                 } else {
                     $form_allow_trackback = 0;
                 }
 
-            } else {
-                $form_allow_trackback = 0;
-            }
-
-            if ($form_data->min_rows != "") {
-                $min_rows = $form_data->min_rows;
-            } else {
-                $min_rows = "YES";
-            }
-
-            if ($form_data->max_rows != "") {
-                $max_rows = $form_data->max_rows;
-            } else {
-                $max_rows = "YES";
-            }
-
-            $form_status = NULL;
-            if ($form_data->post_status != "") {
-
-                if ($form_data->post_status === "publish") {
-                    $form_status = "publish";
-                } elseif ($form_data->post_status === "draft") {
-                    $form_status = "draft";
+                if ($form_data->min_rows != "") {
+                    $min_rows = $form_data->min_rows;
+                } else {
+                    $min_rows = "YES";
                 }
 
-            } else {
-                $form_status = NULL;
-            }
-
-
-            echo '<p>';
-            foreach (unserialize($form_data->header_array_amend) as $key => $result) {
-
-                echo '<strong>'.$key.'</strong>'."   =   ".$result.'<br />';
-            }
-
-            echo '</p>';
-            echo '<div id="form-result">';
-            if (isset($_POST['updateInd'])) {
-
-                $error = array(); // ESSENTIAL! Do not leave this out. Needs to come first
-                $form = $this->security_check($_POST); // SANITIZATION
-
-                $this->sanitize($form, 'stripslashes');
-                $this->add_ind_form_validate($error, $form);
-                if (empty($error)) {
-
-                    $startTime = microtime(true);
-                    $this->update_ind_form($form, urldecode($_GET['unique_form']));
-                    $this->create_post_items(urldecode($_GET['unique_form']), FALSE);
-                    $endTime = microtime(true);
-                    $elapsed = $endTime - $startTime;
-                    var_dump("Execution time : $elapsed seconds");
+                if ($form_data->max_rows != "") {
+                    $max_rows = $form_data->max_rows;
                 } else {
+                    $max_rows = "YES";
+                }
 
-                    echo $this->failure_message($error);
-                } // end if error
+                $form_status = NULL;
+                if ($form_data->post_status != "") {
 
-            }
-
-            if (isset($_POST['submitForm'])) {
-
-                $error = array(); // ESSENTIAL! Do not leave this out. Needs to come first
-                $form = $this->security_check($_POST); // SANITIZATION
-
-                $this->sanitize($form, 'stripslashes');
-                $this->add_ind_form_validate($error, $form);
-                if (empty($error)) {
-
-                    if ($this->update_ind_form($form, urldecode($_GET['unique_form']))) {
-
-                        $startTime = microtime(true);
-                        $this->create_post_items(urldecode($_GET['unique_form']));
-                        $endTime = microtime(true);
-                        $elapsed = $endTime - $startTime;
-                        var_dump("Execution time : $elapsed seconds");
+                    if ($form_data->post_status === "publish") {
+                        $form_status = "publish";
+                    } elseif ($form_data->post_status === "draft") {
+                        $form_status = "draft";
                     }
 
                 } else {
-
-                    echo $this->failure_message($error);
-                } // end if error
-
-            }
-
-            //synchronize
-
-            if (isset($_POST['synchronize'])) {
-
-                $error = array(); // ESSENTIAL! Do not leave this out. Needs to come first
-                $form = $this->security_check($_POST); // SANITIZATION
-
-                $this->sanitize($form, 'stripslashes');
-                $this->add_ind_form_validate($error, $form);
-                if (empty($error)) {
-
-                    //var_dump($form[$option_name]['formTitle']);
-
-                    $this->synchronize_feeds($form[$option_name]['formTitle']);
-                } else {
-
-                    echo $this->failure_message($error);
+                    $form_status = NULL;
                 }
 
+                echo '<p>';
+                foreach (unserialize($form_data->header_array_amend) as $key => $result) {
+                    echo '<strong>'.$key.'</strong>'."   =   ".$result.'<br />';
+                }
+
+                echo '</p>';
+
+                echo '<div id="form-result">';
+                if (isset($_POST['updateInd'])) {
+
+                    $error = array(); // ESSENTIAL! Do not leave this out. Needs to come first
+                    $form = $this->security_check($_POST); // SANITIZATION
+
+                    $this->sanitize($form, 'stripslashes');
+                    $this->add_ind_form_validate($error, $form);
+                    if (empty($error)) {
+
+                        $startTime = microtime(TRUE);
+                        $this->update_ind_form($form, urlencode($_GET['unique_form']));
+                        $this->create_post_items(urlencode($_GET['unique_form']), FALSE);
+                        $endTime = microtime(TRUE);
+                        $elapsed = $endTime - $startTime;
+                        var_dump("Execution time : $elapsed seconds");
+                    } else {
+
+                        echo $this->failure_message($error);
+                    } // end if error
+
+                }
+
+                if (isset($_POST['submitForm'])) {
+
+                    $error = array(); // ESSENTIAL! Do not leave this out. Needs to come first
+                    $form = $this->security_check($_POST); // SANITIZATION
+
+                    $this->sanitize($form, 'stripslashes');
+                    $this->add_ind_form_validate($error, $form);
+                    if (empty($error)) {
+
+                        if ($this->update_ind_form($form, urlencode($_GET['unique_form']))) {
+
+                            $startTime = microtime(TRUE);
+                            $this->create_post_items(urlencode($_GET['unique_form']));
+                            $endTime = microtime(TRUE);
+                            $elapsed = $endTime - $startTime;
+                            var_dump("Execution time : $elapsed seconds");
+                        }
+
+                    } else {
+
+                        echo $this->failure_message($error);
+                    } // end if error
+
+                }
+
+                //synchronize
+
+                if (isset($_POST['synchronize'])) {
+
+                    $error = array(); // ESSENTIAL! Do not leave this out. Needs to come first
+                    $form = $this->security_check($_POST); // SANITIZATION
+
+                    $this->sanitize($form, 'stripslashes');
+                    $this->add_ind_form_validate($error, $form);
+                    
+                    if (empty($error)) {
+                        
+                        $this->synchronize_feeds($form[$option_name]['formTitle']);
+
+                    } else {
+
+                        echo $this->failure_message($error);
+                        
+                    }
+
+                }
+
+                echo '</div>';
+                $form_title = array(
+                    "input" => "text", // input type
+                    "name" => "formTitle", // name attribute
+                    "desc" =>
+                        "<strong>Post title</strong>: <br />Do not add anything other than the above codes for a title", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => $form_title, // value attribute
+                    "select" => FALSE // array only for the select input
+                        );
+                $form_title_contains = array(
+                    "input" => "text", // input type
+                    "name" => "TitleContains", // name attribute
+                    "desc" => "Title contains keywords (comma seperated list): ", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => $form_title_contains, // value attribute
+                    "select" => FALSE // array only for the select input
+                        );
+                $form_title_not_contains = array(
+                    "input" => "text", // input type
+                    "name" => "TitleNotContains", // name attribute
+                    "desc" => "Title does not contain keywords (comma seperated list): ", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => "YES", // value attribute
+                    "select" => FALSE // array only for the select input
+                        );
+                $form_body = array(
+                    "input" => "textarea", // input type
+                    "name" => "formBody", // name attribute
+                    "desc" =>
+                        '<strong>Post body.</strong> You can use HTML in here. Examples:<br>To place an image: <br>'.
+                        htmlspecialchars("<img src=\"[#7#]\">")."<br>To create a link:<br>".
+                        htmlspecialchars("<a href=\"[#5#]\">[#1#]</a>"), // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => $form_body, // value attribute
+                    "select" => FALSE // array only for the select input
+                        );
+                $form_body_contains = array(
+                    "input" => "text", // input type
+                    "name" => "BodyContains", // name attribute
+                    "desc" => "Body contains keywords (comma seperated list): ", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => $form_body_contains, // value attribute
+                    "select" => FALSE // array only for the select input
+                        );
+                $form_body_not_contains = array(
+                    "input" => "text", // input type
+                    "name" => "BodyNotContains", // name attribute
+                    "desc" => "Body does not contain keywords (comma seperated list): ", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => "YES", // value attribute
+                    "select" => FALSE // array only for the select input
+                        );
+                $form_categories = array(
+                    "input" => "text", // input type
+                    "name" => "formCategories", // name attribute
+                    "desc" =>
+                        "<strong>Post categories.</strong> Can be either text or code. All values must be separated with a comma:", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => $form_categories, // value attribute
+                    "select" => FALSE // array only for the select inpu
+                        );
+                $form_categories_contains = array(
+                    "input" => "text", // input type
+                    "name" => "CategoryContains", // name attribute
+                    "desc" => "Categories contains keywords (comma seperated list): ", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => "YES", // value attribute
+                    "select" => FALSE // array only for the select input
+                        );
+                $form_categories_not_contains = array(
+                    "input" => "text", // input type
+                    "name" => "CategoryNotContains", // name attribute
+                    "desc" => "Categories does not contain keywords (comma seperated list): ", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => "YES", // value attribute
+                    "select" => FALSE // array only for the select input
+                        );
+                $form_tags = array(
+                    "input" => "text", // input type
+                    "name" => "formTags", // name attribute
+                    "desc" =>
+                        "<strong>Post tags</strong>. Can be either text or code. All values must be separated with a comma:", // for use in input label
+                    "maxlength" => "250", // max attribute
+                    "value" => $form_tags, // value attribute
+                    "select" => FALSE // array only for the select inpu
+                        );
+                $form_allow_comments = array(
+                    "input" => "checkbox", // input type
+                    "name" => "formAllowComments", // name attribute
+                    "desc" => "<strong>Allow comments on this post?</strong>", // for use in input label
+                    "maxlength" => $form_allow_comments, // max attribute
+                    "value" => 1, // value attribute
+                    "select" => 1 // array only for the select inpu
+                        );
+                $form_allow_trackback = array(
+                    "input" => "checkbox", // input type
+                    "name" => "formAllowTrackbacks", // name attribute
+                    "desc" => "<strong>Allow trackbacks and pingbacks on this post?</strong>", // for use in input label
+                    "maxlength" => $form_allow_trackback, // max attribute
+                    "value" => 1, // value attribute
+                    "select" => 1 // array only for the select inpu
+                        );
+                $post_type = array(
+                    "input" => "select", // input type
+                    "name" => "formPostType", // name attribute
+                    "desc" => "What post type should this feed be allocated to?", // for use in input label
+                    "maxlength" => NULL, // max attribute
+                    "value" => NULL, // value attribute
+                    "select" => $post_array // array only for the select inpu
+                        );
+                $min_rows = array(
+                    "input" => "text", // input type
+                    "name" => "formMinRows", // name attribute
+                    "desc" => "Start processing on which row? (Out of a total of $form_data->num_rows entries)", // for use in input label
+                    "maxlength" => "11", // max attribute
+                    "value" => $min_rows, // value attribute
+                    "select" => FALSE // array only for the select inpu
+                        );
+                $max_rows = array(
+                    "input" => "text", // input type
+                    "name" => "formMaxRows", // name attribute
+                    "desc" => "End processing on which row? (Out of a total of $form_data->num_rows entries)", // for use in input label
+                    "maxlength" => "11", // max attribute
+                    "value" => $max_rows, // value attribute
+                    "select" => FALSE // array only for the select inpu
+                        );
+                $post_status = array(
+                    "input" => "select", // input type
+                    "name" => "formPostStatus", // name attribute
+                    "desc" =>
+                        "<strong>Should the post be held back as a draft or be immediately published?</strong>", // for use in input label
+                    "maxlength" => $form_status, // max attribute
+                    "value" => NULL, // value attribute
+                    "select" => array('draft', 'publish') // array only for the select inpu
+                        );
+                $form = array(
+                    'method' => 'post',
+                    'action' => '#message',
+                    'enctype' => 'multipart/form-data',
+                    'description' => '<h3>Create your post form here</h3>',
+                    'option' => FALSE,
+                    'submit' => 'submitForm',
+                    'submtiTwo' => 'updateInd',
+                    'synchronize' => 'synchronize');
+                $this->create_form($form, $form_title, $form_title_contains, $form_body, $form_body_contains,
+                    $form_categories, $form_tags, $form_allow_comments, $form_allow_trackback, $min_rows,
+                    $max_rows, $post_status);
+
+            } else {
+
+                wp_die("Opps, nothing here");
+
             }
 
-            echo '</div>';
-            $form_title = array(
-                "input" => "text", // input type
-                "name" => "formTitle", // name attribute
-                "desc" =>
-                    "<strong>Post title</strong>: <br />Do not add anything other than the above codes for a title", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => $form_title, // value attribute
-                "select" => FALSE // array only for the select input
-                    );
-            $form_title_contains = array(
-                "input" => "text", // input type
-                "name" => "TitleContains", // name attribute
-                "desc" => "Title contains keywords (comma seperated list): ", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => $form_title_contains, // value attribute
-                "select" => FALSE // array only for the select input
-                    );
-            $form_title_not_contains = array(
-                "input" => "text", // input type
-                "name" => "TitleNotContains", // name attribute
-                "desc" => "Title does not contain keywords (comma seperated list): ", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => "YES", // value attribute
-                "select" => FALSE // array only for the select input
-                    );
-            $form_body = array(
-                "input" => "textarea", // input type
-                "name" => "formBody", // name attribute
-                "desc" =>
-                    '<strong>Post body.</strong> You can use HTML in here. Examples:<br>To place an image: <br>'.
-                    htmlspecialchars("<img src=\"[#7#]\">")."<br>To create a link:<br>".
-                    htmlspecialchars("<a href=\"[#5#]\">[#1#]</a>"), // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => $form_body, // value attribute
-                "select" => FALSE // array only for the select input
-                    );
-            $form_body_contains = array(
-                "input" => "text", // input type
-                "name" => "BodyContains", // name attribute
-                "desc" => "Body contains keywords (comma seperated list): ", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => $form_body_contains, // value attribute
-                "select" => FALSE // array only for the select input
-                    );
-            $form_body_not_contains = array(
-                "input" => "text", // input type
-                "name" => "BodyNotContains", // name attribute
-                "desc" => "Body does not contain keywords (comma seperated list): ", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => "YES", // value attribute
-                "select" => FALSE // array only for the select input
-                    );
-            $form_categories = array(
-                "input" => "text", // input type
-                "name" => "formCategories", // name attribute
-                "desc" =>
-                    "<strong>Post categories.</strong> Can be either text or code. All values must be separated with a comma:", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => $form_categories, // value attribute
-                "select" => FALSE // array only for the select inpu
-                    );
-            $form_categories_contains = array(
-                "input" => "text", // input type
-                "name" => "CategoryContains", // name attribute
-                "desc" => "Categories contains keywords (comma seperated list): ", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => "YES", // value attribute
-                "select" => FALSE // array only for the select input
-                    );
-            $form_categories_not_contains = array(
-                "input" => "text", // input type
-                "name" => "CategoryNotContains", // name attribute
-                "desc" => "Categories does not contain keywords (comma seperated list): ", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => "YES", // value attribute
-                "select" => FALSE // array only for the select input
-                    );
-            $form_tags = array(
-                "input" => "text", // input type
-                "name" => "formTags", // name attribute
-                "desc" =>
-                    "<strong>Post tags</strong>. Can be either text or code. All values must be separated with a comma:", // for use in input label
-                "maxlength" => "250", // max attribute
-                "value" => $form_tags, // value attribute
-                "select" => FALSE // array only for the select inpu
-                    );
-            $form_allow_comments = array(
-                "input" => "checkbox", // input type
-                "name" => "formAllowComments", // name attribute
-                "desc" => "<strong>Allow comments on this post?</strong>", // for use in input label
-                "maxlength" => $form_allow_comments, // max attribute
-                "value" => 1, // value attribute
-                "select" => 1 // array only for the select inpu
-                    );
-            $form_allow_trackback = array(
-                "input" => "checkbox", // input type
-                "name" => "formAllowTrackbacks", // name attribute
-                "desc" => "<strong>Allow trackbacks and pingbacks on this post?</strong>", // for use in input label
-                "maxlength" => $form_allow_trackback, // max attribute
-                "value" => 1, // value attribute
-                "select" => 1 // array only for the select inpu
-                    );
-            $post_type = array(
-                "input" => "select", // input type
-                "name" => "formPostType", // name attribute
-                "desc" => "What post type should this feed be allocated to?", // for use in input label
-                "maxlength" => null, // max attribute
-                "value" => null, // value attribute
-                "select" => $post_array // array only for the select inpu
-                    );
-            $min_rows = array(
-                "input" => "text", // input type
-                "name" => "formMinRows", // name attribute
-                "desc" => "Start processing on which row? (Out of a total of $form_data->num_rows entries)", // for use in input label
-                "maxlength" => "11", // max attribute
-                "value" => $min_rows, // value attribute
-                "select" => FALSE // array only for the select inpu
-                    );
-            $max_rows = array(
-                "input" => "text", // input type
-                "name" => "formMaxRows", // name attribute
-                "desc" => "End processing on which row? (Out of a total of $form_data->num_rows entries)", // for use in input label
-                "maxlength" => "11", // max attribute
-                "value" => $max_rows, // value attribute
-                "select" => FALSE // array only for the select inpu
-                    );
-            $post_status = array(
-                "input" => "select", // input type
-                "name" => "formPostStatus", // name attribute
-                "desc" =>
-                    "<strong>Should the post be held back as a draft or be immediately published?</strong>", // for use in input label
-                "maxlength" => $form_status, // max attribute
-                "value" => null, // value attribute
-                "select" => array('draft', 'publish') // array only for the select inpu
-                    );
-            $form = array(
-                'method' => 'post',
-                'action' => '#message',
-                'enctype' => 'multipart/form-data',
-                'description' => 'Create your post form here',
-                'option' => FALSE,
-                'submit' => 'submitForm',
-                'submtiTwo' => 'updateInd',
-                'synchronize' => 'synchronize');
-            $this->create_form($form, $form_title, $form_title_contains, $form_body, $form_body_contains,
-                $form_categories, $form_tags, $form_allow_comments, $form_allow_trackback, $min_rows,
-                $max_rows, $post_status);
+            // end if($form_data !== NULL) {
         }
 
-    }
+    } // end add_ind_form()
 
+
+    /**
+     * Form_View::add_ind_items()
+     * 
+     * Function for adding feed file
+     * 
+     */
 
     private function add_ind_items() {
 
@@ -643,12 +723,12 @@ class Form_View extends OptionController\Form_Controller {
         extract(self::$form);
         if (isset($_GET['unique_name']) && $_GET['unique_name'] !== "") {
 
-            if ($this->check_table(urldecode($_GET['unique_name'])) === NULL) {
+            if ($this->check_table(urlencode($_GET['unique_name'])) === NULL) {
 
                 $feed_url_value = "YES";
             } else {
 
-                $item = $this->select_all(urldecode($_GET['unique_name']));
+                $item = $this->select_all(urlencode($_GET['unique_name']));
                 if ($item->URL == "") {
                     $feed_url_value = "YES";
                 } else {
@@ -681,7 +761,7 @@ class Form_View extends OptionController\Form_Controller {
             }
 
             $feed_file_value = FALSE;
-            echo "<h3>Feed details for ".urldecode($_GET['unique_name'])."</h3>";
+            echo "<h3>Feed details for ".$_GET['unique_name']."</h3>";
             echo '<div id="ind-result">';
             if (isset($_POST['submitInd'])) {
 
@@ -760,10 +840,14 @@ class Form_View extends OptionController\Form_Controller {
 
                 echo "<p>File can be found here: ".'<strong>'.AH_FEEDS_DIR.$item->fileName.
                     '</strong></p>';
+
+                echo '<p><a href="?page='.$page_url.'&feed-list=total&unique_form='.urlencode($item->
+                    name).'">Edit this form feed here</a></p>';
+
             } else {
 
-                echo '<p>You have not uploaded a flle for '.urldecode($_GET['unique_name']).
-                    ' yet</p>';
+                echo '<p>You have not uploaded a flle for <strong><em>'.$_GET['unique_name'].
+                    ' </em></strong>yet!</p>';
             }
 
             $feed_url = array(
@@ -778,7 +862,7 @@ class Form_View extends OptionController\Form_Controller {
                 "input" => "file", // input type
                 "name" => "feedFile", // name attribute
                 "desc" => "Add file here", // for use in input label
-                "maxlength" => false, // max attribute
+                "maxlength" => FALSE, // max attribute
                 "value" => $feed_file_value, // value attribute
                 "select" => FALSE // array only for the select input
                     );
@@ -788,29 +872,40 @@ class Form_View extends OptionController\Form_Controller {
                 "desc" =>
                     "If the feed comes from a URL when should this feed be automatically updated?", // for use in input label
                 "maxlength" => $form_cron, // max attribute
-                "value" => null, // value attribute
+                "value" => NULL, // value attribute
                 "select" => array("daily", "twicedaily") // array only for the select inpu
                     );
             $form = array(
                 'method' => 'post',
                 'action' => '#outer',
                 'enctype' => 'multipart/form-data',
-                'description' => 'Individual feed details',
+                'description' => '<h3>Individual feed details</h3>',
                 'option' => FALSE,
                 'submit' => 'submitInd',
-                'submtiTwo' => null,
-                'synchronize' => null);
+                'submtiTwo' => NULL,
+                'synchronize' => NULL);
             $this->create_form($form, $feed_url, $feed_file);
         } // end if isset($_GET['unique_name'])
 
-    }
+    } // add_ind_items()
+
+
+    /**
+     * Form_View::instructions()
+     * 
+     * Function for addon instructions
+     * 
+     */
+
 
     private function instructions() {
 
         if (ini_get('safe_mode')) {
 
-            echo "Your server has safe mode on. This will restrict your use of this module because it often requires more than 30 seconds to parse a feed";
+            echo "<p><strong>Your server has safe mode on. This will restrict your use of this module because it often requires more than 30 seconds to parse a feed</strong></p>";
         }
+
+        include_once (AH_DIR_PATH.'misc'.AH_DS.'instructions.php');
 
     }
 

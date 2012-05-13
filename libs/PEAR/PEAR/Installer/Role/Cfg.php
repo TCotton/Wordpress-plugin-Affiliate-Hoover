@@ -36,7 +36,7 @@ class PEAR_Installer_Role_Cfg extends PEAR_Installer_Role_Common
      *
      * @var unknown_type
      */
-    var $md5 = null;
+    var $md5 = NULL;
 
     /**
      * Do any unusual setup here
@@ -58,7 +58,7 @@ class PEAR_Installer_Role_Cfg extends PEAR_Installer_Role_Common
         }
     }
 
-    function processInstallation($pkg, $atts, $file, $tmp_path, $layer = null)
+    function processInstallation($pkg, $atts, $file, $tmp_path, $layer = NULL)
     {
         $test = parent::processInstallation($pkg, $atts, $file, $tmp_path, $layer);
         if (@file_exists($test[2]) && @file_exists($test[3])) {
@@ -96,7 +96,7 @@ class PEAR_Installer_Role_Cfg extends PEAR_Installer_Role_Common
 
                 PEAR::popErrorHandling();
                 $this->installer->log(0, "WARNING: configuration file $old is being installed as $test[2], you should manually merge in changes to the existing configuration file");
-                $this->installer->addFileOperation('rename', array($temp_file, $old, false));
+                $this->installer->addFileOperation('rename', array($temp_file, $old, FALSE));
                 $this->installer->addFileOperation('delete', array($temp_file));
             }
         }

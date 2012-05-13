@@ -5,8 +5,19 @@ use File_CSV_DataSource;
 use XMLReader;
 
 /**
+ * Form_Model a
+ * 
+ * @package Affiliate Hoover
  * @author Andy Walpole
- * @date 26/4/2012
+ * @copyright Andy Walpole
+ * @link http://andywalpole.me/
+ * @version development
+ * @access public
+ * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
+ * 
+ * Wordpress functions:
+ * 
+ * 
  * 
  */
 
@@ -93,9 +104,9 @@ class Form_Model_Sub {
      */
 
 
-    function esc_url_raw_new(&$form_output, $att = null, $single = null) {
+    function esc_url_raw_new(&$form_output, $att = NULL, $single = NULL) {
 
-        if ($single == null) {
+        if ($single == NULL) {
 
             if (is_array($form_output)) {
                 array_walk_recursive($form_output, 'esc_url_raw');
@@ -134,9 +145,9 @@ class Form_Model_Sub {
      */
 
 
-    function wp_kses_new(&$form_output, $att = null, $single = null) {
+    function wp_kses_new(&$form_output, $att = NULL, $single = NULL) {
 
-        if ($single == null) {
+        if ($single == NULL) {
 
             if (is_array($form_output)) {
                 array_walk_recursive($form_output, ' wp_kses_kses');
@@ -175,9 +186,9 @@ class Form_Model_Sub {
      * @return array
      */
 
-    function trim_post(&$form_output, $att = null, $single = null) {
+    function trim_post(&$form_output, $att = NULL, $single = NULL) {
 
-        if ($single == null) {
+        if ($single == NULL) {
 
             if (is_array($form_output)) {
                 array_walk_recursive($form_output, 'trim');
@@ -215,9 +226,9 @@ class Form_Model_Sub {
      * @param array $form_output
      * @return array
      */
-    protected function sanitize_post(&$form_output, $att = null, $single = null) {
+    protected function sanitize_post(&$form_output, $att = NULL, $single = NULL) {
 
-        if ($single == null) {
+        if ($single == NULL) {
 
             if (is_array($form_output)) {
                 array_walk_recursive($form_output, 'sanitize_text_field');
@@ -257,9 +268,9 @@ class Form_Model_Sub {
      * @return array $form_output
      */
 
-    protected function strip_tags_post(&$form_output, $att = null, $single = null) {
+    protected function strip_tags_post(&$form_output, $att = NULL, $single = NULL) {
 
-        if ($single == null) {
+        if ($single == NULL) {
 
             if (is_array($form_output)) {
                 array_walk_recursive($form_output, 'wp_strip_all_tags');
@@ -299,9 +310,9 @@ class Form_Model_Sub {
      * @return array
      */
 
-    protected function stripslashes(&$form_output, $att = null, $single = null) {
+    protected function stripslashes(&$form_output, $att = NULL, $single = NULL) {
 
-        if ($single == null) {
+        if ($single == NULL) {
 
             if (is_array($form_output)) {
                 array_walk_recursive($form_output, 'stripslashes_deep');
@@ -367,8 +378,18 @@ class Form_Model_Sub {
 
 
     }
-    
-    // need to make sure that only code [#234#] is used and only used once
+
+    /**
+     * Form_Model::validate_email()
+     * 
+     * Checks to make sure that title only uses code and nothing else
+     * 
+     * @param string $att
+     * @param array $form_output
+     * @return boolean
+     */
+
+    // need to make sure that only code [#425#] is
     protected function title_check($form_output, $att) {
 
         extract(static::$form);
@@ -397,7 +418,6 @@ class Form_Model_Sub {
 
 
     }
-
 
 
     /**
@@ -488,7 +508,7 @@ class Form_Model_Sub {
         return pathinfo($file_name, PATHINFO_BASENAME);
 
     }
-    
+
     protected function get_file_filename($file_name) {
 
         return pathinfo($file_name, PATHINFO_FILENAME);
@@ -510,7 +530,7 @@ class Form_Model_Sub {
     function file_upload_error_message($error_code) {
         switch ($error_code) {
             case 0:
-                null;
+                NULL;
                 break;
             case 1:
                 return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
@@ -523,7 +543,7 @@ class Form_Model_Sub {
                 return 'The uploaded file was only partially uploaded';
                 break;
             case 4:
-                null;
+                NULL;
                 break;
             case 6:
                 return 'Missing a temporary folder';
@@ -698,7 +718,16 @@ class Form_Model_Sub {
     }
 
 
-    // CHANGE!!
+    /**
+     * Form_Model::parse_feeds_loop()
+     * 
+     * Finds string for parse_feeds()
+     * 
+     * @param array $file 
+     * @param string $att
+     * @return boolean
+     * 
+     */
 
     protected function parse_feeds_loop($form_output, $att) {
 
@@ -751,9 +780,9 @@ class Form_Model_Sub {
         WP_Filesystem();
         if (unzip_file($file, AH_DIR_PATH."feeds")) {
             unlink($file);
-            return true;
+            return TRUE;
         } else {
-            return false;
+            return FALSE;
         }
 
     }
@@ -793,7 +822,9 @@ class Form_Model_Sub {
     }
 
     /**
-     * Form_Model::save_ungzip()
+     * Form_Model::parse_feeds()
+     * 
+     * Takes the XML or CSV file places it into appropiate folder
      * 
      * @param string $url
      * @return string
@@ -856,17 +887,17 @@ class Form_Model_Sub {
 
                 switch ($file) {
 
-                    case ($file['headers']['content-type'] === "application/zip" ? true : false): // Do stuff for zip file here
+                    case ($file['headers']['content-type'] === "application/zip" ? TRUE : FALSE): // Do stuff for zip file here
 
                         switch ($file) {
 
-                            case (stripos($file['headers']['content-disposition'], "xml") ? true : false):
+                            case (stripos($file['headers']['content-disposition'], "xml") ? TRUE : FALSE):
                                 if ($this->save_unzip($file, $match[1], "xml") === TRUE) {
                                     return "datafeed_".$match[1].".xml";
                                 }
                                 break;
 
-                            case (stripos($file['headers']['content-disposition'], "csv") ? true : false):
+                            case (stripos($file['headers']['content-disposition'], "csv") ? TRUE : FALSE):
                                 if ($this->save_unzip($file, $match[1], "csv") === TRUE) {
                                     return "datafeed_".$match[1].".csv";
                                 }
@@ -880,17 +911,17 @@ class Form_Model_Sub {
 
                         break;
 
-                    case ($file['headers']['content-type'] === "application/gzip" ? true : false): // Do stuff for gzip file here
+                    case ($file['headers']['content-type'] === "application/gzip" ? TRUE : FALSE): // Do stuff for gzip file here
 
                         switch ($file) {
 
-                            case (stripos($file['headers']['content-disposition'], "xml") ? true : false):
+                            case (stripos($file['headers']['content-disposition'], "xml") ? TRUE : FALSE):
                                 if ($this->save_ungzip($file, $url_filtered, "xml", $match[1]) === TRUE) {
                                     return "datafeed_".$match[1].".xml";
                                 }
                                 break;
 
-                            case (stripos($file['headers']['content-disposition'], "csv") ? true : false):
+                            case (stripos($file['headers']['content-disposition'], "csv") ? TRUE : FALSE):
                                 if ($this->save_ungzip($file, $url_filtered, "csv", $match[1]) === TRUE) {
                                     return "datafeed_".$match[1].".csv";
                                 }
@@ -977,10 +1008,20 @@ class Form_Model_Sub {
 
         } else {
 
-            return false;
+            return FALSE;
 
         } // end if ($csv->sadfsad
     }
+
+    /**
+     * Form_Model::count_csv_rows()
+     * 
+     * counts entire number of rows
+     * 
+     * @param object $file
+     * @return array || boolean
+     * 
+     */
 
     protected function count_csv_rows($file) {
 
@@ -992,20 +1033,21 @@ class Form_Model_Sub {
 
         } else {
 
-            return false;
+            return FALSE;
 
         } // end if ($csv->sadfsad
     }
 
-
+    /*
     // MOVE THIS TO model A file
     public function parse_xml($file) {
 
-        $xml = simplexml_load_file($file, 'SimpleXMLElement', LIBXML_NOCDATA);
+    $xml = simplexml_load_file($file, 'SimpleXMLElement', LIBXML_NOCDATA);
 
-        return $xml;
+    return $xml;
 
     }
+    */
 
 
 }

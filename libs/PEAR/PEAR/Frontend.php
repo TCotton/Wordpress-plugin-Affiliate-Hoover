@@ -29,7 +29,7 @@ $GLOBALS['_PEAR_FRONTEND_CLASS'] = 'PEAR_Frontend_CLI';
  * Instance of $_PEAR_Command_uiclass.
  * @var object
  */
-$GLOBALS['_PEAR_FRONTEND_SINGLETON'] = null;
+$GLOBALS['_PEAR_FRONTEND_SINGLETON'] = NULL;
 
 /**
  * Singleton-based frontend for PEAR user input/output
@@ -50,11 +50,11 @@ class PEAR_Frontend extends PEAR
      * @return PEAR_Frontend_CLI|PEAR_Frontend_Web|PEAR_Frontend_Gtk
      * @static
      */
-    function &singleton($type = null)
+    function &singleton($type = NULL)
     {
-        if ($type === null) {
+        if ($type === NULL) {
             if (!isset($GLOBALS['_PEAR_FRONTEND_SINGLETON'])) {
-                $a = false;
+                $a = FALSE;
                 return $a;
             }
             return $GLOBALS['_PEAR_FRONTEND_SINGLETON'];
@@ -139,16 +139,16 @@ class PEAR_Frontend extends PEAR
     function isIncludeable($path)
     {
         if (file_exists($path) && is_readable($path)) {
-            return true;
+            return TRUE;
         }
 
-        $fp = @fopen($path, 'r', true);
+        $fp = @fopen($path, 'r', TRUE);
         if ($fp) {
             fclose($fp);
-            return true;
+            return TRUE;
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
@@ -175,10 +175,10 @@ class PEAR_Frontend extends PEAR
      *
      * @param string $msg the message to log
      * @param boolean $append_crlf
-     * @return boolean true
+     * @return boolean TRUE
      * @abstract
      */
-    function log($msg, $append_crlf = true)
+    function log($msg, $append_crlf = TRUE)
     {
     }
 

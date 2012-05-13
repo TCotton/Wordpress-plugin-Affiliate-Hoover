@@ -33,13 +33,13 @@ class PEAR_XMLParser
      * unserilialized data
      * @var string $_serializedData
      */
-    var $_unserializedData = null;
+    var $_unserializedData = NULL;
 
     /**
      * name of the root tag
      * @var string $_root
      */
-    var $_root = null;
+    var $_root = NULL;
 
     /**
      * stack for all data that is found
@@ -75,7 +75,7 @@ class PEAR_XMLParser
 
     /**
      * @param string xml content
-     * @return true|PEAR_Error
+     * @return TRUE|PEAR_Error
      */
     function parse($data)
     {
@@ -113,7 +113,7 @@ class PEAR_XMLParser
             return PEAR::raiseError("XML Error: '$msg' on line '$line'", 2);
         }
         xml_parser_free($xp);
-        return true;
+        return TRUE;
     }
 
     /**
@@ -128,11 +128,11 @@ class PEAR_XMLParser
     function startHandler($parser, $element, $attribs)
     {
         $this->_depth++;
-        $this->_dataStack[$this->_depth] = null;
+        $this->_dataStack[$this->_depth] = NULL;
 
         $val = array(
             'name'         => $element,
-            'value'        => null,
+            'value'        => NULL,
             'type'         => 'string',
             'childrenKeys' => array(),
             'aggregKeys'   => array()
@@ -183,10 +183,10 @@ class PEAR_XMLParser
                 break;
 
             /*
-             * unserialize a null value
+             * unserialize a NULL value
              */
-            case 'null':
-                $data = null;
+            case 'NULL':
+                $data = NULL;
                 break;
 
             /*
@@ -199,10 +199,10 @@ class PEAR_XMLParser
         }
 
         $parent = array_pop($this->_valStack);
-        if ($parent === null) {
+        if ($parent === NULL) {
             $this->_unserializedData = &$value['value'];
             $this->_root = &$value['name'];
-            return true;
+            return TRUE;
         }
 
         // parent has to be an array

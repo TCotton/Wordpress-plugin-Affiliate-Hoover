@@ -27,19 +27,19 @@ define('PEAR_IGNORE_BACKTRACE', 1);
  */
 if ('@include_path@' != '@'.'include_path'.'@') {
     ini_set('include_path', '@include_path@');
-    $raw = false;
+    $raw = FALSE;
 } else {
     // this is a raw, uninstalled pear, either a cvs checkout, or php distro
-    $raw = true;
+    $raw = TRUE;
 }
-@ini_set('allow_url_fopen', true);
+@ini_set('allow_url_fopen', TRUE);
 if (!ini_get('safe_mode')) {
     @set_time_limit(0);
 }
-ob_implicit_flush(true);
-@ini_set('track_errors', true);
-@ini_set('html_errors', false);
-@ini_set('magic_quotes_runtime', false);
+ob_implicit_flush(TRUE);
+@ini_set('track_errors', TRUE);
+@ini_set('html_errors', FALSE);
+@ini_set('magic_quotes_runtime', FALSE);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
@@ -93,8 +93,8 @@ if ($fetype == 'Gtk' && version_compare(phpversion(), '5.1.0', '>=')) {
 
 $pear_user_config = '';
 $pear_system_config = '';
-$store_user_config = false;
-$store_system_config = false;
+$store_user_config = FALSE;
+$store_system_config = FALSE;
 $verbose = 1;
 
 foreach ($opts as $opt) {
@@ -114,10 +114,10 @@ $config = &PEAR_Config::singleton($pear_user_config, $pear_system_config);
 
 if (PEAR::isError($config)) {
     $_file = '';
-    if ($pear_user_config !== false) {
+    if ($pear_user_config !== FALSE) {
        $_file .= $pear_user_config;
     }
-    if ($pear_system_config !== false) {
+    if ($pear_system_config !== FALSE) {
        $_file .= '/' . $pear_system_config;
     }
     if ($_file == '/') {
@@ -144,10 +144,10 @@ $cmdopts = array();
 
 if ($raw) {
     if (!$config->isDefinedLayer('user') && !$config->isDefinedLayer('system')) {
-        $found = false;
+        $found = FALSE;
         foreach ($opts as $opt) {
             if ($opt[0] == 'd' || $opt[0] == 'D') {
-                $found = true; // the user knows what they are doing, and are setting config values
+                $found = TRUE; // the user knows what they are doing, and are setting config values
             }
         }
         if (!$found) {
@@ -170,7 +170,7 @@ if ($raw) {
                 $config->set('test_dir', $pearbase . DIRECTORY_SEPARATOR . 'tests');
                 $config->set('ext_dir', $pearbase . DIRECTORY_SEPARATOR . 'extensions');
                 $config->set('bin_dir', $pearbase);
-                $config->mergeConfigFile($pearbase . 'pear.ini', false);
+                $config->mergeConfigFile($pearbase . 'pear.ini', FALSE);
                 $config->store();
                 $config->set('auto_discover', 1);
             }
@@ -178,10 +178,10 @@ if ($raw) {
     }
 }
 foreach ($opts as $opt) {
-    $param = !empty($opt[1]) ? $opt[1] : true;
+    $param = !empty($opt[1]) ? $opt[1] : TRUE;
     switch ($opt[0]) {
         case 'd':
-            if ($param === true) {
+            if ($param === TRUE) {
                 die('Invalid usage of "-d" option, expected -d config_value=value, ' .
                     'received "-d"' . "\n");
             }
@@ -194,7 +194,7 @@ foreach ($opts as $opt) {
             $config->set($key, $value, 'user');
             break;
         case 'D':
-            if ($param === true) {
+            if ($param === TRUE) {
                 die('Invalid usage of "-d" option, expected -d config_value=value, ' .
                     'received "-d"' . "\n");
             }
@@ -207,10 +207,10 @@ foreach ($opts as $opt) {
             $config->set($key, $value, 'system');
             break;
         case 's':
-            $store_user_config = true;
+            $store_user_config = TRUE;
             break;
         case 'S':
-            $store_system_config = true;
+            $store_system_config = TRUE;
             break;
         case 'u':
             $config->remove($param, 'user');
@@ -222,7 +222,7 @@ foreach ($opts as $opt) {
             $config->set('verbose', $config->get('verbose') - 1);
             break;
         case 'V':
-            usage(null, 'version');
+            usage(NULL, 'version');
         case 'c':
         case 'C':
             break;
@@ -241,7 +241,7 @@ if ($store_user_config) {
     $config->store('user');
 }
 
-$command = (isset($options[1][0])) ? $options[1][0] : null;
+$command = (isset($options[1][0])) ? $options[1][0] : NULL;
 if (empty($command) && ($store_user_config || $store_system_config)) {
     exit;
 }
@@ -255,7 +255,7 @@ if ($fetype == 'Gtk' || $fetype == 'Gtk2') {
     Gtk::main();
 } else do {
     if ($command == 'help') {
-        usage(null, @$options[1][1]);
+        usage(NULL, @$options[1][1]);
     }
 
     if (!$config->validConfiguration()) {
@@ -268,10 +268,10 @@ if ($fetype == 'Gtk' || $fetype == 'Gtk2') {
     $cmd = PEAR_Command::factory($command, $config);
     PEAR::popErrorHandling();
     if (PEAR::isError($cmd)) {
-        usage(null, @$options[1][0]);
+        usage(NULL, @$options[1][0]);
     }
 
-    $short_args = $long_args = null;
+    $short_args = $long_args = NULL;
     PEAR_Command::getGetoptArgs($command, $short_args, $long_args);
     array_shift($options[1]);
     $tmp = Console_Getopt::getopt2($options[1], $short_args, $long_args);
@@ -284,8 +284,8 @@ if ($fetype == 'Gtk' || $fetype == 'Gtk2') {
     $opts = array();
     foreach ($tmpopt as $foo => $tmp2) {
         list($opt, $value) = $tmp2;
-        if ($value === null) {
-            $value = true; // options without args
+        if ($value === NULL) {
+            $value = TRUE; // options without args
         }
 
         if (strlen($opt) == 1) {
@@ -303,7 +303,7 @@ if ($fetype == 'Gtk' || $fetype == 'Gtk2') {
     }
 
     $ok = $cmd->run($command, $opts, $params);
-    if ($ok === false) {
+    if ($ok === FALSE) {
         PEAR::raiseError("unknown command `$command'");
     }
 
@@ -311,21 +311,21 @@ if ($fetype == 'Gtk' || $fetype == 'Gtk2') {
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
         PEAR::raiseError($ok);
     }
-} while (false);
+} while (FALSE);
 
 // {{{ usage()
 
-function usage($error = null, $helpsubject = null)
+function usage($error = NULL, $helpsubject = NULL)
 {
     global $progname, $all_commands;
     $stdout = fopen('php://stdout', 'w');
     if (PEAR::isError($error)) {
         fputs($stdout, $error->getMessage() . "\n");
-    } elseif ($error !== null) {
+    } elseif ($error !== NULL) {
         fputs($stdout, "$error\n");
     }
 
-    if ($helpsubject != null) {
+    if ($helpsubject != NULL) {
         $put = cmdHelp($helpsubject);
     } else {
         $put = "Commands:\n";
@@ -344,7 +344,7 @@ function usage($error = null, $helpsubject = null)
     fputs($stdout, "$put\n");
     fclose($stdout);
 
-    if ($error === null) {
+    if ($error === NULL) {
         exit(0);
     }
     exit(1);
@@ -387,7 +387,7 @@ function cmdHelp($command)
             return "$progname $command [options] $help\n";
         }
 
-        if ($help[1] === null) {
+        if ($help[1] === NULL) {
             return "$progname $command $help[0]";
         }
 
@@ -409,7 +409,7 @@ function error_handler($errno, $errmsg, $file, $line, $vars) {
             return; // E_DEPRECATED
         }
         if ($GLOBALS['config']->get('verbose') < 4) {
-            return false; // @silenced error, show all if debug is high enough
+            return FALSE; // @silenced error, show all if debug is high enough
         }
     }
     $errortype = array (
@@ -433,7 +433,7 @@ function error_handler($errno, $errmsg, $file, $line, $vars) {
         $file = basename($file);
     }
     print "\n$prefix: $errmsg in $file on line $line\n";
-    return false;
+    return FALSE;
 }
 
 

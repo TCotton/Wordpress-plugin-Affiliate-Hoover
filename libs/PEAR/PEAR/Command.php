@@ -63,7 +63,7 @@ $GLOBALS['_PEAR_Command_objects'] = array();
  *    (string) command name
  *    (array)  assoc array with options, freely defined by each
  *             command, for example:
- *             array('force' => true)
+ *             array('force' => TRUE)
  *    (array)  list of the other parameters
  *
  *   The run() function returns a PEAR_CommandResponse object.  Use
@@ -225,10 +225,10 @@ class PEAR_Command
      * @access public
      * @static
      */
-    function registerCommands($merge = false, $dir = null)
+    function registerCommands($merge = FALSE, $dir = NULL)
     {
         $parser = new PEAR_XMLParser;
-        if ($dir === null) {
+        if ($dir === NULL) {
             $dir = dirname(__FILE__) . '/Command';
         }
         if (!is_dir($dir)) {
@@ -294,7 +294,7 @@ class PEAR_Command
         ksort($GLOBALS['_PEAR_Command_shortcuts']);
         ksort($GLOBALS['_PEAR_Command_commandlist']);
         @closedir($dp);
-        return true;
+        return TRUE;
     }
 
     // }}}
@@ -360,7 +360,7 @@ class PEAR_Command
             $command = $GLOBALS['_PEAR_Command_shortcuts'][$command];
         }
         if (!isset($GLOBALS['_PEAR_Command_commandlist'][$command])) {
-            return null;
+            return NULL;
         }
         $obj = &PEAR_Command::getObject($command);
         return $obj->getGetoptArgs($command, $short_args, $long_args);
@@ -382,7 +382,7 @@ class PEAR_Command
     function getDescription($command)
     {
         if (!isset($GLOBALS['_PEAR_Command_commanddesc'][$command])) {
-            return null;
+            return NULL;
         }
         return $GLOBALS['_PEAR_Command_commanddesc'][$command];
     }
@@ -408,7 +408,7 @@ class PEAR_Command
             $obj = &PEAR_Command::getObject($command);
             return $obj->getHelp($command);
         }
-        return false;
+        return FALSE;
     }
     // }}}
 }

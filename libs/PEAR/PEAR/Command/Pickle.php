@@ -101,10 +101,10 @@ generate both package.xml.
      *
      * @param PEAR_Config $config
      * @param bool $debug
-     * @param string|null $tmpdir
+     * @param string|NULL $tmpdir
      * @return PEAR_PackageFile
      */
-    function &getPackageFile($config, $debug = false)
+    function &getPackageFile($config, $debug = FALSE)
     {
         if (!class_exists('PEAR_Common')) {
             require_once 'PEAR/Common.php';
@@ -130,7 +130,7 @@ generate both package.xml.
             return $err;
         }
 
-        $compress = empty($options['nocompress']) ? true : false;
+        $compress = empty($options['nocompress']) ? TRUE : FALSE;
         $result = $packager->package($pkginfofile, $compress, 'package.xml');
         if (PEAR::isError($result)) {
             return $this->raiseError($result);
@@ -141,7 +141,7 @@ generate both package.xml.
             $this->ui->outputData($result, $command);
         }
 
-        return true;
+        return TRUE;
     }
 
     function _convertPackage($packagexml)
@@ -348,7 +348,7 @@ generate both package.xml.
 
         if ($configoptions = $pf2->getConfigureOptions()) {
             foreach ($configoptions as $option) {
-                $default = isset($option['default']) ? $option['default'] : false;
+                $default = isset($option['default']) ? $option['default'] : FALSE;
                 $pf->addConfigureOption($option['name'], $option['prompt'], $default);
             }
         }
@@ -367,7 +367,7 @@ generate both package.xml.
         if (isset($contents['dir']['attribs']['baseinstalldir'])) {
             $baseinstalldir = $contents['dir']['attribs']['baseinstalldir'];
         } else {
-            $baseinstalldir = false;
+            $baseinstalldir = FALSE;
         }
 
         if (!isset($contents['dir']['file'][0])) {

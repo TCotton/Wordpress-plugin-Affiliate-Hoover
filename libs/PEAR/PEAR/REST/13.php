@@ -50,37 +50,37 @@ class PEAR_REST_13 extends PEAR_REST_10
      * </pre>
      * @param string $prefstate Current preferred_state config variable value
      * @param bool $installed the installed version of this package to compare against
-     * @return array|false|PEAR_Error see {@link _returnDownloadURL()}
+     * @return array|FALSE|PEAR_Error see {@link _returnDownloadURL()}
      */
-    function getDownloadURL($base, $packageinfo, $prefstate, $installed, $channel = false)
+    function getDownloadURL($base, $packageinfo, $prefstate, $installed, $channel = FALSE)
     {
-        $states = $this->betterStates($prefstate, true);
+        $states = $this->betterStates($prefstate, TRUE);
         if (!$states) {
             return PEAR::raiseError('"' . $prefstate . '" is not a valid state');
         }
 
         $channel  = $packageinfo['channel'];
         $package  = $packageinfo['package'];
-        $state    = isset($packageinfo['state'])   ? $packageinfo['state']   : null;
-        $version  = isset($packageinfo['version']) ? $packageinfo['version'] : null;
+        $state    = isset($packageinfo['state'])   ? $packageinfo['state']   : NULL;
+        $version  = isset($packageinfo['version']) ? $packageinfo['version'] : NULL;
         $restFile = $base . 'r/' . strtolower($package) . '/allreleases2.xml';
 
-        $info = $this->_rest->retrieveData($restFile, false, false, $channel);
+        $info = $this->_rest->retrieveData($restFile, FALSE, FALSE, $channel);
         if (PEAR::isError($info)) {
             return PEAR::raiseError('No releases available for package "' .
                 $channel . '/' . $package . '"');
         }
 
         if (!isset($info['r'])) {
-            return false;
+            return FALSE;
         }
 
-        $release = $found = false;
+        $release = $found = FALSE;
         if (!is_array($info['r']) || !isset($info['r'][0])) {
             $info['r'] = array($info['r']);
         }
 
-        $skippedphp = false;
+        $skippedphp = FALSE;
         foreach ($info['r'] as $release) {
             if (!isset($this->_rest->_options['force']) && ($installed &&
                   version_compare($release['v'], $installed, '<'))) {
@@ -95,19 +95,19 @@ class PEAR_REST_13 extends PEAR_REST_10
                         $skippedphp = $release;
                         continue;
                     }
-                    $found = true;
+                    $found = TRUE;
                     break;
                 }
 
                 // see if there is something newer and more stable
                 // bug #7221
-                if (in_array($release['s'], $this->betterStates($state), true)) {
+                if (in_array($release['s'], $this->betterStates($state), TRUE)) {
                     if (!isset($version) && version_compare($release['m'], phpversion(), '>')) {
                         // skip releases that require a PHP version newer than our PHP version
                         $skippedphp = $release;
                         continue;
                     }
-                    $found = true;
+                    $found = TRUE;
                     break;
                 }
             } elseif (isset($version)) {
@@ -119,7 +119,7 @@ class PEAR_REST_13 extends PEAR_REST_10
                         $skippedphp = $release;
                         continue;
                     }
-                    $found = true;
+                    $found = TRUE;
                     break;
                 }
             } else {
@@ -129,48 +129,48 @@ class PEAR_REST_13 extends PEAR_REST_10
                         $skippedphp = $release;
                         continue;
                     }
-                    $found = true;
+                    $found = TRUE;
                     break;
                 }
             }
         }
 
         if (!$found && $skippedphp) {
-            $found = null;
+            $found = NULL;
         }
 
         return $this->_returnDownloadURL($base, $package, $release, $info, $found, $skippedphp, $channel);
     }
 
     function getDepDownloadURL($base, $xsdversion, $dependency, $deppackage,
-                               $prefstate = 'stable', $installed = false, $channel = false)
+                               $prefstate = 'stable', $installed = FALSE, $channel = FALSE)
     {
-        $states = $this->betterStates($prefstate, true);
+        $states = $this->betterStates($prefstate, TRUE);
         if (!$states) {
             return PEAR::raiseError('"' . $prefstate . '" is not a valid state');
         }
 
         $channel  = $dependency['channel'];
         $package  = $dependency['name'];
-        $state    = isset($dependency['state'])   ? $dependency['state']   : null;
-        $version  = isset($dependency['version']) ? $dependency['version'] : null;
+        $state    = isset($dependency['state'])   ? $dependency['state']   : NULL;
+        $version  = isset($dependency['version']) ? $dependency['version'] : NULL;
         $restFile = $base . 'r/' . strtolower($package) .'/allreleases2.xml';
 
-        $info = $this->_rest->retrieveData($restFile, false, false, $channel);
+        $info = $this->_rest->retrieveData($restFile, FALSE, FALSE, $channel);
         if (PEAR::isError($info)) {
             return PEAR::raiseError('Package "' . $deppackage['channel'] . '/' . $deppackage['package']
                 . '" dependency "' . $channel . '/' . $package . '" has no releases');
         }
 
         if (!is_array($info) || !isset($info['r'])) {
-            return false;
+            return FALSE;
         }
 
         $exclude = array();
-        $min = $max = $recommended = false;
+        $min = $max = $recommended = FALSE;
         if ($xsdversion == '1.0') {
             $pinfo['package'] = $dependency['name'];
-            $pinfo['channel'] = 'pear.php.net'; // this is always true - don't change this
+            $pinfo['channel'] = 'pear.php.net'; // this is always TRUE - don't change this
             switch ($dependency['rel']) {
                 case 'ge' :
                     $min = $dependency['version'];
@@ -195,10 +195,10 @@ class PEAR_REST_13 extends PEAR_REST_10
             }
         } else {
             $pinfo['package'] = $dependency['name'];
-            $min = isset($dependency['min']) ? $dependency['min'] : false;
-            $max = isset($dependency['max']) ? $dependency['max'] : false;
+            $min = isset($dependency['min']) ? $dependency['min'] : FALSE;
+            $max = isset($dependency['max']) ? $dependency['max'] : FALSE;
             $recommended = isset($dependency['recommended']) ?
-                $dependency['recommended'] : false;
+                $dependency['recommended'] : FALSE;
             if (isset($dependency['exclude'])) {
                 if (!isset($dependency['exclude'][0])) {
                     $exclude = array($dependency['exclude']);
@@ -206,7 +206,7 @@ class PEAR_REST_13 extends PEAR_REST_10
             }
         }
 
-        $skippedphp = $found = $release = false;
+        $skippedphp = $found = $release = FALSE;
         if (!is_array($info['r']) || !isset($info['r'][0])) {
             $info['r'] = array($info['r']);
         }
@@ -261,7 +261,7 @@ class PEAR_REST_13 extends PEAR_REST_10
                 if (!in_array($release['s'], $states)) {
                     // the stability is too low, but we must return the
                     // recommended version if possible
-                    return $this->_returnDownloadURL($base, $package, $release, $info, true, false, $channel);
+                    return $this->_returnDownloadURL($base, $package, $release, $info, TRUE, FALSE, $channel);
                 }
             }
 
@@ -285,13 +285,13 @@ class PEAR_REST_13 extends PEAR_REST_10
                     continue;
                 }
 
-                $found = true; // ... then use it
+                $found = TRUE; // ... then use it
                 break;
             }
         }
 
         if (!$found && $skippedphp) {
-            $found = null;
+            $found = NULL;
         }
 
         return $this->_returnDownloadURL($base, $package, $release, $info, $found, $skippedphp, $channel);
