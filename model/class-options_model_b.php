@@ -522,6 +522,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         $sql2 = "CREATE TABLE IF NOT EXISTS ".AH_TOTAL_FEEDS_TABLES." (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cat_id` int(11) NOT NULL,
   `post_title_id` int(11) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
@@ -535,26 +536,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
-    /**
-     * Form_Model::update_feed_details()
-     * 
-     * Updates the main datbase table
-     * 
-     */
 
-    protected function update_feed_details($form_title, $form_title_contains, $form_body, $form_body_contains,
-        $form_categories, $form_tags, $form_allow_comments, $form_allow_trackback, $form_name, $form_min_rows,
-        $form_max_rows, $form_post_status) {
-
-        global $wpdb;
-
-        return $wpdb->query($wpdb->prepare("UPDATE ".AH_FEED_DETAILS_TABLE.
-            " SET form_title = %s, form_title_contains = %s, form_body = %s, form_body_contains = %s, form_categories = %s, form_tags = %s, form_allow_comments = %d, form_allow_trackback = %d, min_rows = %d, max_rows = %d, post_status = %s WHERE name = %s",
-            $form_title, $form_title_contains, $form_body, $form_body_contains, $form_categories, $form_tags,
-            $form_allow_comments, $form_allow_trackback, $form_min_rows, $form_max_rows, $form_post_status,
-            $form_name));
-
-    }
     /**
      * Form_Model::create_post_items()
      * 
@@ -605,6 +587,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             if ($csv->load(AH_FEEDS_DIR.$file_here)) {
 
+                //var_dump($csv->isSymmetric());
+
                 $csv->symmetrize();
 
                 $total = $csv->getrawArray();
@@ -623,6 +607,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                     $total_val = count($value);
 
                     foreach ($value as $key => $row_value) {
+
+                        //var_dump("key:" . $key );
+                        //var_dump("value: " . $row_value);
 
                         if ($key === 0) {
 
@@ -695,7 +682,11 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                             }
 
-                            $new_post['post_status'] = $item->post_status;
+                            if ($item->post_status == NULL) {
+
+                                $new_post['post_status'] = $item->post_status;
+
+                            }
 
                             $duplicate = FALSE;
 
@@ -857,17 +848,19 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                     }
 
+
                                     $new_post['post_category'] = $post_cat_array;
                                     $new_post['post_date'] = date('Y-m-d H:i:s');
                                     $new_post['post_content'] = force_balance_tags($new_post['post_content']);
 
-                                    //var_dump($new_post);
 
                                     $id = wp_insert_post($new_post);
 
                                     add_post_meta($id, '_unique_post', $post_title, TRUE);
 
-                                    $this->insert_total_feeds($post_title);
+                                    add_post_meta($id, '_cat_num', $item->id, TRUE);
+
+                                    $this->insert_total_feeds($post_title, $item->id);
 
                                 }
 
@@ -924,12 +917,12 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     */
 
 
-    private function insert_total_feeds($id) {
+    private function insert_total_feeds($id, $cat_id) {
 
         global $wpdb;
 
         return $wpdb->query($wpdb->prepare("
-		INSERT INTO ".AH_TOTAL_FEEDS_TABLES."(post_title_id) VALUES (%d)", $id));
+		INSERT INTO ".AH_TOTAL_FEEDS_TABLES."(post_title_id, cat_id) VALUES (%d, %d)", $id, $cat_id));
 
     }
 
@@ -971,17 +964,40 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
      * 
      * Compares the remote and file and database, deletign database entries if not equal
      * 
+     * This is really fucking messy major refacture
+     * 
      * @return string
      */
 
-
     protected function synchronize_feeds($var) {
 
-        $filename = $this->find_filename_feed_details(urlencode($_GET['unique_form']));
+        // firstly find the name of the feed to be updated
+
+        $id = $this->find_feed_details_id($_GET['unique_form']);
+
+        // now use that id to find details of all existing published items for that category
+
+        $cat_array = $this->find_meta_cat($id->id);
+
+        // Now find the title of the posts
+
+        foreach ($cat_array as $result) {
+
+            $total_posts[] = $this->get_post_meta_id($result->post_id);
+
+        }
+
+        // the total posts for this category are no in the $total_posts array
+
+        // Now find the filename so as to access the CSV file
+
+        $filename = $this->find_filename_feed_details($_GET['unique_form']);
 
         $csv = new File_CSV_DataSource;
 
         $total_titles = array();
+
+        // Load CSV file
 
         if ($csv->load(AH_FEEDS_DIR.$filename->fileName)) {
 
@@ -989,13 +1005,30 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             $total = $csv->getrawArray();
 
+            $total_meta = array();
+
+            foreach ($total_posts as $meta_result) {
+
+                $total_meta[] = $meta_result->meta_value;
+
+            }
+
+            // the total_meta array now has the titles for every post in this category
+
+            // loop through CSV total contents and get an array of every title
+
+            ###
+
             foreach ($total as $result => $value) {
 
                 if ($result == 0) continue;
 
                 foreach ($value as $key => $row_value) {
 
-                    $total_titles[] = hexdec(substr(md5($row_value), 0, 7));
+                    if (stristr((string )$var, (string )$key)) {
+                        $total_titles[] = hexdec(substr(md5($row_value), 0, 7));
+
+                    }
 
                 } // end foreach
 
@@ -1003,19 +1036,48 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         } // end if ($csv->load(AH_FEEDS_DIR.$filename)) {
 
-        // now loop through array in postmeta
+        // now we have an array of every title in the CVS and every publish post in that category
+        // lets compare them
+        // if a published post is not in the CVS file, lets delete it from the database
 
-        $total_postmeta = $this->get_post_meta();
+        $difference = array_diff($total_meta, $total_titles);
 
-        foreach ($total_postmeta as $meta_result) {
+        //in the $difference array there is now the titles that need to be deleted
 
-            if (!in_array((int)$meta_result->meta_value, $total_titles)) {
+        foreach ($difference as $result) {
 
-                wp_delete_post($meta_result->post_id);
+            $postid = $this->find_meta_id($result);
 
-            }
+            wp_delete_post($postid->post_id);
 
         }
+
+    }
+
+    private function find_meta_id($var) {
+
+        global $wpdb;
+
+        return $wpdb->get_row("SELECT post_id FROM ".$wpdb->prefix."postmeta WHERE meta_value  = '".
+            $var."'");
+
+    }
+
+    private function find_meta_cat($var) {
+
+        global $wpdb;
+
+        return $wpdb->get_results("SELECT post_id FROM ".$wpdb->prefix.
+            "postmeta WHERE meta_key = '_cat_num' AND meta_value = $var");
+
+    }
+
+    private function find_feed_details_id($var) {
+
+        global $wpdb;
+
+        return $wpdb->get_row("SELECT id FROM ".AH_FEED_DETAILS_TABLE." WHERE name = '".$var."'");
+
 
     }
 
@@ -1055,6 +1117,16 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    private function get_post_meta_id($var) {
+
+        global $wpdb;
+
+        return $wpdb->get_row("SELECT post_id, meta_value FROM ".$wpdb->prefix.
+            "postmeta WHERE meta_key = '_unique_post' AND post_id = $var");
+
+
+    }
+
     private function get_post_meta() {
 
         global $wpdb;
@@ -1079,7 +1151,11 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         // ADD PREPARE STATEMENT WITH SQL
 
+        //var_dump($var);
+
         return $wpdb->get_row("SELECT * FROM ".AH_FEED_DETAILS_TABLE." WHERE name = '".$var."'");
+
+        //$wpdb->show_errors();
 
     }
 
@@ -1279,10 +1355,12 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 if ($value != "") {
                     $form_min_rows = (int)$value;
                 } else {
-                    $form_min_rows = NULL;
+                    $form_min_rows = "NULL";
                 }
 
             }
+
+            //var_dump($form_min_rows);
 
             if ($key === "formMaxRows") {
                 if ($value != "") {
@@ -1338,6 +1416,28 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         }
 
+
+    }
+
+
+    /**
+     * Form_Model::update_feed_details()
+     * 
+     * Updates the main datbase table
+     * 
+     */
+
+    protected function update_feed_details($form_title, $form_title_contains, $form_body, $form_body_contains,
+        $form_categories, $form_tags, $form_allow_comments, $form_allow_trackback, $form_name, $form_min_rows,
+        $form_max_rows, $form_post_status) {
+
+        global $wpdb;
+
+        return $wpdb->query($wpdb->prepare("UPDATE ".AH_FEED_DETAILS_TABLE.
+            " SET form_title = %s, form_title_contains = %s, form_body = %s, form_body_contains = %s, form_categories = %s, form_tags = %s, form_allow_comments = %d, form_allow_trackback = %d, min_rows = %d, max_rows = %d, post_status = %s WHERE name = %s",
+            $form_title, $form_title_contains, $form_body, $form_body_contains, $form_categories, $form_tags,
+            $form_allow_comments, $form_allow_trackback, $form_min_rows, $form_max_rows, $form_post_status,
+            $form_name));
 
     }
 

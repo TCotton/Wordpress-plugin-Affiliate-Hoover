@@ -533,14 +533,14 @@ class Form_Controller extends OptionModel\Form_Model {
                         $text .= "<input type=\"hidden\" name=\"{$option_name}[$i][file_name]\" value=\"\">";
                         if ($add_link === TRUE) {
                             $text .= '<span class="description"><p><a href="';
-                            $text .= '?page='.$page_url.'&feed-list=total&unique_name='.urlencode($name_value);
+                            $text .= '?page='.$page_url.'&feed-list=total&unique_name='.$name_value;
                             $text .= '">Edit feed details</a></p>';
 
                             if ($this->check_feed_details_table($name_value) != "") {
 
                                 $text .= '<p><a href="';
                                 $text .= '?page='.$page_url.'&feed-list=total&unique_form='.
-                                    urlencode($name_value);
+                                    $name_value;
                                 $text .= '">Feed form</a></p>';
 
                             }

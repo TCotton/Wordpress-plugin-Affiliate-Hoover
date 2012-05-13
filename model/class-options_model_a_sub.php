@@ -378,6 +378,39 @@ class Form_Model_Sub {
 
 
     }
+    
+    
+    
+      protected function alnum($form_output, $att) {
+
+        extract(static::$form);
+
+        if (is_array($form_output) && is_string($att)) {
+
+            foreach ($form_output[$option_name] as $thisKey => $result) {
+
+                if (preg_match("/$att/i", $thisKey)) {
+
+                    if ($result !== "") {
+
+                        if (!ctype_alnum($result)) {
+                            return FALSE;
+                        }
+
+                    } // end if
+
+                } // end if
+
+            } // end foreach
+
+        } else {
+            die("Make sure that the inputs for validate_url() is an array and a string");
+        }
+
+
+    }
+
+    
 
     /**
      * Form_Model::validate_email()

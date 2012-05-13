@@ -218,8 +218,6 @@ class Form_View extends OptionController\Form_Controller {
 
             $this->stripslashes($form, 'siteName', TRUE);
 
-            $this->wp_kses_new($form, 'siteName', TRUE);
-
             // EMPTY VALUES
 
             if ($this->empty_value($form) === FALSE) {
@@ -230,6 +228,11 @@ class Form_View extends OptionController\Form_Controller {
             if ($this->duplicate_entries($form) === FALSE) {
                 $error[] = "Please make sure that all feed names are unique";
             }
+            
+            if ($this->alnum($form, 'siteName') === FALSE) {
+                $error[] = "Please make sure that you don't use any special characters or white spaces for a name";
+            }
+            
 
             if (empty($error)) {
 
@@ -293,8 +296,8 @@ class Form_View extends OptionController\Form_Controller {
             echo '<ul>';
 
             foreach ($feed_names as $result) {
-                echo '<li><a href="?page='.$page_url.'&feed-list=total&unique_name='.urlencode($result->
-                    name).'">'.$result->name.'</a></li>';
+                echo '<li><a href="?page='.$page_url.'&feed-list=total&unique_name='.$result->
+                    name.'">'.$result->name.'</a></li>';
             }
 
             echo '</ul>';
@@ -384,6 +387,8 @@ class Form_View extends OptionController\Form_Controller {
             }
 
             $form_data = $this->select_all($_GET['unique_form']);
+            
+            //var_dump($form_data);
 
             if ($form_data !== NULL) {
 
@@ -447,16 +452,16 @@ class Form_View extends OptionController\Form_Controller {
                     $form_allow_trackback = 0;
                 }
 
-                if ($form_data->min_rows != "") {
-                    $min_rows = $form_data->min_rows;
+                if ($form_data->min_rows != "0") {
+                    $mi_rows = $form_data->min_rows;
                 } else {
-                    $min_rows = "YES";
+                    $mi_rows = "YES";
                 }
 
-                if ($form_data->max_rows != "") {
-                    $max_rows = $form_data->max_rows;
+                if ($form_data->max_rows != "0") {
+                    $ma_rows = $form_data->max_rows;
                 } else {
-                    $max_rows = "YES";
+                    $ma_rows = "YES";
                 }
 
                 $form_status = NULL;
@@ -488,10 +493,10 @@ class Form_View extends OptionController\Form_Controller {
                     $this->sanitize($form, 'stripslashes');
                     $this->add_ind_form_validate($error, $form);
                     if (empty($error)) {
-
+                        
                         $startTime = microtime(TRUE);
-                        $this->update_ind_form($form, urlencode($_GET['unique_form']));
-                        $this->create_post_items(urlencode($_GET['unique_form']), FALSE);
+                        $this->update_ind_form($form, $_GET['unique_form']);
+                        $this->create_post_items($_GET['unique_form'], FALSE);
                         $endTime = microtime(TRUE);
                         $elapsed = $endTime - $startTime;
                         var_dump("Execution time : $elapsed seconds");
@@ -511,14 +516,12 @@ class Form_View extends OptionController\Form_Controller {
                     $this->add_ind_form_validate($error, $form);
                     if (empty($error)) {
 
-                        if ($this->update_ind_form($form, urlencode($_GET['unique_form']))) {
-
                             $startTime = microtime(TRUE);
-                            $this->create_post_items(urlencode($_GET['unique_form']));
+                            $this->update_ind_form($form, $_GET['unique_form']);
+                            $this->create_post_items($_GET['unique_form']);
                             $endTime = microtime(TRUE);
                             $elapsed = $endTime - $startTime;
                             var_dump("Execution time : $elapsed seconds");
-                        }
 
                     } else {
 
@@ -539,6 +542,7 @@ class Form_View extends OptionController\Form_Controller {
                     
                     if (empty($error)) {
                         
+                            
                         $this->synchronize_feeds($form[$option_name]['formTitle']);
 
                     } else {
@@ -665,7 +669,7 @@ class Form_View extends OptionController\Form_Controller {
                     "name" => "formMinRows", // name attribute
                     "desc" => "Start processing on which row? (Out of a total of $form_data->num_rows entries)", // for use in input label
                     "maxlength" => "11", // max attribute
-                    "value" => $min_rows, // value attribute
+                    "value" => $mi_rows, // value attribute
                     "select" => FALSE // array only for the select inpu
                         );
                 $max_rows = array(
@@ -673,7 +677,7 @@ class Form_View extends OptionController\Form_Controller {
                     "name" => "formMaxRows", // name attribute
                     "desc" => "End processing on which row? (Out of a total of $form_data->num_rows entries)", // for use in input label
                     "maxlength" => "11", // max attribute
-                    "value" => $max_rows, // value attribute
+                    "value" => $ma_rows, // value attribute
                     "select" => FALSE // array only for the select inpu
                         );
                 $post_status = array(
@@ -723,12 +727,12 @@ class Form_View extends OptionController\Form_Controller {
         extract(self::$form);
         if (isset($_GET['unique_name']) && $_GET['unique_name'] !== "") {
 
-            if ($this->check_table(urlencode($_GET['unique_name'])) === NULL) {
+            if ($this->check_table($_GET['unique_name']) === NULL) {
 
                 $feed_url_value = "YES";
             } else {
 
-                $item = $this->select_all(urlencode($_GET['unique_name']));
+                $item = $this->select_all($_GET['unique_name']);
                 if ($item->URL == "") {
                     $feed_url_value = "YES";
                 } else {
@@ -841,8 +845,8 @@ class Form_View extends OptionController\Form_Controller {
                 echo "<p>File can be found here: ".'<strong>'.AH_FEEDS_DIR.$item->fileName.
                     '</strong></p>';
 
-                echo '<p><a href="?page='.$page_url.'&feed-list=total&unique_form='.urlencode($item->
-                    name).'">Edit this form feed here</a></p>';
+                echo '<p><a href="?page='.$page_url.'&feed-list=total&unique_form='.$item->
+                    name.'">Edit this form feed here</a></p>';
 
             } else {
 
