@@ -1,3 +1,7 @@
+body  {
+}
 
-
-// styles here
+form[name=affiliate_hoover_plugin_options] input[type=text],
+form[name=affiliate_hoover_plugin_options] textarea{
+font-size : 16px;
+}

@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Affiliate Hoover
-Plugin URI: //
+Plugin URI: http://wordpress.org/extend/plugins/affiliate-hoover/
 Description: Takes affiliate feed files and parses them into posts
 Version: 0.1
 Author: Andy Walpole
@@ -38,6 +38,3 @@ foreach (\Config\Configuration::total_files() as $file) {
     }
 
 }
-
-
-set_time_limit(200);

@@ -5,7 +5,6 @@ use OptionModelSub;
 use File_CSV_DataSource;
 use XML_Serializer;
 use XML_Unserializer;
-//use XmlArray;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
 
@@ -488,6 +487,10 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
      */
 
     protected function create_table() {
+        
+        extract(static::$form);
+        
+        //add_option($option_name);
 
         global $wpdb;
 
@@ -531,11 +534,10 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         dbDelta($sql);
         dbDelta($sql2);
-
+        
         //$wpdb->print_error();
 
     }
-
 
     /**
      * Form_Model::create_post_items()
@@ -607,9 +609,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                     $total_val = count($value);
 
                     foreach ($value as $key => $row_value) {
-
-                        //var_dump("key:" . $key );
-                        //var_dump("value: " . $row_value);
 
                         if ($key === 0) {
 
@@ -848,11 +847,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                     }
 
-
                                     $new_post['post_category'] = $post_cat_array;
                                     $new_post['post_date'] = date('Y-m-d H:i:s');
                                     $new_post['post_content'] = force_balance_tags($new_post['post_content']);
-
 
                                     $id = wp_insert_post($new_post);
 
@@ -2169,4 +2166,3 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
 
 }
-//blipblopblip.com

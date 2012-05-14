@@ -89,6 +89,8 @@ class Form_View extends OptionController\Form_Controller {
 
         if (strpos($this->find_url(), $page_url)) {
 
+            set_time_limit(200);
+
             // Only display script on plugin admin page. Is there a Wordpress way of doing this?
             $plugin_url = plugin_dir_url(__DIR__ );
             wp_enqueue_script("option_scripts", $plugin_url."javascript/scripts.js");
@@ -188,19 +190,22 @@ class Form_View extends OptionController\Form_Controller {
         echo '</td> <!-- [left] -->'; // right block here for widgets
 
         echo '<td class="right">';
-        echo '<div class="postbox">';
-        echo '<div class="inside">';
-        echo '<h3 class="hndle">Author details</h3>';
-        echo '<p>This plugin has been created by <a href="http://andywalpole.me/">Andy Walpole</a></p>';
-        echo '<p>At the moment it is optimised to work with Affiliate Window, Paid on Demand and TradeDoubler but it should be okay to upload a CSV file from any company.</p>';
-        echo '<p>Please report any bugs or feature requests to...</p>';
-        echo '</div><!-- end inside -->';
-        echo '</div><!-- end postbox -->';
+
+        $this->admin_sidebar();
+
         echo '</td> <!-- [right] --></tr>';
         echo '</table> <!-- [outer] -->';
         echo '</div><!-- end of wrap div -->';
 
     } // end create_html_cov()
+
+
+    /**
+     * Form_View::main_form()
+     *
+     * Central options form where the feed names are added
+     *
+     */
 
     private function main_form() {
 
@@ -228,11 +233,11 @@ class Form_View extends OptionController\Form_Controller {
             if ($this->duplicate_entries($form) === FALSE) {
                 $error[] = "Please make sure that all feed names are unique";
             }
-            
+
             if ($this->alnum($form, 'siteName') === FALSE) {
-                $error[] = "Please make sure that you don't use any special characters or white spaces for a name";
+                $error[] =
+                    "Please make sure that you don't use any special characters or white spaces for a name";
             }
-            
 
             if (empty($error)) {
 
@@ -284,8 +289,8 @@ class Form_View extends OptionController\Form_Controller {
         extract(self::$form);
 
         $feed_names = $this->get_all_feed_names();
-        
-         echo '<h3>List of total feeds</h3>';
+
+        echo '<h3>List of total feeds</h3>';
 
         if (empty($feed_names)) {
 
@@ -296,8 +301,8 @@ class Form_View extends OptionController\Form_Controller {
             echo '<ul>';
 
             foreach ($feed_names as $result) {
-                echo '<li><a href="?page='.$page_url.'&feed-list=total&unique_name='.$result->
-                    name.'">'.$result->name.'</a></li>';
+                echo '<li><a href="?page='.$page_url.'&feed-list=total&unique_name='.$result->name.
+                    '">'.$result->name.'</a></li>';
             }
 
             echo '</ul>';
@@ -315,7 +320,6 @@ class Form_View extends OptionController\Form_Controller {
      * @param array $form
      * 
      */
-
 
     private function add_ind_form_validate(&$error, $form) {
         // validation and sanitization for form below
@@ -387,7 +391,7 @@ class Form_View extends OptionController\Form_Controller {
             }
 
             $form_data = $this->select_all($_GET['unique_form']);
-            
+
             //var_dump($form_data);
 
             if ($form_data !== NULL) {
@@ -493,7 +497,7 @@ class Form_View extends OptionController\Form_Controller {
                     $this->sanitize($form, 'stripslashes');
                     $this->add_ind_form_validate($error, $form);
                     if (empty($error)) {
-                        
+
                         $startTime = microtime(TRUE);
                         $this->update_ind_form($form, $_GET['unique_form']);
                         $this->create_post_items($_GET['unique_form'], FALSE);
@@ -516,12 +520,12 @@ class Form_View extends OptionController\Form_Controller {
                     $this->add_ind_form_validate($error, $form);
                     if (empty($error)) {
 
-                            $startTime = microtime(TRUE);
-                            $this->update_ind_form($form, $_GET['unique_form']);
-                            $this->create_post_items($_GET['unique_form']);
-                            $endTime = microtime(TRUE);
-                            $elapsed = $endTime - $startTime;
-                            var_dump("Execution time : $elapsed seconds");
+                        $startTime = microtime(TRUE);
+                        $this->update_ind_form($form, $_GET['unique_form']);
+                        $this->create_post_items($_GET['unique_form']);
+                        $endTime = microtime(TRUE);
+                        $elapsed = $endTime - $startTime;
+                        var_dump("Execution time : $elapsed seconds");
 
                     } else {
 
@@ -539,16 +543,16 @@ class Form_View extends OptionController\Form_Controller {
 
                     $this->sanitize($form, 'stripslashes');
                     $this->add_ind_form_validate($error, $form);
-                    
+
                     if (empty($error)) {
-                        
-                            
+
+
                         $this->synchronize_feeds($form[$option_name]['formTitle']);
 
                     } else {
 
                         echo $this->failure_message($error);
-                        
+
                     }
 
                 }
@@ -829,6 +833,19 @@ class Form_View extends OptionController\Form_Controller {
                     $error[] = "Sorry the maximum file upload size is 2MB";
                 }
 
+                if ($this->validation_read_temp_file($_FILES[$option_name]) === FALSE) {
+                    $error[] =
+                        "Sorry, this module only parses XML feeds from TradeDoubler or Paid on Results. Upload a CSV file instead.";
+                }
+
+                if ($this->validate_check_file($form, 'feedURL') === FALSE) {
+                    $error[] =
+                        "There has been an issue accepting remote feeds from this company. Try to upload a CSV file instead.";
+                }
+
+
+                // check if file is from
+
                 if (empty($error)) {
 
                     echo $this->update_record($form);
@@ -840,13 +857,14 @@ class Form_View extends OptionController\Form_Controller {
             } // end if isset($_POST['submitInd'])
 
             echo '</div><!-- end "ind-result" -->';
+
             if (isset($item)) {
 
                 echo "<p>File can be found here: ".'<strong>'.AH_FEEDS_DIR.$item->fileName.
                     '</strong></p>';
 
-                echo '<p><a href="?page='.$page_url.'&feed-list=total&unique_form='.$item->
-                    name.'">Edit this form feed here</a></p>';
+                echo '<p><a href="?page='.$page_url.'&feed-list=total&unique_form='.$item->name.
+                    '">Edit this form feed here</a></p>';
 
             } else {
 
@@ -912,6 +930,30 @@ class Form_View extends OptionController\Form_Controller {
         include_once (AH_DIR_PATH.'misc'.AH_DS.'instructions.php');
 
     }
+
+    /**
+     * Form_View::list_feeds()
+     * 
+     * admin_sidebar()
+     * 
+     * General admin details
+     * 
+     */
+
+
+    private function admin_sidebar() {
+
+        echo '<div class="postbox">';
+        echo '<div class="inside">';
+        echo '<h3 class="hndle">Author details</h3>';
+        echo '<p>This plugin has been created by <a href="http://andywalpole.me/">Andy Walpole</a></p>';
+        echo '<p>At the moment it is optimised to work with Affiliate Window, Paid on Demand and TradeDoubler but it should be okay to upload a CSV file from any company.</p>';
+        echo '<p><a href="http://wordpress.org/tags/affiliate-hoover?forum_id=10">Please report any bugs or feature requests to here</a></p>';
+        echo '</div><!-- end inside -->';
+        echo '</div><!-- end postbox -->';
+
+    }
+
 
 } // end class
 

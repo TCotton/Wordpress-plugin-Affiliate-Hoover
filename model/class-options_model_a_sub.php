@@ -378,10 +378,16 @@ class Form_Model_Sub {
 
 
     }
-    
-    
-    
-      protected function alnum($form_output, $att) {
+
+    /**
+     * Form_Model::alnum()
+     * 
+     * @param array $form_output
+     * @param string $att
+     * @return boolean
+     */
+
+    protected function alnum($form_output, $att) {
 
         extract(static::$form);
 
@@ -410,7 +416,6 @@ class Form_Model_Sub {
 
     }
 
-    
 
     /**
      * Form_Model::validate_email()
@@ -510,8 +515,46 @@ class Form_Model_Sub {
 
                         $response = wp_remote_get($result);
 
-                        if (is_wp_error($response) || stripos($response['body'],
+                        if (wp_remote_retrieve_response_code($response) !== 200) {
+                            /*
+                            if (is_wp_error($response) || stripos($response['body'],
                             "http://www.webaddresshelp.bt.com")) {
+                            */
+
+                            return FALSE;
+
+                        }
+
+                    } // end if
+
+                } // end if
+
+            } // end foreach
+
+        } else {
+            die("Make sure that the inputs for validate_remote_url() is an array and a string");
+        }
+
+    }
+
+    protected function validate_check_file($form_output, $att) {
+
+        extract(static::$form);
+
+        if (is_array($form_output) && is_string($att)) {
+
+            foreach ($form_output[$option_name] as $thisKey => $result) {
+
+                if (preg_match("/$att/i", $thisKey)) {
+
+                    if ($result !== "") {
+
+                        $response = wp_remote_get($result);
+
+                        if ((isset($response['body']) && preg_match("/^tradedoubler\.com/", $response['body'])) ||
+                            (isset($response['headers']['p3p']) && preg_match("/^http:\/\/www\.paidonresults\.com/",
+                            $response['headers']['p3p'])) || (isset($response['headers']['content-disposition']) &&
+                            preg_match("/datafeed_([0-9a-bA-B]*)\.xml/", $response['headers']['content-disposition']))) {
 
                             return FALSE;
 
@@ -677,6 +720,53 @@ class Form_Model_Sub {
             }
 
         } // end if
+
+    }
+
+
+    protected function validation_read_temp_file($file) {
+
+        $tmp_name = "";
+        $name = "";
+        $xml = FALSE;
+
+        foreach ($file as $key => $value) {
+
+            if ($key === 'name') {
+
+                foreach ($value as $new_key => $new_value) {
+
+                    $name = implode($new_value);
+
+                    if (stripos($name, "xml")) {
+                        $xml = TRUE;
+                    }
+
+                } // end foreach
+
+            } // end if
+
+            if ($key === 'tmp_name') {
+
+                foreach ($value as $new_key => $new_value) {
+
+                    $tmp_name = implode($new_value);
+
+                    if ($xml) {
+
+                        $content = file_get_contents($tmp_name);
+
+                        if (!preg_match("/tradedoubler.com|paidonresults.net/", $content)) {
+                            return FALSE;
+                        }
+
+                    }
+
+                } // end foreach
+
+            } // end if
+
+        } // end foreach
 
     }
 

@@ -130,3 +130,19 @@ class Configuration {
 } // end class
 
 new \Config\Configuration;
+
+register_uninstall_hook(__FILE__, 'unistall');
+
+function unistall() {
+
+    $sql1 = "DROP table if exists ".AH_FEED_DETAILS_TABLE;
+    $sql2 = "DROP table if exists ".AH_TOTAL_FEEDS_TABLES;
+
+    global $wpdb;
+
+    delete_option('affiliate_hoover_plugin_options');
+
+    $wpdb->query($sql1);
+    $wpdb->query($sql2);
+
+}

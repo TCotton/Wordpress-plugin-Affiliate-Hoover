@@ -100,8 +100,6 @@ echo '</pre></strong>';
 
 <p>My advice when creating the form is to pay close attention the codes you are cutting and pasting. It is easy to be careless and use the wrong codes form the feed column for the titles or categories.</p>
 
-<p>The process time could be quite lengthy depending on the number of items that are being processed. If it is a new feed with over 500 posts you may need to click on update form a couple of times before </p>
-
-<p>It is probably best to use the min / max rows feature to process 100 posts at a time, clicking &ldquo;update form&rdquo; as you go.</p>
+<p>The process time could be quite lengthy depending on the number of items that are being processed and the power of the server the website site on.</p>
 
 <p>Lastly, please report any bugs or feature suggestions to the Wordpress site [add link here]</p>
