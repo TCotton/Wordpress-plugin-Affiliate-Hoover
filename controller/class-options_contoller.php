@@ -76,6 +76,64 @@ class Form_Controller extends OptionModel\Form_Model {
 
     }
 
+    protected function delete_feed_details_cats() {
+
+        $cats = $this->find_all_post_cats();
+
+        $form = '<form method="post" action="#result" name="deleteFeedTraceForm">';
+        $form .= '<fieldset>';
+        $form .= '<legend>Delete all trace of posts</legend>';
+        $form .= '<table class="form-table"><tbody>';
+        echo $form;
+
+        foreach ($cats as $result) {
+
+            echo '<tr>';
+            echo "<th scope=\"row\">$result->name</th>";
+            echo '<td><label for="';
+            echo $result->name;
+            echo '">';
+            echo "<span class=\"screen-reader-text\">$result->name</span></label>";
+            echo "<input type=\"hidden\" name=\"$result->name\" value=\"\">";
+            echo '<input type="checkbox" name="';
+            echo $result->name;
+            echo '" id="';
+            echo $result->name;
+            echo '" value="';
+            echo $result->id;
+            echo '"';
+            if (isset($_POST[$result->name]) && $_POST[$result->name] !== "") {
+                echo ' checked="checked" ';
+            }
+            echo '>';
+            echo "</td>";
+            echo '</tr>';
+
+        }
+
+        $form = '</tbody></table>';
+        $form .= $this->perm_fields();
+        $form .= '<p class="submit"><input type="submit" name="submitDeleteFeed" class="button-primary" value="Save Changes"></p>';
+        $form .= '</fieldset>';
+        $form .= '</form>';
+        echo $form;
+
+    }
+
+
+    protected function delete_feed_leftovers($form) {
+
+        foreach ($form as $key => $result) {
+
+            if ($key === 'total_user_fields') continue;
+            if ($key === 'submitDeleteFeed') continue;
+
+            if ($result !== "") {
+                $this->delete_total_feeds((int)$result);
+            }
+        }
+    }
+
 
     /**
      * Form_Controller::create_options_fields()
@@ -406,7 +464,7 @@ class Form_Controller extends OptionModel\Form_Model {
      * @param string $total_fields
      * @return string $perm 
      */
-    private function perm_fields($total_fields) {
+    private function perm_fields($total_fields = null) {
 
         extract(static::$form);
 
@@ -532,18 +590,19 @@ class Form_Controller extends OptionModel\Form_Model {
                         $text .= "<input type=\"hidden\" name=\"{$option_name}[$i][input_type]\" value=\"text\">";
                         $text .= "<input type=\"hidden\" name=\"{$option_name}[$i][file_name]\" value=\"\">";
                         if ($add_link === TRUE) {
-                            $text .= '<span class="description"><p><a href="';
-                            $text .= '?page='.$page_url.'&feed-list=total&unique_name='.$name_value;
-                            $text .= '">Edit feed details</a></p>';
+                            $text .= '<span class="description">';
 
                             if ($this->check_feed_details_table($name_value) != "") {
 
                                 $text .= '<p><a href="';
-                                $text .= '?page='.$page_url.'&feed-list=total&unique_form='.
-                                    $name_value;
+                                $text .= '?page='.$page_url.'&feed-list=total&unique_form='.$name_value;
                                 $text .= '">Feed form</a></p>';
 
                             }
+
+                            $text .= '<p><a href="';
+                            $text .= '?page='.$page_url.'&feed-list=total&unique_name='.$name_value;
+                            $text .= '">Edit feed details</a></p>';
 
                             $text .= '</span>';
                         }

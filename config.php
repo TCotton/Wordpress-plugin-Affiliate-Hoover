@@ -1,6 +1,7 @@
 <?php
 
 namespace Config;
+use DirectoryIterator;
 
 include_once ("constants.php");
 /**
@@ -40,9 +41,9 @@ class Configuration {
      */
     private static function connect_lib() {
 
-        foreach (scandir(AH_PLUGINNAME_PATH.self::$libs) as $result) {
+        foreach (new DirectoryIterator(AH_PLUGINNAME_PATH.self::$libs) as $result) {
 
-            if (preg_match('/\.php$/', $result)) {
+            if ($result->getExtension() === 'php') {
 
                 array_push(self::$link_array, self::$libs.AH_DS.$result);
 
@@ -61,9 +62,9 @@ class Configuration {
      */
     private static function connect_model() {
 
-        foreach (scandir(AH_PLUGINNAME_PATH.self::$model) as $result) {
+        foreach (new DirectoryIterator(AH_PLUGINNAME_PATH.self::$model) as $result) {
 
-            if (preg_match('/class-.*\.php$/', $result)) {
+            if ($result->getExtension() === 'php') {
 
                 array_push(self::$link_array, self::$model.AH_DS.$result);
 
@@ -82,9 +83,9 @@ class Configuration {
      */
     private static function connect_controller() {
 
-        foreach (scandir(AH_PLUGINNAME_PATH.self::$controller) as $result) {
+        foreach (new DirectoryIterator(AH_PLUGINNAME_PATH.self::$controller) as $result) {
 
-            if (preg_match('/class-.*\.php$/', $result)) {
+            if ($result->getExtension() === 'php') {
 
                 array_push(self::$link_array, self::$controller.AH_DS.$result);
 
@@ -103,9 +104,9 @@ class Configuration {
      */
     private static function connect_view() {
 
-        foreach (scandir(AH_PLUGINNAME_PATH.self::$view) as $result) {
+        foreach (new DirectoryIterator(AH_PLUGINNAME_PATH.self::$view) as $result) {
 
-            if (preg_match('/class-.*\.php$/', $result)) {
+            if ($result->getExtension() === 'php') {
 
                 array_push(self::$link_array, self::$view.AH_DS.$result);
 

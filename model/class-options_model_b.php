@@ -7,6 +7,7 @@ use XML_Serializer;
 use XML_Unserializer;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
+use DOMDocument;
 
 /**
  * Form_Model b
@@ -487,9 +488,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
      */
 
     protected function create_table() {
-        
+
         extract(static::$form);
-        
+
         //add_option($option_name);
 
         global $wpdb;
@@ -534,7 +535,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         dbDelta($sql);
         dbDelta($sql2);
-        
+
         //$wpdb->print_error();
 
     }
@@ -751,7 +752,14 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                                 // make sure that the user doesn't accidently add numbers
                                                 if (!preg_match("/^[0-9]/", $result)) {
-                                                    $id = wp_create_category($this->check_utf($result));
+                                                    // cut down string length if longer that 200 characters
+                                                    // This is to prevent problems if the user hasn't inputed the correct code
+                                                    if (mb_strlen($result) > 200) {
+                                                        $id = wp_create_category($this->check_utf(mb_substr
+                                                            ($result, 0, 200)));
+                                                    } else {
+                                                        $id = wp_create_category($this->check_utf($result));
+                                                    }
 
                                                 }
 
@@ -837,7 +845,15 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                             // make sure that the user doesn't accidently add numbers
                                             if (!preg_match("/^[0-9]/", $result)) {
-                                                $id = wp_create_category($this->check_utf($result));
+
+                                                // cut down string length if longer that 200 characters
+                                                // This is to prevent problems if the user hasn't inputed the correct code
+                                                if (mb_strlen($result) > 200) {
+                                                    $id = wp_create_category($this->check_utf(mb_substr
+                                                        ($result, 0, 200)));
+                                                } else {
+                                                    $id = wp_create_category($this->check_utf($result));
+                                                }
 
                                             }
 
@@ -850,6 +866,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                                     $new_post['post_category'] = $post_cat_array;
                                     $new_post['post_date'] = date('Y-m-d H:i:s');
                                     $new_post['post_content'] = force_balance_tags($new_post['post_content']);
+
+                                    static $i = 0;
+                                    $test_array[] = $i++;
 
                                     $id = wp_insert_post($new_post);
 
@@ -872,7 +891,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             } // end if ($csv->load(AH_FEEDS_DIR.$file_here)) {
 
         } // end if($this->get_file_extension($item->fileName) === "csv") {
-
 
     }
 
@@ -945,13 +963,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     private function check_utf($str) {
 
         if (mb_detect_encoding($str, 'UTF-8', TRUE) == FALSE) {
-
             return utf8_encode($str);
-
         } else {
-
             return $str;
-
         }
 
     }
@@ -1044,11 +1058,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         foreach ($difference as $result) {
 
             $postid = $this->find_meta_id($result);
-
             wp_delete_post($postid->post_id);
 
         }
-
     }
 
     private function find_meta_id($var) {
@@ -1087,6 +1099,87 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     }
 
+    private function find_all_posts_meta() {
+
+        global $wpdb;
+
+        return $wpdb->get_results("SELECT post_id FROM ".$wpdb->prefix.
+            "postmeta WHERE meta_key = '_unique_post'");
+
+
+    }
+
+    private function find_post_title($var) {
+
+        global $wpdb;
+
+        return $wpdb->get_row("SELECT post_title FROM ".$wpdb->prefix."posts WHERE ID = $var");
+
+
+    }
+
+    private function find_post_revisions($var) {
+
+        global $wpdb;
+
+        return $wpdb->get_row("SELECT ID FROM ".$wpdb->prefix."posts WHERE post_name REGEXP '^$var' AND post_type = 'revision'");
+
+    }
+
+    protected function find_all_post_cats() {
+
+        global $wpdb;
+
+        return $wpdb->get_results("SELECT id, name FROM ".AH_FEED_DETAILS_TABLE);
+
+    }
+
+    protected function delete_total_feeds($var) {
+
+        global $wpdb;
+
+        $wpdb->query($wpdb->prepare("DELETE FROM ".AH_TOTAL_FEEDS_TABLES."
+		 WHERE cat_id = %d", $var));
+
+
+    }
+
+    protected function delete_revisions() {
+
+        // buid array of total posts
+
+        global $wpdb;
+
+        $all_posts = $this->find_all_posts_meta();
+
+        $title_array = array();
+
+        foreach ($all_posts as $result) {
+
+            $id = $this->find_post_title($result->post_id);
+
+            if ($id !== NULL) {
+                $title_array[] = $id;
+            } // end
+
+        }
+
+        if (!empty($title_array)) {
+
+            foreach ($title_array as $result) {
+
+                $wpdb->query($wpdb->prepare("DELETE a,b,c
+FROM wp_posts a
+LEFT JOIN wp_term_relationships b ON (a.ID = b.object_id)
+LEFT JOIN wp_postmeta c ON (a.ID = c.post_id)
+WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
+
+            } // end foreach
+
+        } // end if(!empty($title_array)) {
+
+    }
+
 
     /**
      * Form_Model::check_table()
@@ -1098,40 +1191,29 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     protected function check_table($var) {
 
-        global $wpdb;
-
-        // ADD PREPARE STATEMENT WITH SQL
+        global $wpdb; // ADD PREPARE STATEMENT WITH SQL
 
         return $wpdb->get_row("SELECT name FROM ".AH_FEED_DETAILS_TABLE." WHERE name = '".$var."'");
-
     }
 
     protected function get_all_feed_names() {
 
         global $wpdb;
-
         return $wpdb->get_results("SELECT name FROM ".AH_FEED_DETAILS_TABLE);
-
     }
 
     private function get_post_meta_id($var) {
 
         global $wpdb;
-
         return $wpdb->get_row("SELECT post_id, meta_value FROM ".$wpdb->prefix.
             "postmeta WHERE meta_key = '_unique_post' AND post_id = $var");
-
-
     }
 
     private function get_post_meta() {
 
         global $wpdb;
-
         return $wpdb->get_results("SELECT post_id, meta_value FROM ".$wpdb->prefix.
             "postmeta WHERE meta_key = '_unique_post'");
-
-
     }
 
     /**
@@ -1144,14 +1226,11 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
     protected function select_all($var) {
 
-        global $wpdb;
-
-        // ADD PREPARE STATEMENT WITH SQL
+        global $wpdb; // ADD PREPARE STATEMENT WITH SQL
 
         //var_dump($var);
 
         return $wpdb->get_row("SELECT * FROM ".AH_FEED_DETAILS_TABLE." WHERE name = '".$var."'");
-
         //$wpdb->show_errors();
 
     }
@@ -1170,7 +1249,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     protected function insert_table($name, $url, $fileName, $header_array, $header_array_amend, $num_rows) {
 
         global $wpdb;
-
         if ($this->check_table($name) === NULL) {
 
             return $wpdb->query($wpdb->prepare("
@@ -1178,23 +1256,19 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 		( name, URL, fileName, header_array, header_array_amend,  num_rows)
 		VALUES ( %s, %s, %s, %s, %s,  %d )
 	", $name, $url, $fileName, $header_array, $header_array_amend, $num_rows));
-
         } else {
 
             // here compare data between relevant database table and form
             // if they are different then update table and delete old file in feeds folder
 
             $select_all = $this->select_all($name);
-
             if ($select_all->URL !== $url || $select_all->fileName !== $fileName) {
 
                 $file = AH_FEEDS_DIR.$select_all->fileName;
                 unlink($file);
-
                 return $wpdb->query($wpdb->prepare("UPDATE ".AH_FEED_DETAILS_TABLE.
                     " SET URL = %s, fileName = %s, header_array = %s, header_array_amend = %s, num_rows = %d WHERE name = %s",
                     $url, $fileName, $header_array, $header_array_amend, $num_rows, $name));
-
             }
             //$wpdb->print_error();
         }
@@ -1213,12 +1287,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     protected function update_option($form) {
         //essential
         extract(static::$form);
-
         $this->remove_empty($form);
         $this->delete($form);
-        $this->check_feed_details_table($form);
-
-        //var_dump($form);
+        $this->check_feed_details_table($form); //var_dump($form);
 
         if (update_option($option_name, $form)) {
             return $this->success_message("You have successfully updated the form");
@@ -1239,26 +1310,22 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     private function check_feed_details_table($form) {
         //essential
         extract(static::$form);
-
         global $wpdb;
         $table_name = AH_FEED_DETAILS_TABLE;
-
         $fields = array();
-
         foreach ($form[$option_name] as $key2 => $value2) {
 
             if (is_array($value2)) continue;
             if ($value2 === "") continue;
             $fields[] = $value2;
-
         }
 
         $all_feeds = $wpdb->get_results("SELECT name, fileName FROM $table_name");
-
         foreach ($all_feeds as $key => $value) {
 
             if (in_array($value->name, $fields)) continue;
             $this->delete_record($value->name, $value->fileName);
+
         }
 
     }
@@ -1277,15 +1344,19 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     private function delete_record($name, $filename) {
 
         global $wpdb;
-        $table_name = AH_FEED_DETAILS_TABLE;
-
         $file = AH_FEEDS_DIR.$filename;
         unlink($file);
+
+
+        // delete stuff here
+
+        $id = $this->find_feed_details_id($name);
+
+        $this->delete_total_feeds($id->id);
 
         $wpdb->query($wpdb->prepare("DELETE FROM ".AH_FEED_DETAILS_TABLE."
 		 WHERE name = %s
 		", $name));
-
     }
 
     /**
@@ -1304,12 +1375,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         //essential
         extract(static::$form);
 
-        $regex = '/(\[#([0-9]+)#\])([,]*)/';
-
         $form_categories = NULL;
-
         $form_tags = NULL;
-
         foreach ($form[$option_name] as $key => $value) {
 
             if ($key === "formTitle") {
@@ -1337,11 +1404,16 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             }
 
+            //$regex = '/(\[#([0-9]+)#\]) | ([a-zA-Z0-9]+)/';
+
             if ($key === "formCategories") {
 
-                preg_match_all($regex, $value, $match);
-                if (!empty($match['0'])) {
-                    $form_categories = $match['0']['0'];
+                //preg_match_all($regex, $value, $match);
+                //var_dump($match);
+
+                //var_dump(implode(",",$match));
+                if ($value != "") {
+                    $form_categories = $value;
                 } else {
                     $form_categories = NULL;
                 }
@@ -1379,9 +1451,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             if ($key === "formTags") {
 
-                preg_match_all($regex, $value, $match);
-                if (!empty($match['0'])) {
-                    $form_tags = $match['0']['0'];
+                if ($value != "") {
+                    $form_tags = $value;
                 } else {
                     $form_tags = NULL;
                 }
@@ -1404,13 +1475,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
             // Once the feed_details table has been updated then process the feed:
 
-            return TRUE;
-
-            //return $this->success_message("You have successfully updated the form");
-
+            return TRUE; //return $this->success_message("You have successfully updated the form");
             wp_redirect(admin_url("/options-general.php?page=".$page_url));
             exit;
-
         }
 
 
@@ -1429,13 +1496,11 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         $form_max_rows, $form_post_status) {
 
         global $wpdb;
-
         return $wpdb->query($wpdb->prepare("UPDATE ".AH_FEED_DETAILS_TABLE.
             " SET form_title = %s, form_title_contains = %s, form_body = %s, form_body_contains = %s, form_categories = %s, form_tags = %s, form_allow_comments = %d, form_allow_trackback = %d, min_rows = %d, max_rows = %d, post_status = %s WHERE name = %s",
             $form_title, $form_title_contains, $form_body, $form_body_contains, $form_categories, $form_tags,
             $form_allow_comments, $form_allow_trackback, $form_min_rows, $form_max_rows, $form_post_status,
             $form_name));
-
     }
 
 
@@ -1454,61 +1519,38 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         //essential
         extract(static::$form);
-
         $feed_url = $form[$option_name]['feedURL'];
-
         $fileName = NULL;
-
         if ($this->check_file_empty($_FILES[$option_name], 'feedFile') === FALSE) {
 
             // download and covert feeds to
             $fileName = $this->parse_feeds_loop($form, 'feedURL');
-
         } else {
 
             $fileName = $this->move_file($_FILES[$option_name], 'feedFile');
-
         }
 
         if ($this->get_file_extension($fileName) === "xml") {
 
             // Here convert XML file to CSV
 
-            $xml_file = AH_FEEDS_DIR.$fileName;
-
-            // Use XML_Serializer to get the data into a useable array
+            $xml_file = AH_FEEDS_DIR.$fileName; // Use XML_Serializer to get the data into a useable array
 
             $data = $this->xml_helper($xml_file);
 
-            print '<pre>';
-            //print_r($data);
-            print '</pre>';
-
-            // Retreive header information using RecursiveIteratorIterator / RecursiveArrayIterator
-
-            $header_array = $this->recursive_array($data);
-
-            //var_dump($header_array); //correct!
+            $header_array = $this->recursive_array($data); //
 
             // Find ZML filename without the extension
 
-            $csv_file = $this->get_file_filename($fileName).'.csv';
-
-            // Use that for the name of the CSV file
+            $csv_file = $this->get_file_filename($fileName).'.csv'; // Use that for the name of the CSV file
 
             $csv_full = AH_FEEDS_DIR.$csv_file;
-
             $fp = fopen($csv_full, 'w');
-
             // The first line in the CSV line is the header infor
 
-            fputcsv($fp, $header_array);
+            fputcsv($fp, $header_array); // Find all the values in the XML file
 
-            // Find all the values in the XML file
-
-            $total = $this->recursive_array_values($data);
-
-            //var_dump(count($total));
+            $total = $this->recursive_array_values($data); //
 
             // Here I reset the array so the first key in the index is one not zero
 
@@ -1530,7 +1572,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 }
 
                 $end[] = $value;
-
                 if ($i++ % count($header_array) == 0) {
                     fputcsv($fp, $end);
                     unset($end);
@@ -1541,18 +1582,11 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             // Done. Close the CSV file and destroy the used XML file
             fclose($fp);
             unlink($xml_file);
-
             $fileName = $csv_file;
+            $header_array = $this->parse_csv_head(AH_FEEDS_DIR.$fileName); //var_dump($header_array); //correct!
 
-            $header_array = $this->parse_csv_head(AH_FEEDS_DIR.$fileName);
-
-            //var_dump($header_array); //correct!
-
-            $header_array_amend = $header_array;
-
-            //count total number of entries
+            $header_array_amend = $header_array; //count total number of entries
             $num_rows = $this->count_csv_rows(AH_FEEDS_DIR.$fileName);
-
             foreach ($header_array_amend as $key => $value) {
                 $header_array_amend['[#'.$key.'#]'] = $value;
                 unset($header_array_amend[$key]);
@@ -1563,12 +1597,9 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         if ($this->get_file_extension($fileName) === "csv") {
 
             $header_array = $this->parse_csv_head(AH_FEEDS_DIR.$fileName);
-
             $header_array_amend = $header_array;
-
             //count total number of entries
             $num_rows = $this->count_csv_rows(AH_FEEDS_DIR.$fileName);
-
             foreach ($header_array_amend as $key => $value) {
                 $header_array_amend['[#'.$key.'#]'] = $value;
                 unset($header_array_amend[$key]);
@@ -1602,16 +1633,12 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     private function recursive_array($old_array) {
 
         $riter = new RecursiveIteratorIterator(New RecursiveArrayIterator($old_array));
-
         $output = array();
-
         foreach ($riter as $key => $value) {
             static $i = 1;
-
             if ($riter->getDepth() > 2) {
 
                 $index = $i++;
-
                 if ($index === 1) {
                     $index_key = $key;
                 }
@@ -1625,6 +1652,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         }
 
         return $output;
+
     }
 
     /**
@@ -1640,18 +1668,18 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     private function recursive_array_values($old_array, $new_array = array()) {
 
         $riter = new RecursiveIteratorIterator(New RecursiveArrayIterator($old_array));
-
         foreach ($riter as $key => $value) {
+
+            static $x = 0;
 
             if ($riter->getDepth() > 2) {
                 $new_array[] = $value;
-
             }
         }
 
         return $new_array;
-
     }
+
 
     /**
      * Form_Model::xml_helper()
@@ -1665,28 +1693,70 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
      * 
      */
 
+
     private function xml_helper($file) {
+
+        // keep these functions for future use!!!
+
+        /*
+
+        //http://stackoverflow.com/a/8287944/315350
+        function array_clean(array $haystack) {
+        foreach ($haystack as $key => $value) {
+        if (is_array($value)) {
+        $haystack[$key] = array_clean($value);
+        } elseif (is_string($value)) {
+        $value = trim($value);
+        }
+
+        if (!$value) {
+        unset($haystack[$key]);
+        }
+        }
+
+        return $haystack;
+        }
+
+
+        function removeRecursive($haystack, $needle) {
+        if (is_array($haystack)) {
+        foreach ($haystack as $k => $value) {
+        if ($k === $needle) {
+        foreach ($value as $key => $result) {
+        unset($value[$key]);
+        }
+
+        unset($haystack[$k]);
+
+        } else {
+        $haystack[$k] = removeRecursive($value, $needle);
+
+        }
+        }
+        }
+
+        return $haystack;
+        }
+        
+        */
 
         $xml = simplexml_load_file($file, 'SimpleXMLElement', LIBXML_NOCDATA);
 
-        $options = array(XML_SERIALIZER_OPTION_INDENT => '    ', XML_SERIALIZER_OPTION_RETURN_RESULT => TRUE
-                //XML_SERIALIZER_OPTION_TYPEHINTS => TRUE
-                );
+        $options = array(XML_SERIALIZER_OPTION_INDENT => '    ', XML_SERIALIZER_OPTION_RETURN_RESULT => TRUE);
 
         $serializer = &new XML_Serializer($options);
 
         $result = $serializer->serialize($xml);
 
-        $options = array(XML_UNSERIALIZER_OPTION_COMPLEXTYPE => 'array');
-
-        $unserializer = &new XML_Unserializer($options);
-
+        $options = array(XML_UNSERIALIZER_OPTION_COMPLEXTYPE => 'array',
+                XML_UNSERIALIZER_OPTION_ATTRIBUTES_PARSE => FALSE);
+        $unserializer = &new XML_Unserializer($xml);
         // userialize the document
         $unserializer->unserialize($result, FALSE);
-
         $data = $unserializer->getUnserializedData();
 
         return $data;
+
 
     }
 
@@ -1700,15 +1770,12 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     protected function success_message($message) {
 
         //essential
-        extract(static::$form);
-
-        // necessary for javascript form values zero to work
+        extract(static::$form); // necessary for javascript form values zero to work
         if ($dynamic_output) {
             setcookie("_multi_cov", $option_name, time() + 60);
         }
 
         $html = '<div id="message" class="updated">';
-
         if (is_array($message)) {
             foreach ($message as $line) {
                 $html .= '<p><strong>'.$line.'</strong></p>';
@@ -1718,9 +1785,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         } // end if
 
         $html .= '</div>';
-
         return $html;
-
     }
 
     /**
@@ -1733,9 +1798,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         //essential
         extract(static::$form);
-
         $html = '<div id="message" class="error">';
-
         if (is_array($message)) {
             foreach ($message as $line) {
                 $html .= '<p><strong>'.$line.'</strong></p>';
@@ -1745,9 +1808,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         } // end if
 
         $html .= '</div>';
-
         return $html;
-
     }
 
 
@@ -1770,12 +1831,10 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         $output = (int)$form_output['total_user_fields'];
         $fields = count($form_output[$option_name]);
         $unset = FALSE;
-
         $new_key = array();
         $total_inputs = array();
         $total_arrays = array();
         $radio = FALSE;
-
         if (static::check_options_table() && $dynamic_output && !empty($database[$option_name])) {
 
             // if new form without option database created yet make sure ALL fields are not empty
@@ -1791,18 +1850,15 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                 static $x = 0;
                 static $z = 0;
-
                 if (is_string($n_value)) {
 
-                    $x++;
-                    // the total inputs are fluid depending if the user has checked the delete box
+                    $x++; // the total inputs are fluid depending if the user has checked the delete box
                     // The only TRUE way to determine the number is to access it here
                     $total_inputs[] = $x;
                 } // end is_string
 
                 if (is_array($n_value)) {
-                    $z++;
-                    // the total inputs are fluid depending if the user has checked the delete box
+                    $z++; // the total inputs are fluid depending if the user has checked the delete box
                     // The only TRUE way to determine the number is to access it here
                     $total_arrays[] = $z;
                 } // end is_string
@@ -1812,33 +1868,27 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             // previously was total_inputs
             $total = array_pop($total_arrays) - $output;
             $total_minus = array_pop($total_arrays) - $output;
-
             if (!empty($radio)) {
 
                 foreach ($form_output[$option_name] as $key => $value) {
 
                     var_dump($key);
-
                     if (is_string($value)) continue;
                     if (!isset($value['radio_number'])) continue;
                     if ($value['radio_number'] == NULL) continue;
                     if (preg_match("/^\d$/", $key)) continue;
                     $number = (int)$value['radio_number'];
                     break;
-
                 } // end foreach
 
                 $form_output[$option_name] = array_reverse($form_output[$option_name]);
-
                 $total_empties = array();
                 $t = NULL;
-
                 foreach ($form_output[$option_name] as $key => $value) {
 
                     if (!is_array($value)) {
 
                         static $t = 1;
-
                         if ($value !== "") {
                             // if values are not as above then they have content
                             // if they are as above or in the case of radio buttons not set at all
@@ -1850,7 +1900,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                     }
 
                     if ($t++ === $output) break;
-
                 } // end foreach
 
                 if (empty($total_empties)) {
@@ -1864,24 +1913,16 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                     // total number of individual radio button fields
                     // plus the complete field arrays minus above * 2 remainder.
                     // This is because every non-radio button has two arrays associated with it
-                    $total_ars = $number + (($output - $number) * 2);
-
-                    // remove empty form from entire array
+                    $total_ars = $number + (($output - $number) * 2); // remove empty form from entire array
                     array_splice($form_output[$option_name], 0, $total_ars, NULL);
-
                     // on successful completion rearrange array to previous order but without unwanted fields
                     $form_output[$option_name] = array_reverse($form_output[$option_name]);
-
                     return $form_output;
-
-
                 } else {
 
                     // if not TRUE then put the array back to how it was before;
                     $form_output[$option_name] = array_reverse($form_output[$option_name]);
-
                     return $form_output;
-
                 }
                 // beginning of if not $radio - no radio buttons in the form submit process
             } elseif (empty($radio)) {
@@ -1891,7 +1932,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                     static $i = 1;
                     static $y = 0;
                     static $b = 0;
-
                     if (is_string($n_value)) {
 
 
@@ -1924,7 +1964,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                         static $c = 0;
                         static $f = 0;
-
                         if (is_string($n_value)) {
 
                             if ($c++ >= $total) {
@@ -1946,13 +1985,11 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 } // end if unset
 
                 return $form_output;
-
             } // if not $radio
 
         } else {
 
             return $form_output;
-
         } // end if ($dynamic_output)
 
     }
@@ -1972,16 +2009,13 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         // essential.
         extract(static::$form);
         $database = get_option($option_name);
-
         if (static::check_options_table() && $dynamic_output && !empty($database[$option_name])) {
 
             $delete = NULL;
-
             $output = (int)$form_output['total_user_fields'];
             $total_arrays = array();
             $delete = array();
             $radio = array();
-
             // if new form without option database created yet make sure ALL fields are not empty
             foreach ($form_output[$option_name] as $n_key => $n_value) {
 
@@ -1992,13 +2026,10 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                 static $x = 0;
                 $x++;
                 $total_arrays[] = $x;
-
             } // end foreach loop
 
             $total_elements = array_pop($total_arrays);
-
             $this->reset_array($form_output[$option_name]);
-
             // Find any button
             foreach ($form_output[$option_name] as $result => $value) {
 
@@ -2018,10 +2049,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                         if (is_string($value)) continue;
                         if (!isset($value['radio_number'])) continue;
                         if ($value['radio_number'] == NULL) continue;
-
                         $number = (int)$value['radio_number'];
                         break;
-
                     } // end foreach
 
                     foreach ($delete as $n_delete) {
@@ -2033,7 +2062,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                         // use slice to remove unwanted forms from parent array
                         array_splice($form_output[$option_name], $b_element, $t_element, NULL);
-
                     } // end foreach
 
                 }
@@ -2050,11 +2078,8 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                         //Work out max top and bottom keys to delete
                         $y_delete = $n_delete + 1;
                         $t_element = (int)$y_delete;
-                        $b_element = $t_element - (int)(($output * 2) + 2);
-
-                        // use slice to remove unwanted forms from parent array
+                        $b_element = $t_element - (int)(($output * 2) + 2); // use slice to remove unwanted forms from parent array
                         array_splice($form_output[$option_name], $b_element, $t_element, NULL);
-
                     } // end foreach
 
                 } // end if delete
@@ -2066,12 +2091,10 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             }
 
             return $form_output;
-
         } else {
 
             // if not dynamic
             return $form_output;
-
         } // end dynamic output
 
 
@@ -2090,17 +2113,14 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
         if (!wp_verify_nonce($array['_wpnonce_options_cov'], "options_form_cov")) die("Security check failed");
         if ($_SERVER['REQUEST_URI'] !== $array['_wp_http_referer']) die("Security check failed");
-
         // The values below need to be removed before further validation and database entry
 
         unset($array['option_page']);
         unset($array['_wpnonce_options_cov']);
         unset($array['_wp_http_referer']);
-        unset($array['submit']);
-        //$form['unset_all'] = FALSE;
+        unset($array['submit']); //$form['unset_all'] = FALSE;
 
         return $array;
-
     }
 
 
@@ -2115,7 +2135,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     public static function find_url() {
 
         $pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
-
         if ($_SERVER["SERVER_PORT"] != "80") {
             $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
         } else {
@@ -2141,7 +2160,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             $bin .= chr(hexdec($data{$i}.$data{($i + 1)}));
             $i += 2;
         } while ($i < strlen($data));
-
         return $bin;
     }
 
@@ -2159,9 +2177,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         $keys = range(1, count($form));
         $values = array_values($form);
         $form = array_combine($keys, $values);
-
         return $form;
-
     }
 
 

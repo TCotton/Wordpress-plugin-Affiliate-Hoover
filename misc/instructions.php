@@ -49,6 +49,8 @@ echo '</pre></strong>';
 
 <p>These are the headers of the columns. You will need to use this code to create your form.</p>
 
+<p>If you see all the headers with one code then this is because the CSV files is not comma-separated.</p>
+
 <p>The most important form fields are the title and the body.</p>
 
 <p>In the title pick a code from the list and use that. Don't add anything else.</p>
@@ -94,12 +96,20 @@ echo '</pre></strong>';
 
 <p>Save changes will create new posts AND update existing posts.</p>
 
-<p>Update form will create new posts but not update existing posts.</p>
+<p>Update form will create new posts BUT NOT update existing posts.</p>
+
+<p>Think carefully before you click. It may be worth creating a database backup first if you are not familiar with this software.</p>
 
 <p>Synchronise will loop through the file and the database and if it finds items that are published but not in the file it will delete published items. This means that you won't have outdated items that the company no longer sells.</p>
 
-<p>My advice when creating the form is to pay close attention the codes you are cutting and pasting. It is easy to be careless and use the wrong codes form the feed column for the titles or categories.</p>
+<p>Please create a database backup before using the synchronise feature</p>
 
-<p>The process time could be quite lengthy depending on the number of items that are being processed and the power of the server the website site on.</p>
+<p>My advice when creating the form is to pay close attention to the codes you are cutting and pasting. It is easy to be careless and use the wrong codes form the feed column for the titles or categories.</p>
 
-<p>Lastly, please report any bugs or feature suggestions to the Wordpress site [add link here]</p>
+<p>The process time could be quite lengthy depending on the number of items that are being processed and the power of the server the website sits on.</p>
+
+<p><a href="http://wordpress.org/tags/affiliate-hoover?forum_id=10">Please report any bugs or feature suggestions to the Wordpress site</a></p>
+
+<h4>Reset</h4>
+
+<p>If you run into issues using this plugin please visit the reset section first</p>

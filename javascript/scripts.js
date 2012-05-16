@@ -11,7 +11,7 @@
 if (!Array.prototype.indexOf) {
 	Array.prototype.indexOf = function(searchElement /*, fromIndex */ ) {
 		"use strict";
-		if (this == NULL) {
+		if (this == null) {
 			throw new TypeError();
 		}
 		var t = Object(this);
@@ -46,7 +46,7 @@ if (!Array.prototype.filter) {
 	Array.prototype.filter = function(fun /*, thisp */ ) {
 		"use strict";
 
-		if (this == NULL) throw new TypeError();
+		if (this == null) throw new TypeError();
 
 		var t = Object(this);
 		var len = t.length >>> 0;
@@ -68,14 +68,14 @@ if (!Array.prototype.filter) {
 var OptionForm = {
 
 	//"use strict":
-	elementsNo: NULL,
-	optionName: NULL,
-	originalForm: NULL,
-	theForm: NULL,
-	newForm: NULL,
-	Before: NULL,
-	After: NULL,
-	Submit: NULL,
+	elementsNo: null,
+	optionName: null,
+	originalForm: null,
+	theForm: null,
+	newForm: null,
+	Before: null,
+	After: null,
+	Submit: null,
 
 	// declare the name of the form and keep it in memory
 	formName: function() {
@@ -92,10 +92,10 @@ var OptionForm = {
 					// Below sets a boolean to stop form JavaScript from working on submission
 					// This is unnecessary because the sticky values work
 					OptionForm.originalForm.onsubmit = function() {
-						OptionForm.Submit = TRUE;
+						OptionForm.Submit = true;
 					};
-					if (OptionForm.Submit === NULL) {
-						OptionForm.theForm = OptionForm.originalForm.cloneNode(TRUE);
+					if (OptionForm.Submit === null) {
+						OptionForm.theForm = OptionForm.originalForm.cloneNode(true);
 						OptionForm.formValues();
 					} // end if
 				} // end if typeof
@@ -147,7 +147,7 @@ var OptionForm = {
 				_After = form[0].substr(form[0].indexOf(":") + 1);
 
 				// Radio fields
-				if (form[1].indexOf("type:radio") !== -1 && form[2].indexOf("checked:FALSE") !== -1) {
+				if (form[1].indexOf("type:radio") !== -1 && form[2].indexOf("checked:false") !== -1) {
 
 					// form radio button is not checked
 					// if not then take value from the Wordpress variables in the option_plugin_params and add them
@@ -158,7 +158,7 @@ var OptionForm = {
 
 							// if data between the form radio fields and option_plugin_params the same then put checkbox on there
 							if (OptionForm.theForm.elements[_Before][x].value === object) {
-								OptionForm.theForm.elements[_Before][x].checked = TRUE;
+								OptionForm.theForm.elements[_Before][x].checked = true;
 							} // end if
 						} // end for loop
 					} // end if
@@ -181,12 +181,12 @@ var OptionForm = {
 					} // end if
 				} // end if
 				// Checkboxes
-				if (form[1].indexOf("type:checkbox") !== -1 && form[2].indexOf("checked:FALSE") !== -1) {
+				if (form[1].indexOf("type:checkbox") !== -1 && form[2].indexOf("checked:false") !== -1) {
 
 					if (_Before.indexOf(i) !== -1) {
 
 						if (OptionForm.theForm.elements[_Before][1].value === object) {
-							jQuery(OptionForm.theForm.elements[_Before]).attr('checked', TRUE);
+							jQuery(OptionForm.theForm.elements[_Before]).attr('checked', true);
 						}
 					} // end if
 				} // end if
@@ -243,7 +243,7 @@ var OptionForm = {
 		OptionForm.originalForm = document.getElementsByName(key)[0];
 
 		if (typeof OptionForm.originalForm !== "undefined") {
-			OptionForm.theForm = OptionForm.originalForm.cloneNode(TRUE);
+			OptionForm.theForm = OptionForm.originalForm.cloneNode(true);
 			OptionForm.multiFormValues();
 		} // end if typeof
 	},
@@ -284,7 +284,7 @@ var OptionForm = {
 					// something here for select forms
 				} else if (OptionForm.theForm[i].type === "checkbox") {
 
-					jQuery(OptionForm.theForm[i]).attr('checked', FALSE);
+					jQuery(OptionForm.theForm[i]).attr('checked', false);
 
 				}
 
