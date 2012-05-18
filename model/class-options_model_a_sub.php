@@ -418,7 +418,7 @@ class Form_Model_Sub {
 
 
     /**
-     * Form_Model::validate_email()
+     * Form_Model::title_check()
      * 
      * Checks to make sure that title only uses code and nothing else
      * 
@@ -714,9 +714,7 @@ class Form_Model_Sub {
             $new_name = sanitize_file_name($name);
 
             if (move_uploaded_file($tmp_name, AH_FEEDS_DIR.$new_name)) {
-
                 return $new_name;
-
             }
 
         } // end if
@@ -829,6 +827,42 @@ class Form_Model_Sub {
                             return FALSE;
 
                         } // end if
+
+                    } // end if
+
+                } // end foreach
+
+            } // end if
+
+        } // end foreach
+
+    }
+
+
+    protected function check_file_duplicate($file, $att) {
+
+        foreach ($file as $key => $value) {
+
+            if ($key === "name") {
+
+                foreach ($value as $new_key => $new_value) {
+
+                    if (implode($new_value) !== "") {
+
+                        $file = $this->find_file_name();
+
+                        foreach ($file as $result) {
+                            
+                            $basename = $this->get_file_filename(implode($new_value));
+
+                            if (preg_match("/$basename/", $result->fileName)) {
+
+                                return FALSE;
+                                
+                            } // end if
+
+                        } // end foreach
+
 
                     } // end if
 

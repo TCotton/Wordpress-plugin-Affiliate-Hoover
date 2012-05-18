@@ -618,6 +618,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                             $tags_input = $item->form_tags;
                             $post_category = $item->form_categories;
                             $post_cat_array = array();
+                            $post_type = $item->post_type;
 
                         }
 
@@ -669,23 +670,27 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                             $ping_status = 'closed';
                         }
 
+
+                        //testing
+
+                        static $i = 0;
+                        static $x = 0;
+
                         if ($key === ($total_val - 1)) {
                             // Need to make sure title doesn't start with digits
                             $new_post['post_title'] = stripslashes_deep($this->check_utf($post_title));
                             $new_post['post_content'] = stripslashes_deep($this->check_utf($post_content));
                             $new_post['comment_status'] = $comment_status;
                             $new_post['ping_status'] = $ping_status;
+                            $new_post['post_type'] = $post_type;
 
                             // Don't create tags that are digits
                             if (!preg_match("/[0-9]/", $tags_input)) {
                                 $new_post['tags_input'] = stripslashes_deep($this->check_utf($tags_input));
-
                             }
 
                             if ($item->post_status == NULL) {
-
                                 $new_post['post_status'] = $item->post_status;
-
                             }
 
                             $duplicate = FALSE;
@@ -702,18 +707,18 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                     // If the two values are the same then the post already exists
 
-                                    $publish = TRUE;
+                                    $update = TRUE;
 
                                     if ($item->form_title_contains != "") {
 
                                         $form_title_contains = explode(",", $item->
                                             form_title_contains);
-                                        $publish = FALSE;
+                                        $update = FALSE;
 
                                         foreach ($form_title_contains as $new_result) {
 
                                             if (stristr($new_post['post_title'], trim($new_result))) {
-                                                $publish = TRUE;
+                                                $update = TRUE;
                                             }
 
                                         }
@@ -724,12 +729,12 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                         $form_body_contains = explode(",", $item->
                                             form_body_contains);
-                                        $publish = FALSE;
+                                        $update = FALSE;
 
                                         foreach ($form_body_contains as $new_result) {
 
                                             if (stristr($new_post['post_content'], trim($new_result))) {
-                                                $publish = TRUE;
+                                                $update = TRUE;
                                             }
 
                                         }
@@ -738,7 +743,7 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                     // If the title and body DO contain keywords then publish items OR publish if NO keywords set
 
-                                    if ($publish === TRUE) {
+                                    if ($update === TRUE) {
 
                                         $new_post['ID'] = (int)$result->post_id;
 
@@ -771,7 +776,12 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
 
                                         $new_post['post_category'] = $post_cat_array;
 
+                                        $total_cats = $i++;
+
                                         wp_update_post($new_post);
+                                        
+                                        //var_dump("Update: " );
+                                        //var_dump($new_post);
 
                                         // If already exists then update item rather than create a new one.
 
@@ -866,9 +876,13 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
                                     $new_post['post_category'] = $post_cat_array;
                                     $new_post['post_date'] = date('Y-m-d H:i:s');
                                     $new_post['post_content'] = force_balance_tags($new_post['post_content']);
+                                    $new_post['ID'] = NULL;
+                                  
 
-                                    static $i = 0;
-                                    $test_array[] = $i++;
+                                    $total_new = $x++;
+                                    
+                                    //var_dump("New Post:");
+                                    //var_dump($new_post);
 
                                     $id = wp_insert_post($new_post);
 
@@ -891,6 +905,10 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
             } // end if ($csv->load(AH_FEEDS_DIR.$file_here)) {
 
         } // end if($this->get_file_extension($item->fileName) === "csv") {
+
+
+        //var_dump("total cats: ".$total_cats);
+        //var_dump("total new: ".$total_new);
 
     }
 
@@ -931,24 +949,6 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
     
     */
 
-
-    private function insert_total_feeds($id, $cat_id) {
-
-        global $wpdb;
-
-        return $wpdb->query($wpdb->prepare("
-		INSERT INTO ".AH_TOTAL_FEEDS_TABLES."(post_title_id, cat_id) VALUES (%d, %d)", $id, $cat_id));
-
-    }
-
-    private function select_total_feeds($id) {
-
-        global $wpdb;
-
-        return $wpdb->get_row("SELECT post_title_id FROM ".AH_TOTAL_FEEDS_TABLES.
-            " WHERE post_title_id = $id");
-
-    }
 
     /**
      * Form_Model::check_utf()
@@ -1063,6 +1063,24 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         }
     }
 
+    private function insert_total_feeds($id, $cat_id) {
+
+        global $wpdb;
+
+        return $wpdb->query($wpdb->prepare("
+		INSERT INTO ".AH_TOTAL_FEEDS_TABLES."(post_title_id, cat_id) VALUES (%d, %d)", $id, $cat_id));
+
+    }
+
+    private function select_total_feeds($id) {
+
+        global $wpdb;
+
+        return $wpdb->get_row("SELECT post_title_id FROM ".AH_TOTAL_FEEDS_TABLES.
+            " WHERE post_title_id = $id");
+
+    }
+
     private function find_meta_id($var) {
 
         global $wpdb;
@@ -1141,7 +1159,88 @@ class Form_Model extends OptionModelSub\Form_Model_Sub {
         $wpdb->query($wpdb->prepare("DELETE FROM ".AH_TOTAL_FEEDS_TABLES."
 		 WHERE cat_id = %d", $var));
 
+    }
 
+
+    /**
+     * Form_Model::check_table()
+     * 
+     * Select just name from feed details table
+     * 
+     * @return string
+     */
+
+    protected function check_table($var) {
+
+        global $wpdb; // ADD PREPARE STATEMENT WITH SQL
+
+        return $wpdb->get_row("SELECT name FROM ".AH_FEED_DETAILS_TABLE." WHERE name = '".$var."'");
+    }
+
+    protected function get_all_feed_names() {
+
+        global $wpdb;
+        return $wpdb->get_results("SELECT name FROM ".AH_FEED_DETAILS_TABLE);
+    }
+
+    private function get_post_meta_id($var) {
+
+        global $wpdb;
+        return $wpdb->get_row("SELECT post_id, meta_value FROM ".$wpdb->prefix.
+            "postmeta WHERE meta_key = '_unique_post' AND post_id = $var");
+    }
+
+    private function get_post_meta() {
+
+        global $wpdb;
+
+        return $wpdb->get_results("SELECT post_id, meta_value FROM ".$wpdb->prefix.
+            "postmeta WHERE meta_key = '_unique_post'");
+    }
+
+    protected function find_file_name() {
+
+        global $wpdb;
+
+        return $wpdb->get_results("SELECT fileName FROM ".AH_FEED_DETAILS_TABLE);
+
+    }
+
+    /**
+     * Form_Model::select_all() 
+     * 
+     * Select all from the feed details table
+     * 
+     * @return string
+     */
+
+    protected function select_all($var) {
+
+        global $wpdb; // ADD PREPARE STATEMENT WITH SQL
+
+        return $wpdb->get_row("SELECT * FROM ".AH_FEED_DETAILS_TABLE." WHERE name = '".$var."'");
+
+    }
+
+    private function select_postid_get_post_meta($var) {
+
+        global $wpdb;
+
+        return $wpdb->get_results("SELECT post_id FROM ".$wpdb->prefix.
+            "postmeta WHERE meta_key = '_cat_num' AND meta_value = ".$var);
+
+    }
+
+    protected function delete_all_feed_posts($var) {
+
+        $id = $this->select_postid_get_post_meta($var);
+
+        foreach ($id as $result) {
+
+            if ($result->post_id !== null) {
+                wp_delete_post((int)$result->post_id, TRUE);
+            }
+        }
     }
 
     protected function delete_revisions() {
@@ -1180,60 +1279,6 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
     }
 
-
-    /**
-     * Form_Model::check_table()
-     * 
-     * Select just name from feed details table
-     * 
-     * @return string
-     */
-
-    protected function check_table($var) {
-
-        global $wpdb; // ADD PREPARE STATEMENT WITH SQL
-
-        return $wpdb->get_row("SELECT name FROM ".AH_FEED_DETAILS_TABLE." WHERE name = '".$var."'");
-    }
-
-    protected function get_all_feed_names() {
-
-        global $wpdb;
-        return $wpdb->get_results("SELECT name FROM ".AH_FEED_DETAILS_TABLE);
-    }
-
-    private function get_post_meta_id($var) {
-
-        global $wpdb;
-        return $wpdb->get_row("SELECT post_id, meta_value FROM ".$wpdb->prefix.
-            "postmeta WHERE meta_key = '_unique_post' AND post_id = $var");
-    }
-
-    private function get_post_meta() {
-
-        global $wpdb;
-        return $wpdb->get_results("SELECT post_id, meta_value FROM ".$wpdb->prefix.
-            "postmeta WHERE meta_key = '_unique_post'");
-    }
-
-    /**
-     * Form_Model::select_all() 
-     * 
-     * Select all from the feed details table
-     * 
-     * @return string
-     */
-
-    protected function select_all($var) {
-
-        global $wpdb; // ADD PREPARE STATEMENT WITH SQL
-
-        //var_dump($var);
-
-        return $wpdb->get_row("SELECT * FROM ".AH_FEED_DETAILS_TABLE." WHERE name = '".$var."'");
-        //$wpdb->show_errors();
-
-    }
 
     /**
      * Form_Model::insert_table() 
@@ -1331,7 +1376,7 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
     }
 
     /**
-     * Form_Model::delete_record)
+     * Form_Model::delete_record()
      * 
      * Remove associated data from the feed details table and the feeds folder
      * when the title is deleted from the options tables filed
@@ -1346,7 +1391,6 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
         global $wpdb;
         $file = AH_FEEDS_DIR.$filename;
         unlink($file);
-
 
         // delete stuff here
 
@@ -1404,14 +1448,8 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
             }
 
-            //$regex = '/(\[#([0-9]+)#\]) | ([a-zA-Z0-9]+)/';
-
             if ($key === "formCategories") {
 
-                //preg_match_all($regex, $value, $match);
-                //var_dump($match);
-
-                //var_dump(implode(",",$match));
                 if ($value != "") {
                     $form_categories = $value;
                 } else {
@@ -1428,8 +1466,6 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
                 }
 
             }
-
-            //var_dump($form_min_rows);
 
             if ($key === "formMaxRows") {
                 if ($value != "") {
@@ -1467,11 +1503,23 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
                 $form_allow_trackback = (integer)$value;
             }
 
+            if ($key === "formPostType") {
+
+                if ($value != "") {
+                    $form_posttype = $value;
+                } else {
+                    $form_posttype = "post";
+                }
+
+            }
+
+
         }
+
 
         if ($this->update_feed_details($form_title, $form_title_contains, $form_body, $form_body_contains,
             $form_categories, $form_tags, $form_allow_comments, $form_allow_trackback, $form_name, $form_min_rows,
-            $form_max_rows, $form_post_status)) {
+            $form_max_rows, $form_post_status, $form_posttype)) {
 
             // Once the feed_details table has been updated then process the feed:
 
@@ -1493,14 +1541,14 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
     protected function update_feed_details($form_title, $form_title_contains, $form_body, $form_body_contains,
         $form_categories, $form_tags, $form_allow_comments, $form_allow_trackback, $form_name, $form_min_rows,
-        $form_max_rows, $form_post_status) {
+        $form_max_rows, $form_post_status, $form_posttype) {
 
         global $wpdb;
         return $wpdb->query($wpdb->prepare("UPDATE ".AH_FEED_DETAILS_TABLE.
-            " SET form_title = %s, form_title_contains = %s, form_body = %s, form_body_contains = %s, form_categories = %s, form_tags = %s, form_allow_comments = %d, form_allow_trackback = %d, min_rows = %d, max_rows = %d, post_status = %s WHERE name = %s",
+            " SET form_title = %s, form_title_contains = %s, form_body = %s, form_body_contains = %s, form_categories = %s, form_tags = %s, form_allow_comments = %d, form_allow_trackback = %d, min_rows = %d, max_rows = %d, post_status = %s, post_type = %s WHERE name = %s",
             $form_title, $form_title_contains, $form_body, $form_body_contains, $form_categories, $form_tags,
             $form_allow_comments, $form_allow_trackback, $form_min_rows, $form_max_rows, $form_post_status,
-            $form_name));
+            $form_posttype, $form_name));
     }
 
 

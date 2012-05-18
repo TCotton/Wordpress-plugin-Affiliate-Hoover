@@ -91,18 +91,18 @@ class Form_Controller extends OptionModel\Form_Model {
             echo '<tr>';
             echo "<th scope=\"row\">$result->name</th>";
             echo '<td><label for="';
-            echo $result->name;
+            echo $result->name . '_delete_feed';
             echo '">';
             echo "<span class=\"screen-reader-text\">$result->name</span></label>";
             echo "<input type=\"hidden\" name=\"$result->name\" value=\"\">";
             echo '<input type="checkbox" name="';
-            echo $result->name;
+            echo $result->name . '_delete_feed';
             echo '" id="';
-            echo $result->name;
+            echo $result->name . '_delete_feed';
             echo '" value="';
             echo $result->id;
             echo '"';
-            if (isset($_POST[$result->name]) && $_POST[$result->name] !== "") {
+            if (isset($_POST[$result->name. '_delete_feed']) && $_POST[$result->name. '_delete_feed'] !== "") {
                 echo ' checked="checked" ';
             }
             echo '>';
@@ -119,6 +119,51 @@ class Form_Controller extends OptionModel\Form_Model {
         echo $form;
 
     }
+    
+    protected function delete_feed_posts() {
+
+        $cats = $this->find_all_post_cats();
+
+        $form = '<form method="post" action="#result" name="deleteFeedPostsForm">';
+        $form .= '<fieldset>';
+        $form .= '<legend>Delete all posts on a per feed basis</legend>';
+        $form .= '<table class="form-table"><tbody>';
+        echo $form;
+
+        foreach ($cats as $result) {
+
+            echo '<tr>';
+            echo "<th scope=\"row\">$result->name</th>";
+            echo '<td><label for="';
+            echo $result->name . '_delete_posts';
+            echo '">';
+            echo "<span class=\"screen-reader-text\">$result->name</span></label>";
+            echo "<input type=\"hidden\" name=\"$result->name\" value=\"\">";
+            echo '<input type="checkbox" name="';
+            echo $result->name . '_delete_posts';
+            echo '" id="';
+            echo $result->name . '_delete_posts';
+            echo '" value="';
+            echo $result->id;
+            echo '"';
+            if (isset($_POST[$result->name. '_delete_posts']) && $_POST[$result->name. '_delete_posts'] !== "") {
+                echo ' checked="checked" ';
+            }
+            echo '>';
+            echo "</td>";
+            echo '</tr>';
+
+        }
+
+        $form = '</tbody></table>';
+        $form .= $this->perm_fields();
+        $form .= '<p class="submit"><input type="submit" name="deleteFeedPosts" class="button-primary" value="Save Changes"></p>';
+        $form .= '</fieldset>';
+        $form .= '</form>';
+        echo $form;
+
+    }
+    
 
 
     protected function delete_feed_leftovers($form) {
@@ -133,6 +178,21 @@ class Form_Controller extends OptionModel\Form_Model {
             }
         }
     }
+    
+    protected function delete_posts($form) {
+
+        foreach ($form as $key => $result) {
+
+            if ($key === 'total_user_fields') continue;
+            if ($key === 'deleteFeedPosts') continue;
+
+            if ($result !== "") {
+             
+                $this->delete_all_feed_posts((int)$result);
+            }
+        }
+    }
+    
 
 
     /**

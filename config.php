@@ -1,7 +1,6 @@
 <?php
 
 namespace Config;
-use DirectoryIterator;
 
 include_once ("constants.php");
 /**
@@ -41,9 +40,9 @@ class Configuration {
      */
     private static function connect_lib() {
 
-        foreach (new DirectoryIterator(AH_PLUGINNAME_PATH.self::$libs) as $result) {
+        foreach (scandir(AH_PLUGINNAME_PATH.self::$libs) as $result) {
 
-            if ($result->getExtension() === 'php') {
+            if (preg_match('/\.php$/', $result)) {
 
                 array_push(self::$link_array, self::$libs.AH_DS.$result);
 
@@ -62,9 +61,9 @@ class Configuration {
      */
     private static function connect_model() {
 
-        foreach (new DirectoryIterator(AH_PLUGINNAME_PATH.self::$model) as $result) {
+        foreach (scandir(AH_PLUGINNAME_PATH.self::$model) as $result) {
 
-            if ($result->getExtension() === 'php') {
+            if (preg_match('/class-.*\.php$/', $result)) {
 
                 array_push(self::$link_array, self::$model.AH_DS.$result);
 
@@ -83,9 +82,9 @@ class Configuration {
      */
     private static function connect_controller() {
 
-        foreach (new DirectoryIterator(AH_PLUGINNAME_PATH.self::$controller) as $result) {
+        foreach (scandir(AH_PLUGINNAME_PATH.self::$controller) as $result) {
 
-            if ($result->getExtension() === 'php') {
+            if (preg_match('/class-.*\.php$/', $result)) {
 
                 array_push(self::$link_array, self::$controller.AH_DS.$result);
 
@@ -104,9 +103,9 @@ class Configuration {
      */
     private static function connect_view() {
 
-        foreach (new DirectoryIterator(AH_PLUGINNAME_PATH.self::$view) as $result) {
+        foreach (scandir(AH_PLUGINNAME_PATH.self::$view) as $result) {
 
-            if ($result->getExtension() === 'php') {
+            if (preg_match('/class-.*\.php$/', $result)) {
 
                 array_push(self::$link_array, self::$view.AH_DS.$result);
 
@@ -132,9 +131,19 @@ class Configuration {
 
 new \Config\Configuration;
 
+
 register_uninstall_hook(__FILE__, 'unistall');
 
+function deleteDir($path) {
+    return is_file($path) ? @unlink($path) : array_map(__FUNCTION__, glob($path.'/*')) == @rmdir($path);
+}
+
+
 function unistall() {
+    
+    $ah_uploads = wp_upload_dir();
+    
+    deleteDir($ah_uploads['basedir'].DIRECTORY_SEPARATOR.'affiliate-hoover');
 
     $sql1 = "DROP table if exists ".AH_FEED_DETAILS_TABLE;
     $sql2 = "DROP table if exists ".AH_TOTAL_FEEDS_TABLES;
