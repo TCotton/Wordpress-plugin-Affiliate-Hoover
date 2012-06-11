@@ -1,7 +1,21 @@
-body  {
+body {
 }
 
-form[name=affiliate_hoover_plugin_options] input[type=text],
-form[name=affiliate_hoover_plugin_options] textarea{
-font-size : 16px;
+form [name=affiliate_hoover_plugin_options ]input [type=text ],form [name=affiliate_hoover_plugin_options ]textarea {
+font-size:16px;
+}
+
+.settings_page_affiliate-hoover-plugin-admin .tablenav {
+height:70px;
+overflow:hidden;
+}
+
+.settings_page_affiliate-hoover-plugin-admin .displaying-num {
+display:inline-block;
+width:100%;
+text-align:right;
+}
+
+.settings_page_affiliate-hoover-plugin-admin .tablenav a {
+margin:0 2px;
 }

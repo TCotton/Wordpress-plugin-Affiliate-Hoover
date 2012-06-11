@@ -21,6 +21,7 @@ class Configuration {
     private static $libs = AH_First_LIBS;
 
     private static $link_array = array();
+    private static $tracking_array = array();
 
     function __construct() {
 
@@ -44,7 +45,7 @@ class Configuration {
 
             if (preg_match('/\.php$/', $result)) {
 
-                array_push(self::$link_array, self::$libs.AH_DS.$result);
+                array_push(self::$link_array, AH_PLUGINNAME_PATH.self::$libs.AH_DS.$result);
 
             }
 
@@ -63,9 +64,18 @@ class Configuration {
 
         foreach (scandir(AH_PLUGINNAME_PATH.self::$model) as $result) {
 
-            if (preg_match('/class-.*\.php$/', $result)) {
+            if (preg_match('/\.php$/', $result)) {
 
-                array_push(self::$link_array, self::$model.AH_DS.$result);
+                if ($result === "Tracking_Model.php") {
+
+                    array_push(self::$tracking_array, AH_PLUGINNAME_PATH.self::$model.AH_DS.$result);
+
+                } else {
+
+                    array_push(self::$link_array, AH_PLUGINNAME_PATH.self::$model.AH_DS.$result);
+
+                }
+
 
             } // end preg_match
 
@@ -84,9 +94,17 @@ class Configuration {
 
         foreach (scandir(AH_PLUGINNAME_PATH.self::$controller) as $result) {
 
-            if (preg_match('/class-.*\.php$/', $result)) {
+            if (preg_match('/\.php$/', $result)) {
 
-                array_push(self::$link_array, self::$controller.AH_DS.$result);
+                if ($result === "Tracking_Contoller.php") {
+
+                    array_push(self::$tracking_array, AH_PLUGINNAME_PATH.self::$controller.AH_DS.$result);
+
+                } else {
+
+                    array_push(self::$link_array, AH_PLUGINNAME_PATH.self::$controller.AH_DS.$result);
+
+                }
 
             } // end preg_match
 
@@ -105,9 +123,17 @@ class Configuration {
 
         foreach (scandir(AH_PLUGINNAME_PATH.self::$view) as $result) {
 
-            if (preg_match('/class-.*\.php$/', $result)) {
+            if (preg_match('/\.php$/', $result)) {
 
-                array_push(self::$link_array, self::$view.AH_DS.$result);
+                if ($result === "Tracking_View.php") {
+
+                    array_push(self::$tracking_array, AH_PLUGINNAME_PATH.self::$view.AH_DS.$result);
+
+                } else {
+
+                    array_push(self::$link_array, AH_PLUGINNAME_PATH.self::$view.AH_DS.$result);
+
+                }
 
             } // end preg_match
 
@@ -126,33 +152,15 @@ class Configuration {
 
     }
 
+    public static function tracking_files() {
+
+        return self::$tracking_array;
+
+    }
+
 
 } // end class
 
 new \Config\Configuration;
 
-
-register_uninstall_hook(__FILE__, 'unistall');
-
-function deleteDir($path) {
-    return is_file($path) ? @unlink($path) : array_map(__FUNCTION__, glob($path.'/*')) == @rmdir($path);
-}
-
-
-function unistall() {
-    
-    $ah_uploads = wp_upload_dir();
-    
-    deleteDir($ah_uploads['basedir'].DIRECTORY_SEPARATOR.'affiliate-hoover');
-
-    $sql1 = "DROP table if exists ".AH_FEED_DETAILS_TABLE;
-    $sql2 = "DROP table if exists ".AH_TOTAL_FEEDS_TABLES;
-
-    global $wpdb;
-
-    delete_option('affiliate_hoover_plugin_options');
-
-    $wpdb->query($sql1);
-    $wpdb->query($sql2);
-
-}
+?>

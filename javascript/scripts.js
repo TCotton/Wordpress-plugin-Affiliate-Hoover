@@ -309,6 +309,15 @@ var OptionForm = {
 		document.cookie = "_multi_cov" + '=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
 
 	},
+    
+    submitInd: function() {
+        
+        jQuery("input[name=submitInd]").bind('click', function() {
+            
+            //return false;
+            
+            });
+    },
 
 	init: function() {
 
@@ -319,6 +328,8 @@ var OptionForm = {
 		if (document.cookie.indexOf("_multi_cov") !== -1) {
 			OptionForm.multiFormName();
 		}
+        
+        //OptionForm.submitInd();
 
 	}
 

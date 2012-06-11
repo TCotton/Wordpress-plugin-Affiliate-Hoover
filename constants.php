@@ -20,7 +20,12 @@ global $wpdb;
     'affiliate-hoover'.DIRECTORY_SEPARATOR) : die("AH_FEEDS_DIR already defined: $xyze");
 !defined('AH_FEED_DETAILS_TABLE') ? define('AH_FEED_DETAILS_TABLE', $wpdb->prefix."ah_feed_details") :
     die("AH_FEED_DETAILS_TABLE already defined: $xyze");
+!defined('AH_TRACKING_TABLE') ? define('AH_TRACKING_TABLE', $wpdb->prefix."ah_tracking") :
+    die("AH_TRACKING_TABLE already defined: $xyze");
 !defined('AH_TOTAL_FEEDS_TABLES') ? define('AH_TOTAL_FEEDS_TABLES', $wpdb->prefix."ah_total_feeds") :
     die("AH_FEED_DETAILS_TABLE already defined: $xyze");
 !defined('AH_DS') ? define('AH_DS', DIRECTORY_SEPARATOR) : die("AH_DS already defined: $xyze");
 !defined('AH_BR') ? define('AH_BR', "<br />") : die("AH_BR already defined: $xyze");
+!defined('AH_LOG_FILE') ? define('AH_LOG_FILE', $ah_uploads['basedir'].DIRECTORY_SEPARATOR.
+    'affiliate-hoover'.DIRECTORY_SEPARATOR."log.txt") : die("AH_LOG_FILE already defined: $xyze");
+?>
