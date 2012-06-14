@@ -338,5 +338,7 @@ var OptionForm = {
 jQuery(document).ready(function() {
 
 		OptionForm.init();
+        jQuery("textarea").markItUp(mySettings);
+        
 
 });

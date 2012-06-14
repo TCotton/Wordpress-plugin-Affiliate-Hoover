@@ -11,12 +11,13 @@ use TrackController;
 class Tracking_View extends \TrackController\Tracking_Controller {
 
     static $secure = FALSE;
-    public $ip = NULL;
+    
+    static $option = FALSE;
 
     function __construct() {
-        
+
         global $wpdb;
-            
+
         // create static variable if HTTPS is on
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] ==
             443) {
@@ -25,11 +26,13 @@ class Tracking_View extends \TrackController\Tracking_Controller {
 
         }
 
-        add_action('init', array($this, 'scripts_enqueue_cov'), "1");
+        self::$option = get_option('ah_tracking');
 
-        $this->ip = $_SERVER['REMOTE_ADDR'];
-        
-        
+        if (self::$option === FALSE || self::$option === "") {
+
+            add_action('init', array($this, 'scripts_enqueue_cov'), "1");
+
+        }
 
     }
 
@@ -42,14 +45,13 @@ class Tracking_View extends \TrackController\Tracking_Controller {
 
         $protocol = static::$secure === TRUE ? 'https://' : 'http://';
 
-        $params = array('ajaxurl' => admin_url('admin-ajax.php', $protocol),'my_nonce' => wp_create_nonce('myajax-nonce'));
-        
-        wp_localize_script("tracking_scripts", "ah_tracking_scripts", $params);
+        $params = array('ajaxurl' => admin_url('admin-ajax.php', $protocol), 'my_nonce' =>
+                wp_create_nonce('myajax-nonce'));
 
+        wp_localize_script("tracking_scripts", "ah_tracking_scripts", $params);
     }
 
 }
 
-$tracker = new \TrackView\Tracking_View;
 
 ?>

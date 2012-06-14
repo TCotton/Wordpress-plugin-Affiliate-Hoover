@@ -41,10 +41,11 @@ class Form_View extends OptionController\Form_Controller {
 
     protected static $form;
 
-    private static $tracking;
+    protected static $tracking;
+
+    protected static $max_upload;
 
     function __construct() {
-
 
         /**
          * The code in the Form_View constructor is essential to the functioning of 
@@ -75,9 +76,25 @@ class Form_View extends OptionController\Form_Controller {
 
         } // end foreach
 
-        $this::$tracking = new \TrackView\Tracking_View;
+        self::$tracking = new \TrackView\Tracking_View;
 
-    } // end construct
+        add_action('wp_ajax_nopriv_ah_update', array(self::$tracking, 'update_tracking'), "1");
+        add_action('wp_ajax_ah_update', array(self::$tracking, 'update_tracking'), "1");
+
+        $max_upload = @(int)(ini_get('upload_max_filesize'));
+        $max_post = @(int)(ini_get('post_max_size'));
+        $memory_limit = @(int)(ini_get('memory_limit'));
+        if (isset($max_upload) && isset($max_post) && isset($memory_limit)) {
+
+            self::$max_upload = (int)(min($max_upload, $max_post, $memory_limit) * 1048576);
+
+        } else {
+
+            self::$max_upload = 2097152;
+
+        }
+
+    } // end construc
 
     /**
      * Form_View::scripts_enqueue_cov(
@@ -96,11 +113,13 @@ class Form_View extends OptionController\Form_Controller {
 
             // Only display script on plugin admin page. Is there a Wordpress way of doing this?
             $plugin_url = plugin_dir_url(__DIR__ );
+            wp_enqueue_script("markup", $plugin_url."markitup/jquery.markitup.js");
+            wp_enqueue_script("markup_two", $plugin_url."markitup/sets/default/set.js");
             wp_enqueue_script("option_scripts", $plugin_url."javascript/scripts.js");
-
             wp_localize_script("option_scripts", "option_plugin_params", get_option($option_name));
-
             wp_enqueue_style("option_styles", $plugin_url."css/styles.css");
+            wp_enqueue_style("markup_styles", $plugin_url."markitup/skins/simple/style.css");
+            wp_enqueue_style("markup_two_styles", $plugin_url."markitup/sets/default/style.css");
 
         } // emd of strpos
 
@@ -187,7 +206,9 @@ class Form_View extends OptionController\Form_Controller {
             case (isset($_GET['feed-list']) && $_GET['feed-list'] === "total" ? TRUE : FALSE):
                 $this->add_ind_items();
                 $this->add_ind_form();
-                $this->list_feeds();
+                if (!isset($_GET['unique_form']) && !isset($_GET['unique_name'])) {
+                    $this->list_feeds();
+                }
                 break;
             case (isset($_GET['instructions']) && $_GET['instructions'] === "here" ? TRUE : FALSE):
                 $this->instructions();
@@ -221,10 +242,31 @@ class Form_View extends OptionController\Form_Controller {
 
     } // end create_html_cov()
 
+
     private function tracking() {
 
         echo '<h3>Tracks clicks to external affiliate links</h3>';
         echo '<p>This is an experimental feature. A class is automatically added to all external links when the posts are created. When a user clicks on such a link then their activity is recorded into a database.</p>';
+
+        if (isset($_POST['submitTracking'])) {
+
+            if (isset($_POST['ah_tracking_chq'])) {
+
+                $var = TRUE;
+
+            } else {
+
+                $var = NULL;
+
+            }
+
+            self::$tracking->update_options($var);
+
+            echo $this->success_message("You have changed the tracking settings");
+
+        } // end if
+
+        self::$tracking->turn_off_tracking();
 
         self::$tracking->create_table();
 
@@ -264,7 +306,8 @@ class Form_View extends OptionController\Form_Controller {
             'option' => FALSE,
             'submit' => "wipeRevisions",
             'submtiTwo' => NULL,
-            'synchronize' => NULL);
+            'synchronize' => NULL,
+            'tracking' => NULL);
 
         $this->create_form($form);
 
@@ -381,7 +424,8 @@ class Form_View extends OptionController\Form_Controller {
             'option' => TRUE,
             'submit' => "submitLar",
             'submtiTwo' => NULL,
-            'synchronize' => NULL);
+            'synchronize' => NULL,
+            'tracking' => NULL);
 
         $this->create_form($form, $site_name);
 
@@ -745,7 +789,9 @@ class Form_View extends OptionController\Form_Controller {
                     "desc" =>
                         '<strong>Post body.</strong> You can use HTML in here. Examples:<br>To place an image: <br>'.
                         htmlspecialchars("<img src=\"[#7#]\">")."<br>To create a link:<br>".
-                        htmlspecialchars("<a href=\"[#5#]\">[#1#]</a>"), // for use in input label
+                        htmlspecialchars("<a href=\"[#5#]\">[#1#]</a>").
+                        '<br>If you are going to include internal links you must write the full URL, ie '.
+                        htmlspecialchars("http://www.example.com/category/page-here"), // for use in input label
                     "maxlength" => NULL, // max attribute
                     "value" => $form_body, // value attribute
                     "select" => FALSE // array only for the select input
@@ -874,7 +920,8 @@ class Form_View extends OptionController\Form_Controller {
                     'option' => FALSE,
                     'submit' => 'submitForm',
                     'submtiTwo' => 'updateInd',
-                    'synchronize' => 'synchronize');
+                    'synchronize' => 'synchronize',
+                    'tracking' => NULL);
                 $this->create_form($form, $form_title, $form_title_contains, $form_body, $form_nofollow,
                     $form_body_contains, $form_categories, $form_categories_parent, $form_tags, $form_allow_comments,
                     $form_allow_trackback, $min_rows, $max_rows, $post_type, $post_status);
@@ -1011,7 +1058,8 @@ class Form_View extends OptionController\Form_Controller {
                 }
 
                 if ($this->check_file_error($_FILES[$option_name], 'feedFile') === FALSE) {
-                    $error[] = "Sorry the maximum file upload size is 2MB";
+                    $error[] = "Sorry the maximum file upload size is ".(self::$max_upload / 1048576).
+                        "MBs";
                 }
 
                 if ($this->validation_read_temp_file($_FILES[$option_name]) === FALSE) {
@@ -1039,6 +1087,8 @@ class Form_View extends OptionController\Form_Controller {
             echo '</div><!-- end "ind-result" -->';
 
             if (isset($item)) {
+
+                echo 'Max upload size for this server is '.(self::$max_upload / 1048576).'MBs';
 
                 echo "<p>File can be found here: ".'<strong>'.AH_FEEDS_DIR.$item->fileName.
                     '</strong></p>';
@@ -1085,7 +1135,8 @@ class Form_View extends OptionController\Form_Controller {
                 'option' => FALSE,
                 'submit' => 'submitInd',
                 'submtiTwo' => NULL,
-                'synchronize' => NULL);
+                'synchronize' => NULL,
+                'tracking' => NULL);
             $this->create_form($form, $feed_url, $feed_file);
         } // end if isset($_GET['unique_name'])
 
@@ -1140,6 +1191,8 @@ class Form_View extends OptionController\Form_Controller {
 
         echo '<h3>Changelog</h3>';
         echo '<ul>';
+        echo '<li>0.94: Added support for text editor on textareas</li>';
+        echo '<li>0.9: Added tracking / bug fixes</li>';
         echo '<li>0.8: Added ability to create new categories as children of parent categories / bug fixes</li>';
         echo '<li>0.7: Added log file</li>';
         echo '<li>0.6: Added ability to automatically add nofollow to outbound links. Bug Fixes</li>';

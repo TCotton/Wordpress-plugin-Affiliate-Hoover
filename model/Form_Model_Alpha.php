@@ -654,7 +654,7 @@ class Form_Model_Alpha {
 
                 foreach ($value as $new_key => $new_value) {
 
-                    if ((int)implode($new_value) >= 2097152) {
+                    if ((int)implode($new_value) >= self::$max_upload) {
 
                         return FALSE;
 

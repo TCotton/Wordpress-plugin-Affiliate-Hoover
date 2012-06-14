@@ -5,7 +5,7 @@ ob_start();
 Plugin Name: Affiliate Hoover
 Plugin URI: http://wordpress.org/extend/plugins/affiliate-hoover/
 Description: Takes affiliate feed files and parses them into posts
-Version: 0.81
+Version: 0.95
 Author: Andy Walpole
 Author URI: http://about.me/andywalpole
 Author email: me@andywalpole.me
@@ -15,6 +15,8 @@ License: GPL2
 /**
  * Check to make sure it is PHP version 5.3 and more
  */
+
+global $wp_version;
 
 if (PHP_VERSION_ID < 50300 || floatval($wp_version) < 3.3) {
 
@@ -39,22 +41,9 @@ if (PHP_VERSION_ID < 50300 || floatval($wp_version) < 3.3) {
     //Loop through all files in folders and include them in main file
     foreach (\Config\Configuration::total_files() as $file) {
 
-        //if (is_admin()) { // require only in admin
-
-            require_once ($file);
-
-       // }
+        require_once ($file);
 
     }
-
-    // was firing twice in __construct - moved to here
-    if (is_admin()) {
-
-        add_action('wp_ajax_nopriv_ah_update', array($tracker, 'update_tracking'), "1");
-        //add_action('wp_ajax_ah_update', array($tracker, 'update_tracking'), "1");
-
-    }
-    //add_action('wp_ajax_nopriv_ah_update', array($tracker, 'update_tracking'));
 
 
 } // end if (floatval(phpversion()) < 5.3 && floatval($wp_version) < 3.3) {

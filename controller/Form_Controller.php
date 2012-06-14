@@ -2,6 +2,7 @@
 
 namespace OptionController;
 use OptionModel;
+use pagination;
 
 /**
  * Form_Controller
@@ -420,7 +421,7 @@ class Form_Controller extends OptionModel\Form_Model_Beta {
 
         //var_dump($option_name);
 
-        if (count($form_elms) !== 8) {
+        if (count($form_elms) !== 9) {
             die("Make sure you enter eight values in the form builder array");
         }
 
@@ -534,8 +535,15 @@ class Form_Controller extends OptionModel\Form_Model_Beta {
                 '<p class="submit" style="margin-top:0;padding-top:0"><input type="submit"  name="'.
                 $form_elms['7'].'" class="button-primary" value="Synchronize"></p>';
         }
+        if (isset($form_elms['8']) && $form_elms['8'] != NULL) {
+            $form .=
+                '<p class="submit" style="margin-top:0;padding-top:0"><input type="submit"  name="'.
+                $form_elms['8'].'" class="button-primary" value="Change"></p>';
+
+        }
         $form .= '</fieldset>';
         $form .= '</form>';
+
         echo $form;
 
     }
@@ -1124,5 +1132,9 @@ class Form_Controller extends OptionModel\Form_Model_Beta {
 
     }
 
+   
+
+
 }
+
 ?>

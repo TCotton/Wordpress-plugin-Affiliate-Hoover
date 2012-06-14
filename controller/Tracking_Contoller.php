@@ -17,6 +17,29 @@ class Tracking_Controller extends \TrackModel\Tracking_Model {
 
     }
 
+    public function turn_off_tracking() {
+        
+        $option = get_option('ah_tracking');
+        
+        echo '<form action="#" method="post">';
+        echo '<fieldset><legend>Click checkbox to turn off tracking</legend>';
+        echo '<table class="form-table">';
+        echo '<tbody>';
+        echo '<tr valign="top">';
+        echo '<th scope="row">Turn off tracking</th>';
+        echo '<td><input id="plugin_chk1" name="ah_tracking_chq" value="1" type="checkbox" ';
+
+        isset($_POST['ah_tracking_chq']) || ($option === "1")? print
+            ' checked="checked" ' : null;
+            
+        echo '></td>';
+        echo '</tr></tbody></table>';
+        echo '<p class="submit"><input name="submitTracking" type="submit" class="button-primary" value="Save Changes"></p>';
+        echo '</fieldset>';
+        echo '</form>';
+
+    }
+
 
     public function create_table() {
 
@@ -47,13 +70,12 @@ class Tracking_Controller extends \TrackModel\Tracking_Model {
 
         if (isset($limit) && $limit != NULL) {
 
-        echo '<div class="tablenav">';
+            echo '<div class="tablenav">';
             echo '<div class="tablenav-pages">';
-            echo '<span class="displaying-num">' . $total  . ' items</span>';
+            echo '<span class="displaying-num">'.$total.' items</span>';
             echo $pag->show();
             echo '</div>';
             echo '</div>';
-         
 
             $data = $this->get_all($limit);
 

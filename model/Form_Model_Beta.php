@@ -598,8 +598,6 @@ class Form_Model_Beta extends OptionModelSub\Form_Model_Alpha {
         find_missing_tables($columns, "form_categories_parent", " char(250) NULL ");
         find_missing_tables($columns, "form_body_nofollow", " TINYINT(1) NULL ");
 
-        //$wpdb->print_error();
-
     }
 
     /**
@@ -1578,9 +1576,9 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
             return TRUE; //return $this->success_message("You have successfully updated the form");
             //ob_start();
-            //wp_redirect(admin_url("/options-general.php?page=".$page_url));
+            wp_redirect(admin_url("/options-general.php?page=".$page_url));
             //ob_end_flush();
-            //exit;
+            exit;
         }
 
 

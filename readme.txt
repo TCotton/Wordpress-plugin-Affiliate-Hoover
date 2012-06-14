@@ -11,7 +11,7 @@ Requires at least: 3.3
 
 Tested up to: 3.3.2
 
-Stable tag: 0.55
+Stable tag: 0.95
 
 
 Parses feeds into posts as supplied by affiliate marketing companies
@@ -25,12 +25,24 @@ Affiliate Hoover allows the website owner to upload and parse feeds supplied by 
 
 Feed items are turned into posts, with the ability to add categories, tags, specify whether comments and trackbacks are allowed; and to filter items based on individual keywords.
 
-So far it is optimised for Paid on Demand, Trade Doubler and CSV support for Affiliate Window, but you should be able to upload any CSV files from any company.
+This addon will also create items based on the content type and, if so desired, will also automatically add "nofollow" to outbound links.
+
+There is also a tracking system for checking clicks on affiliate links.
+
+So far it is optimised for the following companies:
+
+* Paid on Results (CSV, XML and remote URL)
+* Trade Double (CSV, XML and remote URL)
+* Affiliate Window (CSV)
+* Google Affiliate Network (CSV)
+
+__You should be able to upload any CSV file from any company__
 
 I aim to add full support for more affiliate marketing companies in the near future.
 
-As this is a new addon I'm keen for bugs and feature requests to be posted.
+Only works with PHP versions 5.3 and higher.
 
+[Please post bugs and support feature requests here](http://wordpress.org/support/plugin/affiliate-hoover)
 
 
 == Installation ==
@@ -57,6 +69,33 @@ None yet
 3. Screenshot three
 
 == Changelog ==
+
+= 0.94 =
+Added support for a simple text editor on textareas
+
+= 0.9 =
+Added tracking
+
+= 0.84 =
+Bug fix
+
+= 0.83 =
+Bug fix
+
+= 0.82 =
+Bug fix
+
+= 0.8 =
+Added ability to create new categories as children of parent categories / bug fixes
+
+= 0.71 =
+Bug fix
+
+= 0.7 =
+Added log file
+
+= 0.6 =
+Adds nofollow to outbound links
 
 = 0.54 =
 Major bug fix
