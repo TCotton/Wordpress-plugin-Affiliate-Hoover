@@ -27,7 +27,7 @@ class View_Initialise extends \model\Database {
     protected static $files;
     protected static $secure = FALSE;
     protected static $option = FALSE;
-
+    protected static $read_write;
 
     function __construct() {
 
@@ -37,7 +37,7 @@ class View_Initialise extends \model\Database {
 
         $this->add_action_admin_menu();
 
-        if (!(self::$form_builder instanceof \controller\Form_Builder)) {
+        if (!(self::$form_builder instanceof \view\Form_Builder)) {
             self::$form_builder = new \view\Form_Builder();
         }
 
@@ -52,7 +52,10 @@ class View_Initialise extends \model\Database {
         if (!(self::$files instanceof \model\Handle_Files)) {
             self::$files = new \model\Handle_Files();
         }
-        
+
+        if (!(self::$read_write instanceof \model\Write_Read_Files)) {
+            self::$read_write = new \model\Write_Read_Files();
+        }
 
         // create static variable if HTTPS is on
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] ==

@@ -46,7 +46,7 @@ class Synchronize_Feeds extends \model\Database {
 
         // now use that id to find details of all existing published items for that category
 
-        $cat_array = $this > db_find_meta_cat($id->id);
+        $cat_array = $this->db_find_meta_cat($id->id);
 
         // Now find the title of the posts
 

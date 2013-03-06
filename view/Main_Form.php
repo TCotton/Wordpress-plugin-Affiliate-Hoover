@@ -14,33 +14,15 @@
  */
 
 class Main_Form extends \view\View_Initialise  {
-
-    protected static $form_builder;
-
+    
     protected static $processing;
-
-    protected static $check;
-
-    protected static $success;
 
     function __construct() {
 
         parent::__construct();
 
-        if (!(self::$form_builder instanceof \view\Form_Builder)) {
-            self::$form_builder = new \view\Form_Builder();
-        }
-
         if (!(self::$processing instanceof \controller\Main_Form_Processing)) {
             self::$processing = new \controller\Main_Form_Processing();
-        }
-
-        if (!(self::$check instanceof \controller\Validation_Sanitisation)) {
-            self::$check = new \controller\Validation_Sanitisation();
-        }
-
-        if (!(self::$success instanceof \controller\Validation_Sanitisation_Success)) {
-            self::$success = new \controller\Validation_Sanitisation_Success();
         }
 
     } // end construct

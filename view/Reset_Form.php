@@ -1,7 +1,7 @@
 <?php namespace view;
 
 /**
- * Upload_Form
+ * Reset_Form
  * 
  * @package Affiliate Hoover
  * @author Andy Walpole
@@ -15,34 +15,14 @@
 
 class Reset_Form extends \view\View_Initialise  {
 
-    protected static $form_builder;
     protected static $processing;
-    protected static $check;
-    protected static $success;
-    protected static $files;
-
+    
     function __construct() {
 
         parent::__construct();
-        
-        if (!(self::$form_builder instanceof \view\Form_Builder)) {
-            self::$form_builder = new \view\Form_Builder();
-        }
-
-        if (!(self::$check instanceof \controller\Validation_Sanitisation)) {
-            self::$check = new \controller\Validation_Sanitisation();
-        }
-
-        if (!(self::$success instanceof \controller\Validation_Sanitisation_Success)) {
-            self::$success = new \controller\Validation_Sanitisation_Success();
-        }
 
         if (!(self::$processing instanceof \controller\Reset_Form_Processing)) {
             self::$processing = new \controller\Reset_Form_Processing();
-        }
-
-        if (!(self::$files instanceof \model\Handle_Files)) {
-            self::$files = new \model\Handle_Files();
         }
 
     } // end construct

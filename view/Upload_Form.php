@@ -13,38 +13,18 @@
  * 
  */
 
-class Upload_Form extends \model\Database {
+class Upload_Form extends \view\View_Initialise {
 
-    protected static $form_builder;
     protected static $processing;
-    protected static $check;
-    protected static $success;
-    protected static $files;
 
     function __construct() {
 
         parent::__construct();
-        
-        if (!(self::$form_builder instanceof \controller\Form_Builder)) {
-            self::$form_builder = new \view\Form_Builder();
-        }
-
-        if (!(self::$check instanceof \controller\Validation_Sanitisation)) {
-            self::$check = new \controller\Validation_Sanitisation();
-        }
-
-        if (!(self::$success instanceof \controller\Validation_Sanitisation_Success)) {
-            self::$success = new \controller\Validation_Sanitisation_Success();
-        }
 
         if (!(self::$processing instanceof \controller\Upload_Form_Processing)) {
             self::$processing = new \controller\Upload_Form_Processing();
         }
 
-        if (!(self::$files instanceof \model\Handle_Files)) {
-            self::$files = new \model\Handle_Files();
-        }
-        
     } // end construct
 
     protected function upload_form() {
@@ -137,6 +117,7 @@ class Upload_Form extends \model\Database {
                 'submtiTwo' => NULL,
                 'synchronize' => NULL,
                 'tracking' => NULL);
+                
              self::$form_builder->create_form($form, $feed_file);
 
         } // end if isset($_GET['unique_name'])

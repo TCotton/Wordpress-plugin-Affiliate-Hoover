@@ -15,55 +15,30 @@
 
 class Feed_Form extends \view\View_Initialise {
 
-    protected static $form_builder;
-    protected static $processing;
-    protected static $check;
-    protected static $success;
-    protected static $files;
-    protected static $create;
-    protected static $update;
     protected static $synchronize;
+    protected static $update;
+    protected static $create;
+    protected static $processing;
 
     function __construct() {
 
         parent::__construct();
-
-        if (!(self::$form_builder instanceof \controller\Form_Builder)) {
-            self::$form_builder = new \view\Form_Builder();
-        }
-
-        if (!(self::$check instanceof \controller\Validation_Sanitisation)) {
-            self::$check = new \controller\Validation_Sanitisation();
-        }
-
-        if (!(self::$success instanceof \controller\Validation_Sanitisation_Success)) {
-            self::$success = new \controller\Validation_Sanitisation_Success();
-        }
-
+        
         if (!(self::$processing instanceof \controller\Feed_Form_Processing)) {
             self::$processing = new \controller\Feed_Form_Processing();
         }
-
-        if (!(self::$files instanceof \model\Handle_Files)) {
-            self::$files = new \model\Handle_Files();
-        }
-
+        
         if (!(self::$create instanceof \controller\Create_Individual_Feeds)) {
             self::$create = new \controller\Create_Individual_Feeds();
         }
-
-        if (!(self::$success instanceof \controller\Validation_Sanitisation_Success)) {
-            self::$success = new \controller\Validation_Sanitisation_Success();
-        }
-
+        
         if (!(self::$update instanceof \controller\Update_Individual_Feeds)) {
             self::$update = new \controller\Update_Individual_Feeds();
         }
-
-        if (!(self::$synchronize instanceof \model\Synchronize_Feeds)) {
-            self::$synchronize = new \model\Synchronize_Feeds();
+        
+        if (!(self:: $synchronize instanceof \model\Synchronize_Feeds)) {
+            self:: $synchronize = new \model\Synchronize_Feeds();
         }
-
 
     } // end construct
 
