@@ -28,3 +28,7 @@ display:inline-block;
 width:100%;
 text-align:right;
 }
+.settings_page_affiliate-hoover-plugin-admin input:disabled {
+opacity : 0.5;
+border : 1px solid rgb(72,0,0);
+}

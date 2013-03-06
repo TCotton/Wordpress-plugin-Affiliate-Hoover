@@ -1,25 +1,19 @@
 === Affiliate Hoover ===
 
-
 Contributors: AndyWalpole
-
 
 Tags: affiliate marketing, CSV, XML
 License: GPLv2
 
 Requires at least: 3.3
 
-Tested up to: 3.3.2
+Tested up to: 3.5
 
-Stable tag: 0.95
-
+Stable tag: 1.5
 
 Parses feeds into posts as supplied by affiliate marketing companies
 
-
 == Description ==
-
-
 
 Affiliate Hoover allows the website owner to upload and parse feeds supplied by affiliate marketing companies.
 
@@ -27,7 +21,7 @@ Feed items are turned into posts, with the ability to add categories, tags, spec
 
 This addon will also create items based on the content type and, if so desired, will also automatically add "nofollow" to outbound links.
 
-There is also a tracking system for checking clicks on affiliate links.
+There is also a tracking system for checking clicks on affiliate links and the ability to stagger publication of individual posts at a rate 5 per 10 minutes.
 
 So far it is optimised for the following companies:
 
@@ -44,10 +38,7 @@ Only works with PHP versions 5.3 and higher.
 
 [Please post bugs and support feature requests here](http://wordpress.org/support/plugin/affiliate-hoover)
 
-
 == Installation ==
-
-
 
 1. Install Affiliate Hoover either via the WordPress.org plugin directory, or by uploading the files to your server
 
@@ -59,7 +50,6 @@ None yet
 
 None yet
 
-
 == Screenshots ==
 
 1. Screenshot one
@@ -69,6 +59,36 @@ None yet
 3. Screenshot three
 
 == Changelog ==
+
+= 1.5 =
+Major backend code update
+
+= 1.33 =
+Category bug fix
+
+= 1.3 =
+Added stagger feature so that posts can be published at a rate of 5 per ten minutes
+
+= 1.2 =
+Greater control of taxonomies
+
+= 1.11 =
+Optimised database code
+
+= 1.10 =
+Adds Affiliate Hoover details to content type admin pages. Reset for tracking data.
+
+= 1.09 =
+Bug fix
+
+= 1.05 =
+Bug fix
+
+= 1.02 =
+Added disabled to feed text inputs
+
+= 1.0 =
+Bug fixes
 
 = 0.94 =
 Added support for a simple text editor on textareas

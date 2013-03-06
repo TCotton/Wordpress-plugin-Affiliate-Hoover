@@ -94,11 +94,11 @@ echo '</pre></strong>';
 
 <p>Finally, in &ldquo;titles contain keywords&rdquo; and &ldquo;body contains keywords&rdquo; you can filter out unwanted content. For instance, by using the keyword &ldquo;babies monitors&rdquo;in the &ldquo;titles contain keywords&rdquo; field you will ONLY create posts with that keyword in the title.</p>
 
-<p>Now you have three choices: Save changes, update form, synchronize.</p>
+<p>Now you have three choices: Create and update, create only and synchronize.</p>
 
-<p>Save changes will create new posts AND update existing posts.</p>
+<p>'Create and Update' will create new posts AND update existing posts.</p>
 
-<p>Update form will create new posts BUT NOT update existing posts.</p>
+<p>'Create only' will create new posts BUT NOT update existing posts.</p>
 
 <p>Think carefully before you click. It may be worth creating a database backup first if you are not familiar with this software.</p>
 

@@ -31,7 +31,7 @@ AFFILIATE.tracker = (function() {
 					dataType: "text",
 					// data type
 					//Do not cache the page
-					cache: true,
+					cache: false,
 					//success
 					success: function(result, textStatus, jqXHR) {
 						if (textStatus === "success") {
