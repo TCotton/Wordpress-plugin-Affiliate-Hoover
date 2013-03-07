@@ -39,7 +39,7 @@ class Tracking_Form extends \view\View_Initialise {
 
             }
 
-            self::$db->db_update_options($var);
+            $this->db_update_options($var);
 
             echo self::$success->success_message('You have changed the tracking settings');
 
@@ -81,7 +81,7 @@ class Tracking_Form extends \view\View_Initialise {
     }
 
     /**
-     * Tracking_Controller::create_table()
+     * Tracking_Form::create_table()
      * 
      * Used for presenting tracking data
      * 

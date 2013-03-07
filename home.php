@@ -37,7 +37,7 @@ register_activation_hook(__FILE__, 'ah_create_table');
 
 function ah_create_table() {
 
-    extract(\Controller\Initialise::$form);
+    extract(\model\Initialise::$form);
 
     $sql = "CREATE TABLE IF NOT EXISTS ".AH_FEED_DETAILS_TABLE." (
   `id` int(11) NOT NULL AUTO_INCREMENT,

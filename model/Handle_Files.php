@@ -24,7 +24,7 @@ class Handle_Files extends \model\Database {
 
 
     /**
-     * Form_Model::update_record()
+     * Upload_Form_Processing::update_record()
      * 
      * This downloads files from URL or from uploading
      * After this the filename is then used to create a row in the feed_details table
@@ -68,7 +68,7 @@ class Handle_Files extends \model\Database {
 
 
     /**
-     * Form_Model::move_file()
+     * Upload_Form_Processing::move_file()
      * 
      * @param array $file_raw 
      * @return string
@@ -120,7 +120,7 @@ class Handle_Files extends \model\Database {
 
 
     /**
-     * Form_Model::parse_csv_head()
+     * Upload_Form_Processing::parse_csv_head()
      * 
      * @param object $file
      * @return array || boolean
@@ -144,7 +144,7 @@ class Handle_Files extends \model\Database {
 
 
     /**
-     * Form_Model::count_csv_rows()
+     * Upload_Form_Processing::count_csv_rows()
      * 
      * counts entire number of rows
      * 

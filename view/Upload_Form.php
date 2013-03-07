@@ -17,6 +17,11 @@ class Upload_Form extends \view\View_Initialise {
 
     protected static $processing;
 
+    /**
+     * Upload_Form::__construct()
+     * 
+     * @return
+     */
     function __construct() {
 
         parent::__construct();
@@ -27,6 +32,11 @@ class Upload_Form extends \view\View_Initialise {
 
     } // end construct
 
+    /**
+     * Upload_Form::upload_form()
+     * 
+     * @return
+     */
     protected function upload_form() {
 
         if (isset($_GET['unique_name'])) {
@@ -41,10 +51,10 @@ class Upload_Form extends \view\View_Initialise {
                 $error = self::$processing->upload_form_processing_validation($form);
 
                 if (empty($error)) {
-                    
+
                     $feed_file_value = TRUE;
                     echo self::$files->update_record($form);
-                    
+
                 } else {
 
                     echo self::$check->failure_message_interface($error);
@@ -84,8 +94,8 @@ class Upload_Form extends \view\View_Initialise {
 
                 echo '<p><strong>Max upload size for this server is <em>'.($max_up / 1048576).
                     'MBs</em></strong></p>';
-                    
-            
+
+
                 echo '<p>File can be found here: '.'<strong>'.AH_FEEDS_DIR.$item->fileName.
                     '</strong></p>';
 
@@ -106,7 +116,7 @@ class Upload_Form extends \view\View_Initialise {
                 'value' => $feed_file_value, // value attribute
                 'select' => $_GET['unique_name'] // array only for the select input
                     );
-                    
+
             $form = array(
                 'method' => 'post',
                 'action' => '#wpbody',
@@ -117,8 +127,8 @@ class Upload_Form extends \view\View_Initialise {
                 'submtiTwo' => NULL,
                 'synchronize' => NULL,
                 'tracking' => NULL);
-                
-             self::$form_builder->create_form($form, $feed_file);
+
+            self::$form_builder->create_form($form, $feed_file);
 
         } // end if isset($_GET['unique_name'])
 
@@ -126,6 +136,11 @@ class Upload_Form extends \view\View_Initialise {
     }
 
 
+    /**
+     * Upload_Form::upload_form_facade()
+     * 
+     * @return
+     */
     public function upload_form_facade() {
 
         $this->upload_form();

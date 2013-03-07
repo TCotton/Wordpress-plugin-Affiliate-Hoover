@@ -17,6 +17,11 @@ class Main_Form extends \view\View_Initialise  {
     
     protected static $processing;
 
+    /**
+     * Main_Form::__construct()
+     * 
+     * @return
+     */
     function __construct() {
 
         parent::__construct();
@@ -28,6 +33,11 @@ class Main_Form extends \view\View_Initialise  {
     } // end construct
 
 
+    /**
+     * Main_Form::main_form()
+     * 
+     * @return
+     */
     protected function main_form() {
 
         if (isset($_POST['submitLar'])) {
@@ -75,6 +85,11 @@ class Main_Form extends \view\View_Initialise  {
     }
 
 
+    /**
+     * Main_Form::main_form_facade()
+     * 
+     * @return
+     */
     public function main_form_facade() {
 
         $this->main_form();

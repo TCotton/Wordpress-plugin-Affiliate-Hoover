@@ -1,7 +1,7 @@
 <?php namespace controller;
 
 /**
- * Main_Form
+ * Main_Form_Processing
  * 
  * @package Affiliate Hoover
  * @author Andy Walpole
@@ -15,6 +15,11 @@
 
 class Main_Form_Processing extends \view\View_Initialise {
 
+    /**
+     * Main_Form_Processing::__construct()
+     * 
+     * @return
+     */
     function __construct() {
 
         parent::__construct();
@@ -23,6 +28,12 @@ class Main_Form_Processing extends \view\View_Initialise {
     
     
     
+    /**
+     * Main_Form_Processing::main_form_processing_sanitisation()
+     * 
+     * @param array $post_form
+     * @return
+     */
     public function main_form_processing_sanitisation($post_form) {
         
          // ESSENTIAL! Do not leave this out. Needs to come first
@@ -40,6 +51,12 @@ class Main_Form_Processing extends \view\View_Initialise {
     }
     
 
+    /**
+     * Main_Form_Processing::main_form_processing_validation()
+     * 
+     * @param array $post_form
+     * @return
+     */
     public function main_form_processing_validation($post_form) {
 
         $error = array();

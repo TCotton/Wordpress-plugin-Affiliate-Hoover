@@ -1,7 +1,7 @@
 <?php namespace controller;
 
 /**
- * Main_Form
+ * Validation_Sanitisation_Success
  * 
  * @package Affiliate Hoover
  * @author Andy Walpole
@@ -20,17 +20,10 @@ class Validation_Sanitisation_Success extends \model\Database {
         parent::__construct();
 
     } // end construct
-    
-    
-    public function update_option_interface($form) {
-        
-        return $this->update_option($form);
-        
-    }
-    
-    
-     /**
-     * Form_Model::update_option()
+
+
+    /**
+     * Validation_Sanitisation_Success::update_option()
      * 
      * Updates databass. Includes important remove_empty() method
      * 
@@ -42,19 +35,18 @@ class Validation_Sanitisation_Success extends \model\Database {
         extract(static::$form);
         $this->remove_empty($form);
         $this->delete($form);
-        $this->check_feed_details_table($form); 
-     
+        $this->check_feed_details_table($form);
+
         if (update_option($option_name, $form)) {
             return $this->success_message('You have successfully updated the form');
         }
-    
+
 
     }
-    
-    
-    
-     /**
-     * Form_Model::check_feed_details_table()
+
+
+    /**
+     * Validation_Sanitisation_Success::check_feed_details_table()
      * 
      * Remove associated data from the feed details table and the feeds folder
      * when the title is deleted from the options tables filed
@@ -84,9 +76,9 @@ class Validation_Sanitisation_Success extends \model\Database {
         }
 
     }
-    
+
     /**
-     * Form_Model::remove_empty()
+     * Validation_Sanitisation_Success::remove_empty()
      * 
      * Necessary for not including empty HTML fields in the database update if dynamic options is set to TRUE
      * If this method is not used then unnessecary fields will become part of the option database field
@@ -262,11 +254,10 @@ class Validation_Sanitisation_Success extends \model\Database {
         } // end if ($dynamic_output)
 
     }
-    
-    
-    
+
+
     /**
-     * Form_Model::delete()
+     * Validation_Sanitisation_Success::delete()
      * 
      * Deletes data before submission to database if the checkbox is checked
      * Unsets array items and then rebuilds array with fresh index
@@ -370,11 +361,10 @@ class Validation_Sanitisation_Success extends \model\Database {
 
 
     }
-    
-    
-    
-/**
-     * Form_Model::success_message()
+
+
+    /**
+     * Validation_Sanitisation_Success::success_message()
      * 
      * @param mixed $message
      * @return
@@ -401,7 +391,12 @@ class Validation_Sanitisation_Success extends \model\Database {
         $html .= '</div>';
         return $html;
     }
-    
+
+    public function update_option_interface($form) {
+
+        return $this->update_option($form);
+
+    }
 
 
 }

@@ -3,7 +3,7 @@ use File_CSV_DataSource;
 use ArrayIterator;
 
 /**
- * Upload_Form_Processing
+ * Synchronize_Feeds
  * 
  * @package Affiliate Hoover
  * @author Andy Walpole
@@ -30,7 +30,7 @@ class Synchronize_Feeds extends \model\Database {
     } // end construct
 
     /**
-     * Form_Model::synchronize_feeds()
+     * Synchronize_Feeds::synchronize_feeds()
      * 
      * Compares the remote and file and database, delets database entries if not equal
      * 

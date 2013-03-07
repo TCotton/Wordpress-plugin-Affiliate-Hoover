@@ -1,7 +1,7 @@
 <?php namespace model;
 
 /**
- * Main_Form
+ * Write_Read_Files
  * 
  * @package Affiliate Hoover
  * @author Andy Walpole
@@ -15,11 +15,22 @@
 
 class Write_Read_Files  {
 
+    /**
+     * Write_Read_Files::__construct()
+     * 
+     * @return
+     */
     function __construct() {
 
     } // end construct
 
 
+    /**
+     * Write_Read_Files::write_file()
+     * 
+     * @param string $info
+     * @return
+     */
     public function write_file($info) {
 
         $fh = fopen(AH_LOG_FILE, 'a+');
@@ -28,6 +39,11 @@ class Write_Read_Files  {
 
     }
 
+    /**
+     * Write_Read_Files::read_file()
+     * 
+     * @return
+     */
     public static function read_file() {
 
         if (file_exists(AH_LOG_FILE)) {

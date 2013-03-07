@@ -4,7 +4,7 @@ use ArrayIterator;
 use DateTime;
 
 /**
- * Main_Form
+ * Create_Individual_Feeds
  * 
  * @package Affiliate Hoover
  * @author Andy Walpole
@@ -22,6 +22,11 @@ class Create_Individual_Feeds extends \model\Database {
 
     protected static $csv;
 
+    /**
+     * Create_Individual_Feeds::__construct()
+     * 
+     * @return
+     */
     function __construct() {
 
         parent::__construct();
@@ -37,7 +42,7 @@ class Create_Individual_Feeds extends \model\Database {
     } // end construct
 
     /**
-     * Form_Model::create_post_items()
+     * Create_Individual_Feed::create_post_items()
      * 
      * Updates the main datbase table
      * 
@@ -507,6 +512,12 @@ class Create_Individual_Feeds extends \model\Database {
 
     //http://stackoverflow.com/a/3257169/315350
     // function adds nofollow to links
+    /**
+     * Create_Individual_Feeds::dont_follow_links()
+     * 
+     * @param string $html
+     * @return
+     */
     protected function dont_follow_links($html) {
         // follow these websites only!
         $follow_list = array($_SERVER['HTTP_HOST']);
@@ -516,6 +527,12 @@ class Create_Individual_Feeds extends \model\Database {
 
     // adds class of ah_link to outbound links,
     // This is intended as for use with tracking clicks on outbound links
+    /**
+     * Create_Individual_Feeds::add_tracking_link()
+     * 
+     * @param string $html
+     * @return
+     */
     protected function add_tracking_link($html) {
         // follow these websites only!
         $follow_list = array($_SERVER['HTTP_HOST']);
@@ -527,6 +544,13 @@ class Create_Individual_Feeds extends \model\Database {
     }
 
 
+    /**
+     * Create_Individual_Feeds::create_individual_feeds_facade()
+     * 
+     * @param array $var
+     * @param bool $bol
+     * @return
+     */
     public function create_individual_feeds_facade($var, $bol = TRUE) {
 
         $this->create_indiviual_feeds($var, $bol = TRUE);

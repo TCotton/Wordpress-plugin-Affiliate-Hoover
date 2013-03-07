@@ -16,15 +16,12 @@
  * get_option()
  * http://codex.wordpress.org/Function_Reference/get_option
  * 
- * \Init\Initialise::$form;
  * 
  */
 class Initialise {
 
     public static $form;
-
     protected static $tracking;
-
     protected static $wpdb = null;
 
     function __construct() {
@@ -59,7 +56,7 @@ class Initialise {
 
 
     /**
-     * Form_View::scripts_enqueue_cov(
+     * Initialise::scripts_enqueue_cov(
      * 
      * Callback function of add_action above
      * Adds scripts and styles to the headers
@@ -89,7 +86,7 @@ class Initialise {
     }
 
     /**
-     * Form_Controller::config_settings()
+     * Initialise::config_settings()
      * Main array for important values throughout the class
      * @param string $option_name
      * @param string $page_title
@@ -110,7 +107,7 @@ class Initialise {
     }
     
      /**
-     * Form_Controller::check_options_table()
+     * Initialise::check_options_table()
      * Checks to see if option database field is used
      * @return boolean
      */
@@ -125,15 +122,8 @@ class Initialise {
         }
 
     }
-    
-    public static function form(){
-        
-        return self::$form;
-        
-    }
-
+   
 }
-
 
 $first_form = array(
     'option_name' => 'affiliate_hoover_plugin_options', // has to be alphanumeric and underscores only
@@ -141,4 +131,4 @@ $first_form = array(
     'page_url' => 'affiliate-hoover-plugin-admin', // URL
     'dynamic_output' => TRUE); // Should the form be generated on more input
 
-$init = new \model\Initialise($first_form);
+new \model\Initialise($first_form);

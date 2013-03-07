@@ -15,6 +15,11 @@
 
 class Upload_Form_Processing extends \view\View_Initialise {
 
+    /**
+     * Upload_Form_Processing::__construct()
+     * 
+     * @return
+     */
     function __construct() {
 
         parent::__construct();
@@ -22,6 +27,12 @@ class Upload_Form_Processing extends \view\View_Initialise {
     } // end construct
 
 
+    /**
+     * Upload_Form_Processing::upload_form_processing_sanitisation()
+     * 
+     * @param array $post_form
+     * @return
+     */
     public function upload_form_processing_sanitisation($post_form) {
 
         // ESSENTIAL! Do not leave this out. Needs to come first
@@ -32,6 +43,12 @@ class Upload_Form_Processing extends \view\View_Initialise {
     }
 
 
+    /**
+     * Upload_Form_Processing::upload_form_processing_validation()
+     * 
+     * @param array $form
+     * @return
+     */
     public function upload_form_processing_validation($form) {
         
         // essential.

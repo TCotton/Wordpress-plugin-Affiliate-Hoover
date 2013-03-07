@@ -24,7 +24,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::method_args_validation()
+     * Validation_Sanitisation::method_args_validation()
      * 
      * @param digit $number
      * @param function: func_num_args() $args
@@ -42,7 +42,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::sanitize()
+     * Validation_Sanitisation::sanitize()
      * 
      * @param string $handle
      * @param array $form_output
@@ -79,11 +79,9 @@ class Validation_Sanitisation extends \model\Database {
 
     }
 
-    //validate_file
-
 
     /**
-     * Form_Model::wp_kses_new()
+     * Validation_Sanitisation::wp_kses_new()
      * 
      * @param string $att
      * @param string $single
@@ -123,7 +121,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::trim_post()
+     * Validation_Sanitisation::trim_post()
      * 
      * @param string $att
      * @param string $single
@@ -162,7 +160,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::sanitize_post()
+     * Validation_Sanitisation::sanitize_post()
      * 
      * @param string $att
      * @param string $single
@@ -201,7 +199,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::strip_tags_post()
+     * Validation_Sanitisation::strip_tags_post()
      * 
      * @param string $att
      * @param boolean $single
@@ -241,7 +239,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::stripslashes()
+     * Validation_Sanitisation::stripslashes()
      * 
      * @param string $att
      * @param string $single
@@ -282,7 +280,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::alnum()
+     * Validation_Sanitisation::alnum()
      * 
      * @param array $form_output
      * @param string $att
@@ -315,7 +313,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::title_check()
+     * Validation_Sanitisation::title_check()
      * 
      * Checks to make sure that title only uses code and nothing else
      * 
@@ -353,7 +351,7 @@ class Validation_Sanitisation extends \model\Database {
     }
 
     /**
-     * Form_Model::check_file_error()
+     * Validation_Sanitisation::check_file_error()
      * 
      * @param string $att
      * @param array $file
@@ -388,7 +386,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::security_check()
+     * Validation_Sanitisation::security_check()
      * 
      * ESSENTIAL! Must include this
      * Removes non-relevant HTML form fields before database update
@@ -412,7 +410,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::check_file_empty()
+     * Validation_Sanitisation::check_file_empty()
      * 
      * @param array $file 
      * @param string $att
@@ -444,7 +442,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::check_file_ext()
+     * Validation_Sanitisation::check_file_ext()
      * 
      * @param array $file 
      * @param string $att
@@ -511,7 +509,7 @@ class Validation_Sanitisation extends \model\Database {
     }
 
     /**
-     * Form_Model::parse_feeds_loop()
+     * Validation_Sanitisation::parse_feeds_loop()
      * 
      * Finds string for parse_feeds()
      * 
@@ -565,7 +563,7 @@ class Validation_Sanitisation extends \model\Database {
     }
 
     /**
-     * Form_Model::failure_message()
+     * Validation_Sanitisation::failure_message()
      * 
      * @param mixed $message
      * @return
@@ -596,7 +594,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::empty_value()
+     * Validation_Sanitisation::empty_value()
      * 
      * Checks if form fields are empty
      * 
@@ -737,7 +735,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::empty_non_dynamic()
+     * Validation_Sanitisation::empty_non_dynamic()
      * 
      * Checks if form fields are empty if no dynamic is set
      * 
@@ -796,7 +794,7 @@ class Validation_Sanitisation extends \model\Database {
 
 
     /**
-     * Form_Model::duplicate_entries()
+     * Validation_Sanitisation::duplicate_entries()
      * 
      * Checks to make sure all array values are unique
      * 

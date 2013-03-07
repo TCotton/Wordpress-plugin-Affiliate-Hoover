@@ -1,7 +1,7 @@
 <?php namespace view;
 
 /**
- * Tracking_Controller
+ * View_Initialise
  * 
  * @package Affiliate Hoover
  * @author Andy Walpole
@@ -98,7 +98,7 @@ class View_Initialise extends \model\Database {
 
 
     /**
-     * Form_View::meta_boxes()
+     * View_Initialise::meta_boxes()
      * 
      * Addes meta boxes to appropiate content types
      * 
@@ -137,7 +137,7 @@ class View_Initialise extends \model\Database {
 
 
     /**
-     * Form_View::feed_details()
+     * View_Initialise::feed_details()
      * 
      * Adds feed name to post admin page
      * 
@@ -163,7 +163,7 @@ class View_Initialise extends \model\Database {
 
 
     /**
-     * Form_View::tracking_details()
+     * View_Initialise::tracking_details()
      * 
      * Adds tracking data to post admin page
      * 
@@ -196,7 +196,7 @@ class View_Initialise extends \model\Database {
 
 
     /**
-     * Form_View::add_action_admin_menu()
+     * View_Initialise::add_action_admin_menu()
      * 
      * Calls the Wordpress add_action() hook funciton
      * 
@@ -210,7 +210,7 @@ class View_Initialise extends \model\Database {
 
 
     /**
-     * Form_View::add_options_page_method_cov()
+     * View_Initialise::add_options_page_method_cov()
      * 
      * callback method for add_action().
      * 
@@ -229,7 +229,7 @@ class View_Initialise extends \model\Database {
 
 
     /**
-     * Form_View::create_html_cov()
+     * View_Initialise::create_html_cov()
      *
      * callback method for add_options_page()
      *
@@ -334,7 +334,15 @@ class View_Initialise extends \model\Database {
         echo $form;
 
     } // end create_html_cov()
-
+    
+    
+ /**
+     * View_Initialise::list_feeds()
+     * 
+     * 
+     * @return string
+     * 
+     */
 
     protected function list_feeds() {
 

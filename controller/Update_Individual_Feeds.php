@@ -14,8 +14,6 @@
  */
 
 class Update_Individual_Feeds extends \model\Database {
-    
-    protected static $db;
 
     function __construct() {
 
@@ -24,7 +22,7 @@ class Update_Individual_Feeds extends \model\Database {
     } // end construct
 
     /**
-     * Form_Model::update_ind_form())
+     * Update_Individual_Feeds::update_ind_form())
      * 
      * Remove associated data from the feed details table and the feeds folder
      * when the title is deleted from the options tables filed

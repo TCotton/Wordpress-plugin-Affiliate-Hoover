@@ -2,7 +2,7 @@
 
 Contributors: AndyWalpole
 
-Tags: affiliate marketing, CSV, XML
+Tags: affiliate marketing, CSV
 License: GPLv2
 
 Requires at least: 3.3
@@ -15,7 +15,7 @@ Parses feeds into posts as supplied by affiliate marketing companies
 
 == Description ==
 
-Affiliate Hoover allows the website owner to upload and parse feeds supplied by affiliate marketing companies.
+Affiliate Hoover allows the website owner to upload and parse CSV feeds supplied by affiliate marketing companies.
 
 Feed items are turned into posts, with the ability to add categories, tags, specify whether comments and trackbacks are allowed; and to filter items based on individual keywords.
 
@@ -23,18 +23,11 @@ This addon will also create items based on the content type and, if so desired, 
 
 There is also a tracking system for checking clicks on affiliate links and the ability to stagger publication of individual posts at a rate 5 per 10 minutes.
 
-So far it is optimised for the following companies:
+__You should be able to upload any CSV file from any company but you need to make sure that it is formatted correctly with comma separators__
 
-* Paid on Results (CSV, XML and remote URL)
-* Trade Double (CSV, XML and remote URL)
-* Affiliate Window (CSV)
-* Google Affiliate Network (CSV)
+__Important! Only works with PHP versions 5.3 and higher__
 
-__You should be able to upload any CSV file from any company__
-
-I aim to add full support for more affiliate marketing companies in the near future.
-
-Only works with PHP versions 5.3 and higher.
+If you have an earlier PHP version then ask your hosting company to upgrade.
 
 [Please post bugs and support feature requests here](http://wordpress.org/support/plugin/affiliate-hoover)
 

@@ -20,7 +20,6 @@ require_once ('pagination.class.php');
 
 require_once ('Initialise.php');
 require_once ('Database.php');
-require_once ('Model_Gateway.php');
 require_once ('Write_Read_Files.php');
 require_once ('Handle_Files.php');
 require_once ('Synchronize_Feeds.php');

@@ -370,7 +370,7 @@ class Form_Builder extends \model\Database {
     }
 
     /**
-     * Form_Controller::individual_fields()
+     * Form_Builder::individual_fields()
      * Create the individual form fields here
      * 
      * @param array $array

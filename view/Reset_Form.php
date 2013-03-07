@@ -17,6 +17,11 @@ class Reset_Form extends \view\View_Initialise  {
 
     protected static $processing;
     
+    /**
+     * Reset_Form::__construct()
+     * 
+     * @return
+     */
     function __construct() {
 
         parent::__construct();
@@ -28,13 +33,12 @@ class Reset_Form extends \view\View_Initialise  {
     } // end construct
 
     /**
-     * Form_View::reset()
+     * Reset_Form::reset()
      *
      * reset page
      *
      * @return array of data / html
      */
-
     protected function reset() {
 
         // essential.
@@ -138,6 +142,11 @@ class Reset_Form extends \view\View_Initialise  {
 
     }
 
+    /**
+     * Reset_Form::delete_feed_details_cats()
+     * 
+     * @return
+     */
     protected function delete_feed_details_cats() {
 
         $cats = $this->db_find_all_post_cats();
@@ -182,6 +191,11 @@ class Reset_Form extends \view\View_Initialise  {
 
     }
 
+    /**
+     * Reset_Form::delete_tracking_data()
+     * 
+     * @return
+     */
     protected function delete_tracking_data() {
 
         $form = '<form method="post" action="#result" name="deleteTracking">';
@@ -195,6 +209,11 @@ class Reset_Form extends \view\View_Initialise  {
 
     }
 
+    /**
+     * Reset_Form::delete_feed_posts()
+     * 
+     * @return
+     */
     protected function delete_feed_posts() {
 
         $cats = $this->db_find_all_post_cats();
@@ -241,6 +260,11 @@ class Reset_Form extends \view\View_Initialise  {
     }
 
 
+    /**
+     * Reset_Form::reset_form_facade()
+     * 
+     * @return
+     */
     public function reset_form_facade() {
 
         $this->reset();

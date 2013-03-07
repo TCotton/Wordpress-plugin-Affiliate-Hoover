@@ -20,6 +20,11 @@ class Feed_Form extends \view\View_Initialise {
     protected static $create;
     protected static $processing;
 
+    /**
+     * Feed_Form::__construct()
+     * 
+     * @return
+     */
     function __construct() {
 
         parent::__construct();
@@ -36,12 +41,19 @@ class Feed_Form extends \view\View_Initialise {
             self::$update = new \controller\Update_Individual_Feeds();
         }
         
-        if (!(self:: $synchronize instanceof \model\Synchronize_Feeds)) {
+        if (!(self::$synchronize instanceof \model\Synchronize_Feeds)) {
             self:: $synchronize = new \model\Synchronize_Feeds();
         }
 
     } // end construct
 
+    /**
+     * Feed_Form::feed_form()
+     * 
+     * Creates the main feed form with relevant calls to sanitisation and validation
+     * 
+     * @return
+     */
     protected function feed_form() {
 
         if (isset($_GET['unique_form']) && $_GET['unique_form'] != '') {
@@ -538,6 +550,11 @@ class Feed_Form extends \view\View_Initialise {
     }
 
 
+    /**
+     * Feed_Form::feed_form_facade()
+     * 
+     * @return
+     */
     public function feed_form_facade() {
 
         return $this->feed_form();

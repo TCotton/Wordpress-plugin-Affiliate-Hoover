@@ -69,6 +69,13 @@ function ah_reset_array(&$form) {
     return $form;
 }
 
+/**
+ * 
+ * Adds instructions to to the page
+ * 
+ * @return string
+ */
+
 function ah_instructions() {
 
     if (ini_get('safe_mode')) {
@@ -77,6 +84,12 @@ function ah_instructions() {
 
     include_once (AH_DIR_PATH.'misc'.AH_DS.'instructions.php');
 }
+
+/**
+ * 
+ * @return string
+ */
+
 
 function ah_changelog() {
 
@@ -103,6 +116,11 @@ function ah_changelog() {
 
 }
 
+/**
+ * 
+ * @return string
+ */
+
 function ah_admin_sidebar() {
 
     $form = '<div class="postbox clearfix">';
@@ -126,6 +144,13 @@ function ah_admin_sidebar() {
     return $form;
 
 }
+
+/**
+ * 
+ * Find maximum file upload size
+ * 
+ * @return string
+ */
 
 function ah_max_upload() {
 

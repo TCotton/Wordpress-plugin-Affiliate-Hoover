@@ -14,15 +14,13 @@
  * Wordpress functions used:
  * 
  * 
- * 
- * 
  */
 class Database extends \model\Initialise {
 
     /**
      * Database::__construct()
      * 
-     * @return
+     * @return  parent::__construct();
      */
     function __construct() {
 
@@ -33,8 +31,11 @@ class Database extends \model\Initialise {
     /**
      * Database::db_insert_total_feeds()
      * 
-     * @param mixed $id
-     * @param mixed $cat_id
+     * Used in:
+     * Create_Individual_Feeds::create_indiviual_feeds()
+     * 
+     * @param digit $id
+     * @param digit $cat_id
      * @return
      */
     protected function db_insert_total_feeds($id, $cat_id) {
@@ -47,7 +48,10 @@ class Database extends \model\Initialise {
     /**
      * Database::db_select_total_feeds()
      * 
-     * @param mixed $id
+     * Used in:
+     * Create_Individual_Feeds::create_indiviual_feeds()
+     * 
+     * @param digit $id
      * @return
      */
     protected function db_select_total_feeds($id) {
@@ -60,7 +64,10 @@ class Database extends \model\Initialise {
     /**
      * Database::db_find_meta_id()
      * 
-     * @param mixed $var
+     * Used in:
+     * Synchronize_Feeds::db_find_meta_id()
+     * 
+     * @param digit $var
      * @return
      */
     protected function db_find_meta_id($var) {
@@ -73,7 +80,10 @@ class Database extends \model\Initialise {
     /**
      * Database::db_find_meta_cat()
      * 
-     * @param mixed $var
+     * Used in:
+     * Synchronize_Feeds::synchronize_feeds()
+     * 
+     * @param digit $var
      * @return
      */
     protected function db_find_meta_cat($var) {
@@ -86,7 +96,11 @@ class Database extends \model\Initialise {
     /**
      * Database::db_find_feed_details_id()
      * 
-     * @param mixed $var
+     * Used in:
+     * Synchronize_Feeds::synchronize_feeds()
+     * Database::db_delete_record())
+     * 
+     * @param string $var
      * @return
      */
     protected function db_find_feed_details_id($var) {
@@ -99,7 +113,10 @@ class Database extends \model\Initialise {
     /**
      * Database::db_find_filename_feed_details()
      * 
-     * @param mixed $var
+     * Used in:
+     * Synchronize_Feeds::synchronize_feeds()
+     * 
+     * @param string $var
      * @return
      */
     protected function db_find_filename_feed_details($var) {
@@ -111,6 +128,9 @@ class Database extends \model\Initialise {
 
     /**
      * Database::db_find_all_posts_meta()
+     * 
+     * Used in:
+     * Database::db_delete_revisions()
      * 
      * @return
      */
@@ -124,7 +144,10 @@ class Database extends \model\Initialise {
     /**
      * Database::db_find_post_title()
      * 
-     * @param mixed $var
+     * Used in:
+     * Database::db_find_post_title()
+     * 
+     * @param digit $var
      * @return
      */
     protected function db_find_post_title($var) {
@@ -140,15 +163,20 @@ class Database extends \model\Initialise {
      * @param mixed $var
      * @return
      */
+    /*
     protected function db_find_post_revisions($var) {
 
-        return static::$wpdb->get_row("SELECT ID FROM ".static::$wpdb->prefix.
-            "posts WHERE post_name REGEXP '^$var' AND post_type = 'revision'");
+    return static::$wpdb->get_row("SELECT ID FROM ".static::$wpdb->prefix.
+    "posts WHERE post_name REGEXP '^$var' AND post_type = 'revision'");
 
     }
+    */
 
     /**
      * Database::db_find_all_post_cats()
+     * 
+     * Used in:
+     * Reset_Form::delete_feed_details_cats(
      * 
      * @return
      */
@@ -160,6 +188,10 @@ class Database extends \model\Initialise {
 
     /**
      * Database::db_delete_total_feeds()
+     * 
+     * Used in:
+     * Database::db_delete_record()
+     * Database::db_delete_feed_leftovers()
      * 
      * @param mixed $var
      * @return
@@ -173,6 +205,9 @@ class Database extends \model\Initialise {
 
     /**
      * Database::db_find_post_types()
+     * 
+     * Used in:
+     * View_Initialise::meta_boxes()
      * 
      * @return
      */
@@ -192,7 +227,10 @@ class Database extends \model\Initialise {
     /**
      * Database::db_find_feed_name_from_post_id()
      * 
-     * @param mixed $var
+     * Used in:
+     * View_Initialise::feed_details
+     * 
+     * @param digit $var
      * @return
      */
     protected function db_find_feed_name_from_post_id($var) {
@@ -218,7 +256,10 @@ class Database extends \model\Initialise {
     /**
      * Database::db_find_tracking_details_from_post_id()
      * 
-     * @param mixed $var
+     * Used in:
+     * View_Initialise::tracking_details()
+     * 
+     * @param digit $var
      * @return
      */
     protected function db_find_tracking_details_from_post_id($var) {
@@ -230,6 +271,9 @@ class Database extends \model\Initialise {
 
     /**
      * Database::db_delete_all_tracking()
+     * 
+     * Used in:
+     * Reset_Form::reset()
      * 
      * @return
      */
@@ -245,6 +289,11 @@ class Database extends \model\Initialise {
      * 
      * Select just name from feed details table
      * 
+     * Used in:
+     * Database::db_insert_table()
+     * Form_Builder::individual_fields()
+     * Upload_Form::upload_form()
+     * 
      * @return string
      */
     protected function db_check_table($var) {
@@ -257,6 +306,9 @@ class Database extends \model\Initialise {
     /**
      * Database::db_get_all_feed_names()
      * 
+     * Used in:
+     * View_Initialise::list_feeds()
+     * 
      * @return
      */
     protected function db_get_all_feed_names() {
@@ -268,9 +320,13 @@ class Database extends \model\Initialise {
     /**
      * Database::db_get_post_meta_id()
      * 
-     * @param mixed $var
+     * Used in:
+     * Synchronize_Feeds::synchronize_feeds()
+     * 
+     * @param digit $var
      * @return
      */
+
     protected function db_get_post_meta_id($var) {
 
         return static::$wpdb->get_row("SELECT post_id, meta_value FROM ".static::$wpdb->prefix.
@@ -278,8 +334,12 @@ class Database extends \model\Initialise {
 
     }
 
+
     /**
      * Database::db_get_post_meta()
+     * 
+     * Used in:
+     * Create_Individual_Feed::create_post_items()
      * 
      * @return
      */
@@ -293,6 +353,9 @@ class Database extends \model\Initialise {
     /**
      * Database::db_find_file_name()
      * 
+     * Used in:
+     * Validation_Sanitisation::check_file_duplicate()
+     * 
      * @return
      */
     protected function db_find_file_name() {
@@ -305,7 +368,13 @@ class Database extends \model\Initialise {
     /**
      * Database::db_select_all()
      * 
-     * @param mixed $var
+     * Used in:
+     * Create_Individual_Feed::create_post_items()
+     * Database::db_insert_table()
+     * Feed_Form::feed_form()
+     * Upload_Form::upload_form()
+     * 
+     * @param string $var
      * @return
      */
     protected function db_select_all($var) {
@@ -317,6 +386,9 @@ class Database extends \model\Initialise {
 
     /**
      * Database::db_select_postid_get_post_meta()
+     * 
+     * Used in:
+     * Database::db_delete_all_feed_posts()
      * 
      * @param mixed $var
      * @return
@@ -330,6 +402,9 @@ class Database extends \model\Initialise {
 
     /**
      * Database::db_delete_all_feed_posts()
+     * 
+     * Used in:
+     * Database::db_delete_posts()
      * 
      * @param mixed $var
      * @return
@@ -349,6 +424,9 @@ class Database extends \model\Initialise {
 
     /**
      * Database::db_delete_revisions()
+     * 
+     * Used in:
+     * Form_View::reset()
      * 
      * @return
      */
@@ -389,8 +467,11 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
     /**
      * Database::db_delete_record()
      * 
-     * @param mixed $name
-     * @param mixed $filename
+     * Used in:
+     * Validation_Sanitisation_Success::check_feed_details_table()
+     * 
+     * @param string $name
+     * @param string $filename
      * @return
      */
     protected function db_delete_record($name, $filename) {
@@ -415,17 +496,22 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
      * @param mixed $var
      * @return
      */
+    /*
     protected function db_find_cat_id($var) {
 
-        return static::$wpdb->get_row("SELECT term_id FROM ".static::$wpdb->prefix.
-            "terms WHERE name  = '".$var."'");
+    return static::$wpdb->get_row("SELECT term_id FROM ".static::$wpdb->prefix.
+    "terms WHERE name  = '".$var."'");
 
     }
+    */
 
     /**
      * Database::db_update_feed_details()
      * 
-     * @param mixed $form_title
+     * Used in:
+     * Update_Individual_Feeds::update_ind_form())
+     * 
+     * @param string $form_title
      * @param mixed $form_title_contains
      * @param mixed $form_body
      * @param mixed $form_body_contains
@@ -459,6 +545,8 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
     /**
      * Database::db_insert_table()
+     * 
+     * ???? where is this used ???
      * 
      * @param mixed $name
      * @param mixed $url
@@ -499,8 +587,11 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
 
     /**
-     * Tracking_Model::update_tracking()
+     * Database::update_tracking()
      * Used for AJAX updates tracking table when user clicks on an affiliate link
+     * 
+     * Used in:
+     * View_Initialise::__construct()
      * 
      * @return no return or the AJAX fucks up
      */
@@ -540,7 +631,10 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
 
     /**
-     * Tracking_Model::get_all()
+     * Database::get_all()
+     * 
+     * Used in:
+     * Tracking_Form::create_table()
      * 
      * @param mixed $limit - for pagination
      * @return
@@ -553,8 +647,11 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
 
     /**
-     * Tracking_Model::total_entries()
+     * Database::total_entries()
      * Finds total entries of posts in ah_tracking table and that which are currently still live
+     * 
+     * Used in:
+     * Tracking_Form::create_table()
      * 
      * @return
      */
@@ -577,11 +674,14 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
 
 
     /**
-     * Tracking_Model::update_options()
+     * Database::update_options()
      * 
      * Changes option field for ah_tracking
      * 
-     * @param mixed $var
+     * Used in:
+     * Tracking_Form::trackin_form()
+     * 
+     * @param boolean $var
      */
 
     protected function db_update_options($var) {
@@ -622,7 +722,10 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
     /**
      * Database::db_delete_feed_leftovers()
      * 
-     * @param mixed $form
+     * Used in:
+     * Reset_Form::reset()
+     * 
+     * @param array $form
      * @return
      */
     protected function db_delete_feed_leftovers($form) {
@@ -641,7 +744,10 @@ WHERE a.post_type = 'revision' AND post_title = %s", $result->post_title));
     /**
      * Database::db_delete_posts()
      * 
-     * @param mixed $form
+     * Used in:
+     * Reset_Form::reset()
+     * 
+     * @param array $form
      * @return
      */
     protected function db_delete_posts($form) {
