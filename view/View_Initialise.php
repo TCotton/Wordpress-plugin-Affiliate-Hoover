@@ -21,14 +21,38 @@
  */
 class View_Initialise extends \model\Database {
 
+    /**
+     * @var Form_Builder
+     */
     protected static $form_builder;
+    /**
+     * @var \controller\Validation_Sanitisation
+     */
     protected static $check;
+    /**
+     * @var \controller\Validation_Sanitisation_Success
+     */
     protected static $success;
+    /**
+     * @var \model\Handle_Files
+     */
     protected static $files;
+    /**
+     * @var bool
+     */
     protected static $secure = FALSE;
+    /**
+     * @var bool
+     */
     protected static $option = FALSE;
+    /**
+     * @var \model\Write_Read_Files
+     */
     protected static $read_write;
 
+    /**
+     *
+     */
     function __construct() {
 
         parent::__construct();
@@ -80,6 +104,14 @@ class View_Initialise extends \model\Database {
     } // end __construct
 
 
+    /**
+     * View_Initialise::racking_scripts
+     *
+     * Adds tracking feature of when user clicks on live links
+     *
+     * @return calls wp_localize_script() hoo
+     *
+     */
     public function tracking_scripts() {
 
         $plugin_url = plugin_dir_url(__DIR__ );

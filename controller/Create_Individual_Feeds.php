@@ -18,8 +18,14 @@ use DateTime;
 
 class Create_Individual_Feeds extends \model\Database {
 
+    /**
+     * @var \model\Write_Read_Files
+     */
     protected static $read_write;
 
+    /**
+     * @var \model\Handle_Files
+     */
     protected static $csv;
 
     /**

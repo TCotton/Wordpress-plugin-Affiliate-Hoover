@@ -12,10 +12,6 @@
  * 
  * 
  */
-
-/**
- *
- */
 class Feed_Form extends \view\View_Initialise {
 
     /**

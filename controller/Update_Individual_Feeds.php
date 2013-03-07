@@ -12,7 +12,6 @@
  * 
  * 
  */
-
 class Update_Individual_Feeds extends \model\Database {
 
     function __construct() {

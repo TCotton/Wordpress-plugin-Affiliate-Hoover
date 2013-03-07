@@ -12,7 +12,6 @@
  * 
  * 
  */
-
 class Validation_Sanitisation extends \model\Database {
 
     function __construct() {
