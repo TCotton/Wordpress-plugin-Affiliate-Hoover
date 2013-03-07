@@ -14,7 +14,10 @@
  */
 
 class Main_Form extends \view\View_Initialise  {
-    
+
+    /**
+     * @var \controller\Main_Form_Processing
+     */
     protected static $processing;
 
     /**

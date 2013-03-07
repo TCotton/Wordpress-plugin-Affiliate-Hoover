@@ -11,6 +11,8 @@ $paths = array(
 
 set_include_path(implode(PATH_SEPARATOR, $paths));
 
+/* Using __autoload() in Wordpress does odd things */
+
 /* library */
 
 require_once ('Datasource.php');

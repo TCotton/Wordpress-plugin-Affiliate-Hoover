@@ -13,11 +13,26 @@
  * 
  */
 
+/**
+ *
+ */
 class Feed_Form extends \view\View_Initialise {
 
+    /**
+     * @var \model\Synchronize_Feeds
+     */
     protected static $synchronize;
+    /**
+     * @var \controller\Update_Individual_Feeds
+     */
     protected static $update;
+    /**
+     * @var \controller\Create_Individual_Feeds
+     */
     protected static $create;
+    /**
+     * @var \controller\Feed_Form_Processing
+     */
     protected static $processing;
 
     /**
