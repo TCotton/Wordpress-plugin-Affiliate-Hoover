@@ -24,7 +24,7 @@ class Form_Builder extends \model\Database {
 
 
     /**
-     * Form_Controller::create_form()
+     * Form_Builder::create_form()
      * 
      * @param array $array
      * @return echo
@@ -172,7 +172,7 @@ class Form_Builder extends \model\Database {
 
 
     /**
-     * Form_Controller::create_options_fields()
+     * Form_Builder::create_options_fields()
      * 
      * This method is either genius or mental
      * 
@@ -350,7 +350,7 @@ class Form_Builder extends \model\Database {
 
 
     /**
-     * Form_Controller::perm_fields()
+     * Form_Builder::perm_fields()
      * 
      * @param string $total_fields
      * @return string $perm 

@@ -6,6 +6,7 @@ $paths = array(
     AH_PLUGINNAME_PATH.AH_First_CONTROLLER.AH_DS,
     AH_PLUGINNAME_PATH.AH_First_VIEW.AH_DS,
     AH_PLUGINNAME_PATH.AH_First_MODEL.AH_DS,
+    AH_PLUGINNAME_PATH.'viewTests'.AH_DS,
     get_include_path(),
     );
 
@@ -53,3 +54,14 @@ require_once ('Upload_Form.php');
 require_once ('Reset_Form.php');
 require_once ('Feed_Form.php');
 require_once ('Tracking_Form.php');
+
+/* PHPUnit tests */
+
+/* view */
+
+require_once ('LogTests.php');
+require_once ('Main_FormTests.php');
+require_once ('Upload_FormTests.php');
+require_once ('Reset_FormTests.php');
+require_once ('Feed_FormTests.php');
+require_once ('Tracking_FormTests.php');
