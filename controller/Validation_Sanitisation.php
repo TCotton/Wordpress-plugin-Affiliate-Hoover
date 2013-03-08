@@ -642,7 +642,7 @@ class Validation_Sanitisation extends \model\Database {
 
             if ($database && !empty($data[$option_name])) {
 
-                if ($single == NULL) {
+                if ($single === NULL) {
                     // if entire form is entered
 
                     // if new form without option database created yet make sure ALL fields are not empty
@@ -725,7 +725,7 @@ class Validation_Sanitisation extends \model\Database {
 
         extract(static::$form);
 
-        if ($single == NULL) {
+        if ($single === NULL) {
 
             // if new form without option database created yet make sure ALL fields are not empty
             foreach ($form_output[$option_name] as $n_key => $n_value) {

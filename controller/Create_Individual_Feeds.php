@@ -477,6 +477,16 @@ class Create_Individual_Feeds extends \model\Database {
                                     $total_new = $x++;
 
                                     $id = wp_insert_post($new_post);
+                                    
+                                    /* if custom taxonomy is set then add the categories to the custom taxonomy */
+
+                                    $post_type_array = array('post', 'page');
+
+                                    if (!in_array($new_post['post_type'], $post_type_array)) {
+
+                                        wp_set_post_terms($id, $new_post['post_category'], $post_voc);
+
+                                    }
 
                                     add_post_meta($id, '_unique_post', $post_title, TRUE);
 
