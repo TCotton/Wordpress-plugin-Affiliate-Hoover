@@ -23,10 +23,6 @@ class Synchronize_Feeds extends \model\Database {
 
         parent::__construct();
 
-        if (!(self::$read_write instanceof \model\Write_Read_Files)) {
-            self::$read_write = new \model\Write_Read_Files();
-        }
-
     } // end construct
 
     /**
@@ -39,6 +35,10 @@ class Synchronize_Feeds extends \model\Database {
      * @return string
      */
     protected function synchronize_feeds($var) {
+
+        if (!(self::$read_write instanceof \model\Write_Read_Files)) {
+            self::$read_write = new \model\Write_Read_Files();
+        }
 
         // firstly find the name of the feed to be updated
 

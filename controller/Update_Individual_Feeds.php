@@ -96,7 +96,7 @@ class Update_Individual_Feeds extends \model\Database {
                 if ($value != '') {
                     $form_min_rows = (int)$value;
                 } else {
-                    $form_min_rows = NULL;
+                    $form_min_rows = -1;
                 }
 
             }
@@ -105,7 +105,7 @@ class Update_Individual_Feeds extends \model\Database {
                 if ($value != '') {
                     $form_max_rows = (int)$value;
                 } else {
-                    $form_max_rows = NULL;
+                    $form_max_rows = -1;
                 }
 
             }

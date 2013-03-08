@@ -295,6 +295,7 @@ class Validation_Sanitisation extends \model\Database {
             foreach ($form_output[$option_name] as $key => $value) {
 
                 if (!preg_match("/$att/i", $key)) continue;
+
                 if ($value == '') continue;
 
                 if (!ctype_alnum($value)) {
@@ -332,11 +333,10 @@ class Validation_Sanitisation extends \model\Database {
 
                 if (!preg_match("/$att/i", $thisKey)) continue;
 
-                if ($result == '') {
+                if ($result == '') continue;
 
-                    if (!preg_match('/^\[#([0-9]*)#\]$/', $result)) {
-                        return FALSE;
-                    }
+                if (!preg_match('/^\[#([0-9]*)#\]$/', $result)) {
+                    return FALSE;
 
                 } // end if
 
@@ -365,19 +365,17 @@ class Validation_Sanitisation extends \model\Database {
 
         foreach ($file as $key => $value) {
 
-            if ($key == 'size') {
+            if ($key != 'size') continue;
 
-                foreach ($value as $new_key => $new_value) {
+            foreach ($value as $new_key => $new_value) {
 
-                    if ((int)implode($new_value) >= $max_up) {
+                if ((int)implode($new_value) >= $max_up) {
 
-                        return FALSE;
+                    return FALSE;
 
-                    }
+                }
 
-                } // end foreach
-
-            } // end if
+            } // end foreach
 
         } // end foreach
 
@@ -389,6 +387,7 @@ class Validation_Sanitisation extends \model\Database {
      * 
      * ESSENTIAL! Must include this
      * Removes non-relevant HTML form fields before database update
+     * and checks nonce value
      * 
      * @param array $array
      * @return array
@@ -421,19 +420,17 @@ class Validation_Sanitisation extends \model\Database {
 
         foreach ($file as $key => $value) {
 
-            if ($key == 'type') {
+            if ($key != 'type') continue;
 
-                foreach ($value as $new_key => $new_value) {
+            foreach ($value as $new_key => $new_value) {
 
-                    if (implode($new_value) == '') {
+                if (implode($new_value) == '') {
 
-                        return FALSE;
+                    return FALSE;
 
-                    }
+                }
 
-                } // end foreach
-
-            } // end if
+            } // end foreach
 
         } // end foreach
 
@@ -453,22 +450,23 @@ class Validation_Sanitisation extends \model\Database {
 
         foreach ($file as $key => $value) {
 
-            if ($key == 'name') {
+            if ($key != 'name') continue;
 
-                foreach ($value as $new_key => $new_value) {
+            foreach ($value as $new_key => $new_value) {
 
-                    if (implode($new_value) == '') continue;
-                    $ext = $this->get_file_extension(implode($new_value));
+                if (implode($new_value) == '') continue;
 
-                    if ($ext != 'csv') {
+                // find file extension
 
-                        return FALSE;
+                $ext = pathinfo(implode($new_value), PATHINFO_EXTENSION);
 
-                    } // end if
+                if ($ext != 'csv') {
 
-                } // end foreach
+                    return FALSE;
 
-            } // end if
+                } // end if
+
+            } // end foreach
 
         } // end foreach
 
@@ -479,29 +477,29 @@ class Validation_Sanitisation extends \model\Database {
 
         foreach ($file as $key => $value) {
 
-            if ($key == 'name') {
-                
-                $file = $this->db_find_file_name();
+            if ($key != 'name') continue;
 
-                foreach ($value as $new_key => $new_value) {
+            $file = $this->db_find_file_name();
 
-                    if (implode($new_value) == '') continue;
+            foreach ($value as $new_key => $new_value) {
 
-                    foreach ($file as $result) {
+                if (implode($new_value) == '') continue;
 
-                        $basename = $this->get_file_filename(implode($new_value));
+                foreach ($file as $result) {
 
-                        if (preg_match("/$basename/", $result->fileName)) {
+                    // get basename of file
 
-                            return FALSE;
+                    $basename = pathinfo(implode($new_value), PATHINFO_FILENAME);
 
-                        } // end if
+                    if (preg_match("/$basename/", $result->fileName)) {
 
-                    } // end foreach
-                    
+                        return FALSE;
+
+                    } // end if
+
                 } // end foreach
 
-            } // end if
+            } // end foreach
 
         } // end foreach
 
@@ -528,36 +526,15 @@ class Validation_Sanitisation extends \model\Database {
 
                 if (!preg_match("/$att/i", $thisKey)) continue;
 
-                if ($result == '') {
+                if ($result != '') continue;
 
-                    return $this->parse_feeds($result);
-
-
-                } // end if
+                return $this->parse_feeds($result);
 
             } // end foreach
 
         } else {
             die('Make sure that the inputs for validate_file() is an array and a string');
         }
-
-    }
-
-    public function get_file_extension($file_name) {
-
-        return pathinfo($file_name, PATHINFO_EXTENSION);
-
-    }
-
-    public function get_file_basename($file_name) {
-
-        return pathinfo($file_name, PATHINFO_BASENAME);
-
-    }
-
-    public function get_file_filename($file_name) {
-
-        return pathinfo($file_name, PATHINFO_FILENAME);
 
     }
 
@@ -585,7 +562,7 @@ class Validation_Sanitisation extends \model\Database {
     }
 
 
-    public function failure_message_interface($value) {
+    public function failure_message_facade($value) {
 
         return $this->failure_message($value);
 

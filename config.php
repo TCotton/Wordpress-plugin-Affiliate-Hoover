@@ -59,9 +59,13 @@ require_once ('Tracking_Form.php');
 
 /* view */
 
+/*
+
 require_once ('LogTests.php');
 require_once ('Main_FormTests.php');
 require_once ('Upload_FormTests.php');
 require_once ('Reset_FormTests.php');
 require_once ('Feed_FormTests.php');
 require_once ('Tracking_FormTests.php');
+
+*/

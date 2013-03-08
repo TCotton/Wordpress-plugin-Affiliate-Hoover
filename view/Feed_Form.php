@@ -39,22 +39,7 @@ class Feed_Form extends \view\View_Initialise {
     function __construct() {
 
         parent::__construct();
-        
-        if (!(self::$processing instanceof \controller\Feed_Form_Processing)) {
-            self::$processing = new \controller\Feed_Form_Processing();
-        }
-        
-        if (!(self::$create instanceof \controller\Create_Individual_Feeds)) {
-            self::$create = new \controller\Create_Individual_Feeds();
-        }
-        
-        if (!(self::$update instanceof \controller\Update_Individual_Feeds)) {
-            self::$update = new \controller\Update_Individual_Feeds();
-        }
-        
-        if (!(self::$synchronize instanceof \model\Synchronize_Feeds)) {
-            self:: $synchronize = new \model\Synchronize_Feeds();
-        }
+
 
     } // end construct
 
@@ -68,6 +53,22 @@ class Feed_Form extends \view\View_Initialise {
     protected function feed_form() {
 
         if (isset($_GET['unique_form']) && $_GET['unique_form'] != '') {
+
+            if (!(self::$processing instanceof \controller\Feed_Form_Processing)) {
+                self::$processing = new \controller\Feed_Form_Processing();
+            }
+
+            if (!(self::$create instanceof \controller\Create_Individual_Feeds)) {
+                self::$create = new \controller\Create_Individual_Feeds();
+            }
+
+            if (!(self::$update instanceof \controller\Update_Individual_Feeds)) {
+                self::$update = new \controller\Update_Individual_Feeds();
+            }
+
+            if (!(self::$synchronize instanceof \model\Synchronize_Feeds)) {
+                self::$synchronize = new \model\Synchronize_Feeds();
+            }
 
             // essential.
             extract(self::$form);
@@ -158,7 +159,7 @@ class Feed_Form extends \view\View_Initialise {
 
                     } else {
 
-                        echo self::$check->failure_message_interface($error);
+                        echo self::$check->failure_message_facade($error);
 
                     } // end if error
 
@@ -187,7 +188,7 @@ class Feed_Form extends \view\View_Initialise {
 
                     } else {
 
-                        echo self::$check->failure_message_interface($error);
+                        echo self::$check->failure_message_facade($error);
 
                     } // end if error
 
@@ -206,7 +207,7 @@ class Feed_Form extends \view\View_Initialise {
 
                     } else {
 
-                        echo self::$check->failure_message_interface($error);
+                        echo self::$check->failure_message_facade($error);
 
                     }
 
@@ -458,7 +459,7 @@ class Feed_Form extends \view\View_Initialise {
                     'select' => $post_array // array only for the select inpu
                         );
 
-                if ($form_data->min_rows != '') {
+                if ($form_data->min_rows != NULL && $form_data->min_rows != -1) {
                     $mi_rows = $form_data->min_rows;
                 } else {
                     $mi_rows = 'YES';
@@ -473,7 +474,7 @@ class Feed_Form extends \view\View_Initialise {
                     'select' => FALSE // array only for the select inpu
                         );
 
-                if ($form_data->max_rows != '') {
+                if ($form_data->max_rows != NULL && $form_data->max_rows != -1) {
                     $ma_rows = $form_data->max_rows;
                 } else {
                     $ma_rows = 'YES';

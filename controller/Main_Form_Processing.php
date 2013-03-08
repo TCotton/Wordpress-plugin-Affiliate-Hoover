@@ -47,7 +47,6 @@ class Main_Form_Processing extends \view\View_Initialise {
         
         return $form;
         
-        
     }
     
 
@@ -77,7 +76,6 @@ class Main_Form_Processing extends \view\View_Initialise {
             $error[] = 'Please make sure that you don\'t use any special characters or white spaces for a name';
         }
         
-     
         return $error;
 
     }

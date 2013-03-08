@@ -37,14 +37,6 @@ class Create_Individual_Feeds extends \model\Database {
 
         parent::__construct();
 
-        if (!(self::$read_write instanceof \model\Write_Read_Files)) {
-            self::$read_write = new \model\Write_Read_Files();
-        }
-
-        if (!(self::$csv instanceof \model\Handle_Files)) {
-            self::$csv = new \model\Handle_Files();
-        }
-
     } // end construct
 
     /**
@@ -62,6 +54,14 @@ class Create_Individual_Feeds extends \model\Database {
      */
 
     protected function create_indiviual_feeds($var, $bol = TRUE) {
+
+        if (!(self::$read_write instanceof \model\Write_Read_Files)) {
+            self::$read_write = new \model\Write_Read_Files();
+        }
+
+        if (!(self::$csv instanceof \model\Handle_Files)) {
+            self::$csv = new \model\Handle_Files();
+        }
 
         $item = $this->db_select_all($var);
 
@@ -105,7 +105,8 @@ class Create_Individual_Feeds extends \model\Database {
 
                 foreach ($total as $result => $value) {
 
-                    if ($item->min_rows != FALSE && $item->max_rows != FALSE) {
+                    if (($item->min_rows != NULL && $item->min_rows != -1) && ($item->max_rows != NULL &&
+                        $item->max_rows != -1)) {
 
                         if ($result > $item->max_rows) continue;
                         if ($result < $item->min_rows) continue;

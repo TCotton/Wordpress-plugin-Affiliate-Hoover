@@ -26,10 +26,6 @@ class Upload_Form extends \view\View_Initialise {
 
         parent::__construct();
 
-        if (!(self::$processing instanceof \controller\Upload_Form_Processing)) {
-            self::$processing = new \controller\Upload_Form_Processing();
-        }
-
     } // end construct
 
     /**
@@ -41,6 +37,9 @@ class Upload_Form extends \view\View_Initialise {
 
         if (isset($_GET['unique_name'])) {
 
+            if (!(self::$processing instanceof \controller\Upload_Form_Processing)) {
+                self::$processing = new \controller\Upload_Form_Processing();
+            }
             // essential.
             extract(self::$form);
 
@@ -57,7 +56,7 @@ class Upload_Form extends \view\View_Initialise {
 
                 } else {
 
-                    echo self::$check->failure_message_interface($error);
+                    echo self::$check->failure_message_facade($error);
 
                 } // end if error
 

@@ -13,10 +13,10 @@
  * 
  */
 
-class Reset_Form extends \view\View_Initialise  {
+class Reset_Form extends \view\View_Initialise {
 
     protected static $processing;
-    
+
     /**
      * Reset_Form::__construct()
      * 
@@ -26,9 +26,6 @@ class Reset_Form extends \view\View_Initialise  {
 
         parent::__construct();
 
-        if (!(self::$processing instanceof \controller\Reset_Form_Processing)) {
-            self::$processing = new \controller\Reset_Form_Processing();
-        }
 
     } // end construct
 
@@ -40,6 +37,10 @@ class Reset_Form extends \view\View_Initialise  {
      * @return array of data / html
      */
     protected function reset() {
+
+        if (!(self::$processing instanceof \controller\Reset_Form_Processing)) {
+            self::$processing = new \controller\Reset_Form_Processing();
+        }
 
         // essential.
         extract(self::$form);

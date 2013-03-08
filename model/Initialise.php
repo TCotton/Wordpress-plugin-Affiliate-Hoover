@@ -111,7 +111,7 @@ class Initialise {
      * Checks to see if option database field is used
      * @return boolean
      */
-    public static function check_options_table() {
+    protected static function check_options_table() {
 
         extract(static::$form);
 

@@ -13,7 +13,7 @@
  * 
  */
 
-class Main_Form extends \view\View_Initialise  {
+class Main_Form extends \view\View_Initialise {
 
     /**
      * @var \controller\Main_Form_Processing
@@ -29,10 +29,6 @@ class Main_Form extends \view\View_Initialise  {
 
         parent::__construct();
 
-        if (!(self::$processing instanceof \controller\Main_Form_Processing)) {
-            self::$processing = new \controller\Main_Form_Processing();
-        }
-
     } // end construct
 
 
@@ -42,6 +38,10 @@ class Main_Form extends \view\View_Initialise  {
      * @return
      */
     protected function main_form() {
+
+        if (!(self::$processing instanceof \controller\Main_Form_Processing)) {
+            self::$processing = new \controller\Main_Form_Processing();
+        }
 
         if (isset($_POST['submitLar'])) {
 
@@ -54,7 +54,7 @@ class Main_Form extends \view\View_Initialise  {
 
             } else {
 
-                echo self::$check->failure_message_interface($error);
+                echo self::$check->failure_message_facade($error);
 
             } // end if error
 

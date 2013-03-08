@@ -388,12 +388,7 @@ class Form_Builder extends \model\Database {
             6 => 'select',
             );
 
-        //var_dump($default);
-        //var_dump($array);
-
         $fields_essentials = array_combine($default, $array);
-
-        //var_dump($fields_essentials);
 
         // above combines the default array with the user input data to create a multidimensial array with
         // form attribute names and values
@@ -421,8 +416,8 @@ class Form_Builder extends \model\Database {
                             if ($key == 'name') {
 
                                 if ($value != NULL) {
-                                    $form .= " name=\"{$option_name}[{$value}]\" ";
-                                    $name = $value;
+                                    $form .= " name=\"{$option_name}[" . esc_attr($value) . "]\" ";
+                                    $name = esc_attr($value);
                                     $id = $name.'-'.$i;
                                     $form .= " id=\"$id\" ";
 
@@ -451,9 +446,9 @@ class Form_Builder extends \model\Database {
                                 if ($value != NULL && $value != 'YES') {
                                     $form .= ' value="';
                                     $form .= isset($_POST[$option_name][$name]) ? esc_attr(stripslashes
-                                        ($_POST[$option_name][$name])) : $value;
+                                        ($_POST[$option_name][$name])) : esc_attr($value);
                                     $form .= '"';
-                                    $name_value = $value;
+                                    $name_value = esc_attr($value);
                                 }
 
                                 if ($value == 'YES') {
@@ -551,7 +546,7 @@ class Form_Builder extends \model\Database {
 
                                 if ($value != NULL && $value != 'YES') {
                                     $textareaValue = isset($_POST[$option_name][$name]) ? esc_attr(stripslashes
-                                        ($_POST[$option_name][$name])) : $value;
+                                        ($_POST[$option_name][$name])) : esc_attr($value);
                                 }
 
                                 if ($value == 'YES') {
