@@ -54,41 +54,41 @@ class Feed_Form_Processing extends \view\View_Initialise {
         
         $error = array();
 
-        if (self::$check->empty_value($form, 'formTitle') === FALSE) {
+        if (!self::$check->empty_value($form, 'formTitle')) {
             $error[] = 'Please don\'t leave the title empty';
         }
 
-        if (self::$check->empty_value($form, 'formBody') === FALSE) {
+        if (!self::$check->empty_value($form, 'formBody')) {
             $error[] = 'Please don\'t leave the body empty';
         }
 
-        if (self::$check->title_check($form, 'formTitle') === FALSE) {
+        if (!self::$check->title_check($form, 'formTitle')) {
             // title_check
             $error[] =
                 'Only include one code such as [#3#] and nothing else for the title. You can change the title once the form has been created.';
         }
 
-        if (self::$check->empty_value($form, 'formPostType') === FALSE) {
+        if (!self::$check->empty_value($form, 'formPostType')) {
             // title_check
             $error[] = 'Please pick a post type';
         }
 
-        if (self::$check->empty_value($form, 'formPostStatus') === FALSE) {
+        if (!self::$check->empty_value($form, 'formPostStatus')) {
             // title_check
             $error[] = 'Please choose whether you would like to save the item as draft or published';
         }
 
         $formMinRows = FALSE;
         $formMaxRows = FALSE;
-        if (self::$check->empty_value($form, 'formMinRows') === FALSE) {
+        if (!self::$check->empty_value($form, 'formMinRows')) {
             $formMinRows = TRUE;
         }
 
-        if (self::$check->empty_value($form, 'formMaxRows') === FALSE) {
+        if (!self::$check->empty_value($form, 'formMaxRows')) {
             $formMaxRows = TRUE;
         }
 
-        if (($formMinRows == TRUE && $formMaxRows === FALSE) || ($formMinRows === FALSE && $formMaxRows === TRUE)) {
+        if (($formMinRows === TRUE && $formMaxRows === FALSE) || ($formMinRows === FALSE && $formMaxRows === TRUE)) {
             $error[] = 'Please make sure that set both a min rows number and a max rows number';
         }
 

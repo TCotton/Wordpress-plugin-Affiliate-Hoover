@@ -38,7 +38,7 @@ class Initialise {
 
         foreach ($args as $result) {
 
-           $result = array_values($result);
+            $result = array_values($result);
 
             if (count($result) != 4) {
                 wp_die('Please make sure you place the right number of values into your array');
@@ -105,8 +105,8 @@ class Initialise {
         return $output;
 
     }
-    
-     /**
+
+    /**
      * Initialise::check_options_table()
      * Checks to see if option database field is used
      * @return boolean
@@ -122,7 +122,7 @@ class Initialise {
         }
 
     }
-   
+
 }
 
 $first_form = array(

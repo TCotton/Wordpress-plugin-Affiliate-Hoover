@@ -255,6 +255,7 @@ class Create_Individual_Feeds extends \model\Database {
 
                                         $form_title_contains = explode(',', $item->
                                             form_title_contains);
+                                            
                                         $update = FALSE;
 
                                         foreach ($form_title_contains as $new_result) {
