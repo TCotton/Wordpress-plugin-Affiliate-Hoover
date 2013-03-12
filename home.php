@@ -18,7 +18,7 @@ License: GPL2
 
 global $wp_version;
 
-if (floatval(phpversion()) < 5.3 || floatval($wp_version) < 3.3) {
+if (floatval(phpversion()) < 5.3 && floatval($wp_version) < 3.3) {
 
     require_once ABSPATH.'/wp-admin/includes/plugin.php';
     deactivate_plugins(__file__);

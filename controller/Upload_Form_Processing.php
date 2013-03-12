@@ -59,15 +59,15 @@ class Upload_Form_Processing extends \view\View_Initialise {
             $error[] = 'Opps! You forgot to add a file';
         }
 
-        if (self::$check->check_file_ext($_FILES[$option_name], 'feedFile') === FALSE) {
+        if (!self::$check->check_file_ext($_FILES[$option_name], 'feedFile')) {
             $error[] = 'Only upload CSV files';
         }
 
-        if (self::$check->check_file_duplicate($_FILES[$option_name], 'feedFile') === FALSE) {
+        if (!self::$check->check_file_duplicate($_FILES[$option_name], 'feedFile')) {
             $error[] = 'Opps, you appear to be already using this file';
         }
 
-        if (self::$check->check_file_error($_FILES[$option_name], 'feedFile') === FALSE) {
+        if (!self::$check->check_file_error($_FILES[$option_name], 'feedFile')) {
             $error[] = 'Sorry the maximum file upload size is '.($max_up / 1048576).'MBs';
         }
 

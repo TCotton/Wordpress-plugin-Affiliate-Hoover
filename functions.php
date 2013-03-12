@@ -8,7 +8,7 @@
 
 function ah_check_utf($str) {
 
-    if (mb_detect_encoding($str, 'UTF-8', TRUE) === FALSE) {
+    if (!mb_detect_encoding($str, 'UTF-8', TRUE)) {
         return utf8_encode($str);
     } else {
         return $str;
@@ -166,6 +166,5 @@ function ah_max_upload() {
         return 2097152;
 
     }
-
 
 }

@@ -88,7 +88,7 @@ class Feed_Form_Processing extends \view\View_Initialise {
             $formMaxRows = TRUE;
         }
 
-        if (($formMinRows === TRUE && $formMaxRows === FALSE) || ($formMinRows === FALSE && $formMaxRows === TRUE)) {
+        if (($formMinRows === TRUE && $formMaxRows) || ($formMinRows === FALSE && $formMaxRows === TRUE)) {
             $error[] = 'Please make sure that set both a min rows number and a max rows number';
         }
 

@@ -63,16 +63,16 @@ class Main_Form_Processing extends \view\View_Initialise {
 
         // EMPTY VALUES
         
-        if (self::$check->empty_value($post_form) === FALSE) {
+        if (!self::$check->empty_value($post_form)) {
             $error[] = 'Please don\'t leave any input values empty';
         }
 
         // Make sure that none of the form values are duplicates
-        if (self::$check->duplicate_entries($post_form) === FALSE) {
+        if (!self::$check->duplicate_entries($post_form)) {
             $error[] = 'Please make sure that all feed names are unique';
         }
 
-        if (self::$check->alnum($post_form, 'siteName') === FALSE) {
+        if (!self::$check->alnum($post_form, 'siteName')) {
             $error[] = 'Please make sure that you don\'t use any special characters or white spaces for a name';
         }
         

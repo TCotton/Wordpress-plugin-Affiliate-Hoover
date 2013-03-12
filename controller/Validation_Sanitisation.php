@@ -295,7 +295,6 @@ class Validation_Sanitisation extends \model\Database {
             foreach ($form_output[$option_name] as $key => $value) {
 
                 if (!preg_match("/$att/i", $key)) continue;
-
                 if ($value == '') continue;
 
                 if (!ctype_alnum($value)) {
@@ -307,6 +306,8 @@ class Validation_Sanitisation extends \model\Database {
         } else {
             die('Make sure that the inputs for validate_url() is an array and a string');
         }
+
+        return TRUE;
 
 
     }
@@ -332,7 +333,6 @@ class Validation_Sanitisation extends \model\Database {
             foreach ($form_output[$option_name] as $thisKey => $result) {
 
                 if (!preg_match("/$att/i", $thisKey)) continue;
-
                 if ($result == '') continue;
 
                 if (!preg_match('/^\[#([0-9]*)#\]$/', $result)) {
@@ -345,6 +345,8 @@ class Validation_Sanitisation extends \model\Database {
         } else {
             die('Make sure that the inputs for validate_url() is an array and a string');
         }
+
+        return TRUE;
 
 
     }
@@ -378,6 +380,8 @@ class Validation_Sanitisation extends \model\Database {
             } // end foreach
 
         } // end foreach
+
+        return TRUE;
 
     }
 
@@ -434,6 +438,8 @@ class Validation_Sanitisation extends \model\Database {
 
         } // end foreach
 
+        return TRUE;
+
     }
 
 
@@ -470,6 +476,8 @@ class Validation_Sanitisation extends \model\Database {
 
         } // end foreach
 
+        return TRUE;
+
     }
 
 
@@ -503,6 +511,8 @@ class Validation_Sanitisation extends \model\Database {
 
         } // end foreach
 
+        return TRUE;
+
     }
 
     /**
@@ -525,7 +535,6 @@ class Validation_Sanitisation extends \model\Database {
             foreach ($form_output[$option_name] as $thisKey => $result) {
 
                 if (!preg_match("/$att/i", $thisKey)) continue;
-
                 if ($result != '') continue;
 
                 return $this->parse_feeds($result);
@@ -642,7 +651,7 @@ class Validation_Sanitisation extends \model\Database {
 
             if ($database && !empty($data[$option_name])) {
 
-                if ($single === NULL) {
+                if ($single == NULL) {
                     // if entire form is entered
 
                     // if new form without option database created yet make sure ALL fields are not empty
@@ -656,14 +665,14 @@ class Validation_Sanitisation extends \model\Database {
                         if (preg_match('/zyxwv/', $key)) continue;
 
                         if (!is_string($value)) continue;
-
+                        
                         //This is to prevent checking for empty the bottom form
                         static $c = 0;
 
                         if ($c++ < $total) {
 
                             if (!is_string($value)) continue;
-
+                            
                             if (empty($value)) {
                                 return FALSE;
                             } // end if
@@ -671,6 +680,8 @@ class Validation_Sanitisation extends \model\Database {
                         } // end if
 
                     } // end foreach loop
+                    
+                    return TRUE;
 
                 } else {
 
@@ -692,7 +703,7 @@ class Validation_Sanitisation extends \model\Database {
             } else {
 
 
-                if ($this->empty_non_dynamic($form_output, $single) == FALSE) {
+                if (!$this->empty_non_dynamic($form_output, $single)) {
                     return FALSE;
                 }
 
@@ -701,11 +712,13 @@ class Validation_Sanitisation extends \model\Database {
             // if $dynamic_output is set to FALSE
         } else {
 
-            if ($this->empty_non_dynamic($form_output, $single) == FALSE) {
+            if (!$this->empty_non_dynamic($form_output, $single)) {
                 return FALSE;
             }
 
         } // end if $dynamic_output
+
+        return TRUE;
 
     }
 
@@ -764,6 +777,8 @@ class Validation_Sanitisation extends \model\Database {
 
             } // end foreach
 
+            return TRUE;
+
         } // end if not single
 
     }
@@ -805,6 +820,8 @@ class Validation_Sanitisation extends \model\Database {
 
         if (count($tmp) != count(array_unique($tmp))) {
             return FALSE;
+        } else {
+            return TRUE;
         }
 
     }

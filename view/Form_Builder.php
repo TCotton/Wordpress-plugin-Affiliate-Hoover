@@ -146,7 +146,20 @@ class Form_Builder extends \model\Database {
         // permenant settings for every form
         $form .= $this->perm_fields($total_arrays);
         $form .= '<p class="submit"><input type="submit" id="submit" name="'.$form_elms['5'].
-            '" class="button-primary" value="Submit"></p>';
+            '" class="button-primary" value="';
+            
+        if(isset($_GET['unique_form'])){
+            
+            $form .= 'Update and Create';
+            
+        } else {
+            
+            $form .= 'Submit';
+            
+            
+        }
+        
+        $form .= '"></p>';
         if ($form_elms['6'] != NULL) {
             $form .=
                 '<p class="submit" style="margin-top:0;padding-top:0"><input type="submit"  name="'.
