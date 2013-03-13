@@ -134,7 +134,7 @@ class Create_Individual_Feeds extends \model\Database {
 
                         // Post title
 
-                        if (mb_stristr($item->form_title, "[#$key#]") !== FALSE) {
+                        if (mb_stristr($item->form_title, "[#$key#]")) {
 
                             $post_title = str_replace("[#$key#]", $row_value, $post_title);
 
@@ -142,7 +142,7 @@ class Create_Individual_Feeds extends \model\Database {
 
                         // Post content
 
-                        if (mb_stristr($item->form_body, "[#$key#]") !== FALSE) {
+                        if (mb_stristr($item->form_body, "[#$key#]")) {
 
                             $post_content = str_replace("[#$key#]", $row_value, $post_content);
 
@@ -150,7 +150,7 @@ class Create_Individual_Feeds extends \model\Database {
 
                         // Form tags
 
-                        if (mb_stristr($item->form_tags, "[#$key#]") !== FALSE) {
+                        if (mb_stristr($item->form_tags, "[#$key#]")) {
 
                             $tags_input = str_replace("[#$key#]", $row_value, $tags_input);
 
@@ -158,7 +158,7 @@ class Create_Individual_Feeds extends \model\Database {
 
                         // form cats
 
-                        if (mb_stristr($item->form_categories, "[#$key#]") !== FALSE) {
+                        if (mb_stristr($item->form_categories, "[#$key#]")) {
 
                             $post_category = str_replace("[#$key#]", $row_value, $post_category);
 
