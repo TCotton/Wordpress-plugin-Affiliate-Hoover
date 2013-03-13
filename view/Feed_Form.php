@@ -10,6 +10,16 @@
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
+ * Wordpress functions used:
+ * 
+ * get_categories():
+ * http://codex.wordpress.org/Function_Reference/get_categories
+ * get_post_types():
+ * http://codex.wordpress.org/Function_Reference/get_post_types
+ * get_taxonomies():
+ * http://codex.wordpress.org/Function_Reference/get_taxonomies
+ * wp_die():
+ * http://codex.wordpress.org/Function_Reference/wp_die
  * 
  */
 class Feed_Form extends \view\View_Initialise {

@@ -11,6 +11,16 @@ use ah_pagination;
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
+ * Wordpress functions:
+ * 
+ * get_option()
+ * http://codex.wordpress.org/Function_Reference/get_option
+ * get_post():
+ * http://codex.wordpress.org/Function_Reference/get_post
+ * admin_url():
+ * http://codex.wordpress.org/Function_Reference/admin_url
+ * add_action():
+ * http://codex.wordpress.org/Function_Reference/add_action
  * 
  */
 

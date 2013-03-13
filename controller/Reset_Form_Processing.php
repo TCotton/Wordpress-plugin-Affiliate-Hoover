@@ -12,7 +12,6 @@
  * 
  * 
  */
-
 class Reset_Form_Processing extends \view\View_Initialise {
 
     /**

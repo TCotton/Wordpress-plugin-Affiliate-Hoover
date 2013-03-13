@@ -12,6 +12,9 @@ use ArrayIterator;
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
+ * Wordpress functions used:
+ * wp_delete_post():
+ * http://codex.wordpress.org/Function_Reference/wp_delete_post
  * 
  */
 

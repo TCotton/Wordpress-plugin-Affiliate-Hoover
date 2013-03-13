@@ -11,7 +11,6 @@
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
  */
-
 class Feed_Form_Processing extends \view\View_Initialise {
 
     /**

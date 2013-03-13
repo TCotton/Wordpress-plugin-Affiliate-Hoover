@@ -10,6 +10,9 @@
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
+ * Wordpress functions used:
+ * get_option(): 
+ * http://codex.wordpress.org/Function_Reference/get_option
  * 
  */
 class Validation_Sanitisation_Success extends \model\Database {

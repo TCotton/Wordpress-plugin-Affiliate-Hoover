@@ -13,9 +13,27 @@ use DateTime;
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
+ * Wordpress functions used:
+ * add_post_meta(): 
+ * http://codex.wordpress.org/Function_Reference/add_post_meta
+ * wp_set_post_terms(): 
+ * http://codex.wordpress.org/Function_Reference/wp_set_post_terms
+ * wp_insert_post(): 
+ * http://codex.wordpress.org/Function_Reference/wp_insert_post
+ * force_balance_tags(): 
+ * http://codex.wordpress.org/Function_Reference/force_balance_tags
+ * wp_insert_term(): 
+ * http://codex.wordpress.org/Function_Reference/wp_insert_term
+ * wp_update_post(): 
+ * http://codex.wordpress.org/Function_Reference/wp_update_post
+ * stripslashes_deep(): 
+ * http://codex.wordpress.org/Function_Reference/stripslashes_deep
+ * term_exists(): 
+ * http://codex.wordpress.org/Function_Reference/term_exists
+ * get_userdata(): 
+ * http://codex.wordpress.org/Function_Reference/get_userdata
  * 
  */
-
 class Create_Individual_Feeds extends \model\Database {
 
     /**

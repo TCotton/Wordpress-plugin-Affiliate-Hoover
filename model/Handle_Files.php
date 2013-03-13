@@ -11,9 +11,14 @@ use File_CSV_DataSource;
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
+ * Wordpress functions used:
+ * 
+ * wp_redirect():
+ * http://codex.wordpress.org/Function_Reference/wp_redirect
+ * admin_url():
+ * http://codex.wordpress.org/Function_Reference/admin_url
  * 
  */
-
 class Handle_Files extends \model\Database {
 
     function __construct() {

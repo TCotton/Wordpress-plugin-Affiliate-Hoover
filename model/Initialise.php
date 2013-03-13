@@ -15,7 +15,18 @@
  * 
  * get_option()
  * http://codex.wordpress.org/Function_Reference/get_option
- * 
+ * wp_die():
+ * http://codex.wordpress.org/Function_Reference/wp_die
+ * wp_enqueue_style():
+ * http://codex.wordpress.org/Function_Reference/wp_enqueue_style
+ * wp_localize_script():
+ * http://codex.wordpress.org/Function_Reference/wp_localize_script
+ * wp_enqueue_script():
+ * http://codex.wordpress.org/Function_Reference/wp_enqueue_script
+ * plugin_dir_url():
+ * http://codex.wordpress.org/Function_Reference/plugin_dir_url
+ * add_action():
+ * http://codex.wordpress.org/Function_Reference/add_action
  * 
  */
 class Initialise {

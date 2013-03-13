@@ -10,7 +10,6 @@
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
- * 
  */
 class Upload_Form_Processing extends \view\View_Initialise {
 

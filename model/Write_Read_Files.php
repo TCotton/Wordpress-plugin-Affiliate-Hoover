@@ -10,9 +10,7 @@
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
- * 
  */
-
 class Write_Read_Files  {
 
     /**

@@ -10,6 +10,19 @@
  * @access public
  * @license GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
  * 
+ * Wordpress functions used:
+ * get_option(): 
+ * http://codex.wordpress.org/Function_Reference/get_option
+ * wp_verify_nonce(): 
+ * http://codex.wordpress.org/Function_Reference/wp_verify_nonce
+ * stripslashes_deep(): 
+ * http://codex.wordpress.org/Function_Reference/stripslashes_deep
+ * wp_strip_all_tags(): 
+ * http://wpseek.com/wp_strip_all_tags/
+ * sanitize_text_field(): 
+ * http://codex.wordpress.org/Function_Reference/sanitize_text_field
+ * wp_filter_nohtml_kses(): 
+ * http://codex.wordpress.org/Function_Reference/wp_filter_nohtml_kses
  * 
  */
 class Validation_Sanitisation extends \model\Database {

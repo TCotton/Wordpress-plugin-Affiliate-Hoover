@@ -15,7 +15,24 @@
  * 
  * get_option()
  * http://codex.wordpress.org/Function_Reference/get_option
- * 
+ * add_options_page():
+ * http://codex.wordpress.org/Function_Reference/add_options_page
+ * get_the_ID():
+ * http://codex.wordpress.org/Function_Reference/get_the_ID
+ * add_meta_box():
+ * http://codex.wordpress.org/Function_Reference/add_meta_box
+ * wp_localize_script():
+ * http://codex.wordpress.org/Function_Reference/wp_localize_script
+ * wp_create_nonce():
+ * http://codex.wordpress.org/Function_Reference/wp_create_nonce
+ * admin_url():
+ * http://codex.wordpress.org/Function_Reference/admin_url
+ * wp_enqueue_script():
+ * http://codex.wordpress.org/Function_Reference/wp_enqueue_script
+ * plugin_dir_url():
+ * http://codex.wordpress.org/Function_Reference/plugin_dir_url
+ * add_action():
+ * http://codex.wordpress.org/Function_Reference/add_action
  * 
  * 
  */
